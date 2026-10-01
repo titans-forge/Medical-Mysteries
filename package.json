@@ -1,0 +1,9 @@
+{
+  "name": "medical-mysteries-release-recovery",
+  "private": true,
+  "type": "module",
+  "license": "SEE LICENSE IN LICENSE",
+  "scripts": {
+    "test": "python3 scripts/check-release.py"
+  }
+}

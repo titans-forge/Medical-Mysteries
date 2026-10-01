@@ -1,0 +1,377 @@
+{
+  "schema": "forge_game_media_inventory_v1",
+  "assets": [
+    {
+      "path": "assets/covers/doc-001-melanoma-480.webp",
+      "sha256": "3c6243ad734a90ba3546556d2bd705f400bd0a0216c7f6052ab56078f92e4669",
+      "bytes": 14844
+    },
+    {
+      "path": "assets/covers/doc-001-melanoma-960.webp",
+      "sha256": "7f1fdeef757edb7b7583f267afd8b8c88791baddccd6ed3dbaeae8756ec0d67c",
+      "bytes": 46292
+    },
+    {
+      "path": "assets/covers/doc-002-dissection-480.webp",
+      "sha256": "e2a33ae7eeed23f3c8bb76fedf53da5c19bd12ad092e35b039bae0e7a22bbc86",
+      "bytes": 14458
+    },
+    {
+      "path": "assets/covers/doc-002-dissection-960.webp",
+      "sha256": "36507a72ac6e93a48eb976444cca99c094dd6ff30084f935c9a19100bfd2aa12",
+      "bytes": 40770
+    },
+    {
+      "path": "assets/covers/pub-001-stroke-480.webp",
+      "sha256": "3b53f174b42eac6ff03b2f2ade69c386a3d86f6678189ac26e164b630c0a4234",
+      "bytes": 10126
+    },
+    {
+      "path": "assets/covers/pub-001-stroke-960.webp",
+      "sha256": "51b900a0a471844f159ce58517ceb35c7f00838bd8a7c64d52498e46d5d73ad6",
+      "bytes": 25846
+    },
+    {
+      "path": "assets/covers/pub-002-botulism-480.webp",
+      "sha256": "557bd940812f9ad4d0809140f86524e4119f1bf18ff04f4a6479b5e5a4f5df5a",
+      "bytes": 9596
+    },
+    {
+      "path": "assets/covers/pub-002-botulism-960.webp",
+      "sha256": "f344a69b79f34bd505638e0a98b9c45a842f183e25260e42376727ead3c8e96a",
+      "bytes": 25394
+    },
+    {
+      "path": "assets/covers/stu-001-dka-480.webp",
+      "sha256": "e16a22a046d256f207611311487ebbc9cbb4d573e06eba9e4c509868f2b31741",
+      "bytes": 13036
+    },
+    {
+      "path": "assets/covers/stu-001-dka-960.webp",
+      "sha256": "f92349080a867799d91db6ff3826de69f0fa552c3948a73cfc65b6c7b22822a4",
+      "bytes": 35458
+    },
+    {
+      "path": "assets/covers/stu-002-ectopic-480.webp",
+      "sha256": "c2b216252f9eef3b6c4426183f801b37819a4a4f586afcc7fb68683d7c3d3277",
+      "bytes": 7128
+    },
+    {
+      "path": "assets/covers/stu-002-ectopic-960.webp",
+      "sha256": "a0a0b0174cf3393a65849eef193fb2d85f032cdc8503071eda1fe829db1ba3ac",
+      "bytes": 18130
+    },
+    {
+      "path": "assets/doc-001-melanoma.png",
+      "sha256": "be1bcbd1192bfa8cedf5f389970f65fba9f20bc08ee5d0b28a2afd661c2c59fa",
+      "bytes": 1772120
+    },
+    {
+      "path": "assets/doc-002-dissection.png",
+      "sha256": "ed8bfa16235cffdda410f8a3257d3cd6fc07022546a3ba25465f9b8fedc44d17",
+      "bytes": 1780651
+    },
+    {
+      "path": "assets/episodes-v04/doc-001-scatter-sign-s3-b-consequence-1440.webp",
+      "sha256": "5aa7df903bcc03181929cd320e9094568488f1a79658ea3de66f96a814e43442",
+      "bytes": 97968
+    },
+    {
+      "path": "assets/episodes-v04/doc-001-scatter-sign-s3-b-consequence-720.webp",
+      "sha256": "3a1d2ee0830555e0fd2dad8cad12a9237635c5851b6e9229e973ac8c0c9f59c1",
+      "bytes": 35690
+    },
+    {
+      "path": "assets/episodes-v04/doc-001-scatter-sign-s3-scene-1440.webp",
+      "sha256": "0b7c1ae1a7afb55bcb711056d33761f5b992c79dbc06317f58ea0de6acdb014a",
+      "bytes": 102786
+    },
+    {
+      "path": "assets/episodes-v04/doc-001-scatter-sign-s3-scene-720.webp",
+      "sha256": "f93da93c00007e26a376ec2dc8a01dbf5cd1ef8cbf16e11bc1100726f6b57661",
+      "bytes": 37884
+    },
+    {
+      "path": "assets/episodes-v04/doc-001-scatter-sign-s4-scene-1440.webp",
+      "sha256": "ceb46ca7281dba1a7a713f66a40092323103ab1862c29e5e4a906a546a5e1297",
+      "bytes": 84222
+    },
+    {
+      "path": "assets/episodes-v04/doc-001-scatter-sign-s4-scene-720.webp",
+      "sha256": "7d71bace4799f396d82374e454ba4a2a1cb1601cdc0a808a07391da653ced2af",
+      "bytes": 33614
+    },
+    {
+      "path": "assets/episodes-v04/doc-002-tearing-back-s3-b-consequence-1440.webp",
+      "sha256": "79cde06f2b585a32087fe7118c051e592f2001eabdfa47bb7582d47e655d356b",
+      "bytes": 85620
+    },
+    {
+      "path": "assets/episodes-v04/doc-002-tearing-back-s3-b-consequence-720.webp",
+      "sha256": "a3393a598bd464be1cb1a75ed7d53ab18f7f23d5869e95cee7295594258ecd23",
+      "bytes": 34680
+    },
+    {
+      "path": "assets/episodes-v04/doc-002-tearing-back-s3-scene-1440.webp",
+      "sha256": "5508d97b677fa97a539a3431c865a415f6d5ff6760316b4158c3b31bdfacf3d2",
+      "bytes": 96344
+    },
+    {
+      "path": "assets/episodes-v04/doc-002-tearing-back-s3-scene-720.webp",
+      "sha256": "6cc1c07d02d7b46d2c6bb4fbdd55dff44b970ed83bb9871790d22d2f978d0868",
+      "bytes": 41690
+    },
+    {
+      "path": "assets/episodes-v04/doc-002-tearing-back-s4-scene-1440.webp",
+      "sha256": "79756052454b3a8d37a296fb02e25fc59dc96f7e1b04fad8115d97e643a08d55",
+      "bytes": 66156
+    },
+    {
+      "path": "assets/episodes-v04/doc-002-tearing-back-s4-scene-720.webp",
+      "sha256": "17d716c9976894fc087ee129719a631a7562610b6bdafd51c99c1fc828621247",
+      "bytes": 28456
+    },
+    {
+      "path": "assets/episodes-v04/pub-001-dropped-pen-s3-aspirin-consequence-1440.webp",
+      "sha256": "62d63723fed65b7c4ed745a4ea2eb5424a69a8fd8d820fce902502d8485ff2e3",
+      "bytes": 68274
+    },
+    {
+      "path": "assets/episodes-v04/pub-001-dropped-pen-s3-aspirin-consequence-720.webp",
+      "sha256": "990d3609b1e4dd6500e6163fc722bcfcf620521d731478da479b4efa0420ebb7",
+      "bytes": 28496
+    },
+    {
+      "path": "assets/episodes-v04/pub-001-dropped-pen-s3-scene-1440.webp",
+      "sha256": "62f1a8dfa6e1fd861c4734a76754032a4758f725dd97724e331fb331b12d8643",
+      "bytes": 65192
+    },
+    {
+      "path": "assets/episodes-v04/pub-001-dropped-pen-s3-scene-720.webp",
+      "sha256": "2cbec1977da04efdb08380cf9d4cc5d93b31622ed56e889e31d7641ed057b2f4",
+      "bytes": 26788
+    },
+    {
+      "path": "assets/episodes-v04/pub-002-honey-jar-s3-b-consequence-1440.webp",
+      "sha256": "d66abd9fa1a1520dcb944f98b3d214ce4fddba71d01f34ff77a85aeeb1d7e345",
+      "bytes": 54826
+    },
+    {
+      "path": "assets/episodes-v04/pub-002-honey-jar-s3-b-consequence-720.webp",
+      "sha256": "bd8f5894dbe647a0376756ae52eba15aef36ecdb460be5b43553ce9d9acaf352",
+      "bytes": 22862
+    },
+    {
+      "path": "assets/episodes-v04/pub-002-honey-jar-s3-scene-1440.webp",
+      "sha256": "3b456ea2ce74ca1436dec7520c3afb078093f2cfc0ca487b3643e7b0c4a7bf57",
+      "bytes": 68200
+    },
+    {
+      "path": "assets/episodes-v04/pub-002-honey-jar-s3-scene-720.webp",
+      "sha256": "533454123b9e6f4eb248779f22aac5ac6ec4f315d833c7adcec3abccc095a44b",
+      "bytes": 27562
+    },
+    {
+      "path": "assets/episodes-v04/stu-001-mountain-acid-s1-b-consequence-1440.webp",
+      "sha256": "aa9996624b5d991a5de509d33a1c7b053bb68c9d4638a3d4893e78190b994fa6",
+      "bytes": 91788
+    },
+    {
+      "path": "assets/episodes-v04/stu-001-mountain-acid-s1-b-consequence-720.webp",
+      "sha256": "0f05fdfed7875c349b2f65784317f36f8ddd41cfe5671881a53926ad23cfcad4",
+      "bytes": 37902
+    },
+    {
+      "path": "assets/episodes-v04/stu-001-mountain-acid-s3-scene-1440.webp",
+      "sha256": "35afe9bef47d4e7e3f61c9309f23e7ab9f21fb7d2f62537fa37f5f5466f75aa6",
+      "bytes": 89652
+    },
+    {
+      "path": "assets/episodes-v04/stu-001-mountain-acid-s3-scene-720.webp",
+      "sha256": "68ee17ddaf1c43d8fd014934fc7e46ec16e7caf2a5bc62382abc665d6b7a5b32",
+      "bytes": 36770
+    },
+    {
+      "path": "assets/episodes-v04/stu-001-mountain-acid-s4-scene-1440.webp",
+      "sha256": "8a9061f6d88dddd915c5553c4f1fc78c98d749fa1158c52b520f7a1831e4a1df",
+      "bytes": 82872
+    },
+    {
+      "path": "assets/episodes-v04/stu-001-mountain-acid-s4-scene-720.webp",
+      "sha256": "10e75d6d97875b71e4de0672d859565a8706d4840146482070cf8950115eb68a",
+      "bytes": 34112
+    },
+    {
+      "path": "assets/episodes-v04/stu-002-saturday-pain-s3-scene-1440.webp",
+      "sha256": "f0ff96a6a53c9524523239afd79b79f594c2eaab8ea4ae66cc6911f40b0b88f0",
+      "bytes": 58026
+    },
+    {
+      "path": "assets/episodes-v04/stu-002-saturday-pain-s3-scene-720.webp",
+      "sha256": "3c5196f5690d6270922b34e8e35ed5ee4314c38be54ec01407f9a095a71cfa14",
+      "bytes": 22732
+    },
+    {
+      "path": "assets/episodes-v04/stu-002-saturday-pain-s4-b-consequence-1440.webp",
+      "sha256": "a1e382f11624b1ca0945cf181fb294d8b5fa0a89404400ac9db51a8043cc3d80",
+      "bytes": 38044
+    },
+    {
+      "path": "assets/episodes-v04/stu-002-saturday-pain-s4-b-consequence-720.webp",
+      "sha256": "059a7ff90b4ad0b1a5fffabc37f99ee26c0a0c7f5518b0ecb17d05a46c3f77c6",
+      "bytes": 15872
+    },
+    {
+      "path": "assets/episodes-v04/stu-002-saturday-pain-s4-scene-1440.webp",
+      "sha256": "98deadecef3be474472a054eabd381af34db4145338f68c1f179d6dedb6d4498",
+      "bytes": 61184
+    },
+    {
+      "path": "assets/episodes-v04/stu-002-saturday-pain-s4-scene-720.webp",
+      "sha256": "d3baabc5b2bb1d5c339bc7abca3e37c2a8b797c0369eb649c4b1f616cd792fff",
+      "bytes": 24912
+    },
+    {
+      "path": "assets/episodes/doc-001-melanoma-epilogue-1440.webp",
+      "sha256": "487950e9d2d1aa137ff140ae35b229d4ca5dc73cb6b279a623c5daf69c2b8719",
+      "bytes": 76864
+    },
+    {
+      "path": "assets/episodes/doc-001-melanoma-epilogue-720.webp",
+      "sha256": "2ab1198cb65a713c6bb9aaf5eca75dd97d9b889eb2decec02abda14e73c6b44a",
+      "bytes": 29514
+    },
+    {
+      "path": "assets/episodes/doc-001-melanoma-escalation-1440.webp",
+      "sha256": "b8f58cad88b2494172b62ebc5d3039aa174278e19347ad61ba802c72a8c8162f",
+      "bytes": 66182
+    },
+    {
+      "path": "assets/episodes/doc-001-melanoma-escalation-720.webp",
+      "sha256": "c29c800f255eb3330058b062659557b690df40ea552c66fe43c02a6b96b0c177",
+      "bytes": 25868
+    },
+    {
+      "path": "assets/episodes/doc-002-aorta-epilogue-1440.webp",
+      "sha256": "ca45799a288124f335f0f5c8b13caecdf4e074568f9cd3d1d76566da7f49dd7b",
+      "bytes": 66010
+    },
+    {
+      "path": "assets/episodes/doc-002-aorta-epilogue-720.webp",
+      "sha256": "f10fe3b8b11047dbd331d7a1261f31203ce8b8bbeedaada4b600458afb26cf96",
+      "bytes": 29244
+    },
+    {
+      "path": "assets/episodes/doc-002-aorta-escalation-1440.webp",
+      "sha256": "acd08efa3b380deef61212d2fdab6e24ad15c94cc3be4d4e36f93d9f8cdb99ab",
+      "bytes": 89314
+    },
+    {
+      "path": "assets/episodes/doc-002-aorta-escalation-720.webp",
+      "sha256": "be057f76dc37d8e7cfcd33074fd0db896eb37725aef4cda8a6c0d4971d82b339",
+      "bytes": 35960
+    },
+    {
+      "path": "assets/episodes/pub-001-stroke-epilogue-1440.webp",
+      "sha256": "ea6ea1114ae1b08234a9bf22bc7d9f0aca95746ab9d4882377a5993f04c59f8f",
+      "bytes": 94642
+    },
+    {
+      "path": "assets/episodes/pub-001-stroke-epilogue-720.webp",
+      "sha256": "b871b744ee851145500d61175df032e27134ebd90c723f01861db7e845f15d57",
+      "bytes": 36494
+    },
+    {
+      "path": "assets/episodes/pub-001-stroke-escalation-1440.webp",
+      "sha256": "71ef3415043d2a83fffe71e615529971b6c42fbd063db7f8a5581104aef1cddc",
+      "bytes": 60882
+    },
+    {
+      "path": "assets/episodes/pub-001-stroke-escalation-720.webp",
+      "sha256": "3c54f32665a21a2ec30e581f825912ac3381022c55b2acb5503eb17ce66d675d",
+      "bytes": 24800
+    },
+    {
+      "path": "assets/episodes/pub-002-botulism-epilogue-1440.webp",
+      "sha256": "a2a413f9adb0477329f377a9691c7201f3581d41eb962ee31bd53bec43475edc",
+      "bytes": 72928
+    },
+    {
+      "path": "assets/episodes/pub-002-botulism-epilogue-720.webp",
+      "sha256": "0e4bdcb820a4f4f37a7c0c55dc9b54ef781b8b70e6ee27b018df03bdf51f230a",
+      "bytes": 27300
+    },
+    {
+      "path": "assets/episodes/pub-002-botulism-escalation-1440.webp",
+      "sha256": "46c3c2ac9a629b2a52f03e18a597c8220934603cf2f7fd9c3bb125c746c27118",
+      "bytes": 65856
+    },
+    {
+      "path": "assets/episodes/pub-002-botulism-escalation-720.webp",
+      "sha256": "61293843d1d584d177a98683e253687db66c9e08c593ca2175238217b80c8549",
+      "bytes": 25414
+    },
+    {
+      "path": "assets/episodes/stu-001-dka-epilogue-1440.webp",
+      "sha256": "dfe8e2147b1f7283549dedb121453ec05130b2effe751de8cada072347f49dea",
+      "bytes": 120130
+    },
+    {
+      "path": "assets/episodes/stu-001-dka-epilogue-720.webp",
+      "sha256": "2ff4d2bd57291c3f4edbfbddb4ebceb1a7ccd64fe4dcfd5224c4fe281f308a40",
+      "bytes": 49270
+    },
+    {
+      "path": "assets/episodes/stu-001-dka-escalation-1440.webp",
+      "sha256": "6352c45fe1d10ef1f486abccec8b68c77537e7ab327a1424267e37b170c895f2",
+      "bytes": 85056
+    },
+    {
+      "path": "assets/episodes/stu-001-dka-escalation-720.webp",
+      "sha256": "80be6a2e7920ce8ddaad7b73aa8f0ea39733620a6ec0536d09c65441eafd9a35",
+      "bytes": 33338
+    },
+    {
+      "path": "assets/episodes/stu-002-ectopic-epilogue-1440.webp",
+      "sha256": "5da12e5504668e227d94e0465718c07e30557345976848be1cb833177869ba0c",
+      "bytes": 49298
+    },
+    {
+      "path": "assets/episodes/stu-002-ectopic-epilogue-720.webp",
+      "sha256": "09f101434a791ecf6de0d01d9d602105f636b4a4d05138b55cb210e63f5fb330",
+      "bytes": 20148
+    },
+    {
+      "path": "assets/episodes/stu-002-ectopic-escalation-1440.webp",
+      "sha256": "2dd191199ae4e37b5b8f3b4cdbe8c1d2b06dcc93fb3d08da7e38fe4673e0a8a6",
+      "bytes": 46926
+    },
+    {
+      "path": "assets/episodes/stu-002-ectopic-escalation-720.webp",
+      "sha256": "82346564c3278c636e2906f6fe5511d3d942b5090873dc38ea5fe303a82703e6",
+      "bytes": 18376
+    },
+    {
+      "path": "assets/pub-001-stroke.png",
+      "sha256": "2e8695374e1006debf8e53c076f96eda864a47ad095f2122c74ba3946dc490c7",
+      "bytes": 1678986
+    },
+    {
+      "path": "assets/pub-002-botulism.png",
+      "sha256": "105e1edaa965a2fa198803fe9c7b10ee8035cec10079efd1e35905885debe6af",
+      "bytes": 1753200
+    },
+    {
+      "path": "assets/stu-001-dka.png",
+      "sha256": "562a7c8a7671ae07f9766d5f611acff19df8a504f0adc7302039573c33aaf98e",
+      "bytes": 1691775
+    },
+    {
+      "path": "assets/stu-002-ectopic.png",
+      "sha256": "6f282f7d19066fa7eba5ed0d4b92250340224cf984e1ee68f164776f873b2dfc",
+      "bytes": 1409369
+    }
+  ],
+  "rights_record": "MEDIA_RIGHTS.md",
+  "private_receipts_included": false
+}

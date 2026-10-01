@@ -1,0 +1,5 @@
+# Media and educational-use notices
+
+This exact published beta recovery preserves the original CREDITS.txt and release-manifest.json. Illustrations are fictional, synthetic scene art, not diagnostic imagery. The original manifest records OpenAI image-generation provenance and historical internal asset labels. Those labels are retained as evidence, not replaced by a fabricated third-party license or independent rights clearance. The public inventory records every image hash. Covered owner-controlled material follows LICENSE; independent earlier grants and third-party rights remain effective.
+
+This is an AI-audited educational beta, not independently clinically reviewed. No clinical use, diagnosis or treatment guidance is established. The authored cases include source links, not full article texts. No analytics or model API is included in this game; the hosting platform has separate policies. Browser-local learning records remain on the device. No real patient records or unrelated medical-vault files are exported.

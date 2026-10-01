@@ -1,0 +1,8 @@
+Medical Mysteries - Titans Forge - educational beta
+Fictional cases and AI-generated illustrative scene art. Not diagnostic imagery.
+AI-audited; not independently clinically reviewed. No clinical use.
+Source links accompany the authored cases. No source article full text is bundled.
+The project owner requested this public beta distribution. Original internal asset
+license labels are retained in release-manifest.json; no third-party license or
+independent rights clearance is asserted by the build tool.
+No analytics or model API is used by this game. itch.io has its own platform policies.
