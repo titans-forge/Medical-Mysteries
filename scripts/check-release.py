@@ -23,5 +23,5 @@ for path in modules:
     text = path.read_text()
     for name in re.findall(r"(?:from\s*|import\s*\()['\"](\./[^'\"]+)['\"]", text):
         assert (root / name).is_file(), name
-assert hashlib.sha256((root / "LICENSE").read_bytes()).hexdigest() == "28638be413f7815704fe68aed52a4ea4cb7bd4d28b35f2dca9b78d438a4a90bf"
+assert hashlib.sha256((root / "LICENSE").read_bytes()).hexdigest() == "01c53180ca78bee80411c2d07e436014b62f7e48dd37de70c2fed72238ee57dc"
 print(f"Verified {len(snapshot['runtime_files'])} unchanged archive files and {len(modules)} JavaScript modules. Static checks only; no clinical-use claim.")

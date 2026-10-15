@@ -1,0 +1,16 @@
+{
+  "schema": "forge_game_github_license_checkpoint_v1",
+  "release_id": "FG-LIC-20260930-05-GH1",
+  "game": "Medical Mysteries",
+  "repository": "titans-forge/Medical-Mysteries",
+  "recorded_date": "2026-09-30",
+  "license": "Forge Game Hosting License 1.0",
+  "license_sha256": "28638be413f7815704fe68aed52a4ea4cb7bd4d28b35f2dca9b78d438a4a90bf",
+  "previous_mit_license_sha256": null,
+  "previous_source_snapshot_sha256": "3bb3445fd835494d44d74c21cdb593e7796870501ee72105c534b5bd3380e8c1",
+  "prior_grants_preserved": true,
+  "third_party_and_media_terms_preserved": true,
+  "owner_upgrade_confirmation": "Owner confirms substantial upgrades since original grants; migration adds no gameplay changes.",
+  "approval": "Owner approved license wording and requested publication of the remaining catalog games.",
+  "recovery_scope": "Exact published native-browser release; original authoring workspace not recovered"
+}

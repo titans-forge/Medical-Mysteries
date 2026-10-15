@@ -1,0 +1,20 @@
+{
+  "changed_file_sha256": {
+    "FORGE-LICENSING.html": "d368492517c398a02ab9f3d87e82c8a33b9434e7b116df09c2e9d630fa20cd2e",
+    "LICENSE": "01c53180ca78bee80411c2d07e436014b62f7e48dd37de70c2fed72238ee57dc",
+    "LICENSE-LEGACY-PRE-FORGE-2.0.txt": "28638be413f7815704fe68aed52a4ea4cb7bd4d28b35f2dca9b78d438a4a90bf",
+    "LICENSING.md": "3bc1907c905a61cc77d84aa3549d21f214bfd6667dc605f55b02359b0da196f1",
+    "README.md": "56a8bc6161665221302ddf63dec0ed87220eb3522d2b47b45ba43e247c110d42",
+    "docs/licensing-history/2026-10-15-before-forge-2.0/LICENSE": "28638be413f7815704fe68aed52a4ea4cb7bd4d28b35f2dca9b78d438a4a90bf",
+    "docs/licensing-history/2026-10-15-before-forge-2.0/LICENSING.md": "6c3a8d8e8d045c2102f4d487a10d61e76a7ebf4c9159a73ca3c4ba4aaa52dad3",
+    "docs/licensing-history/2026-10-15-before-forge-2.0/LICENSING_CHECKPOINT.json": "8ef36c671099e79680bee029d02f2664a31c9bdaa77d64153630c6c0f88cec24",
+    "docs/licensing-history/2026-10-15-before-forge-2.0/SOURCE_SNAPSHOT.json": "3190d5fbfa3d238d8136c01af6f5fc1b47e2ab83bcfe1e978f1b2520957c66cd",
+    "docs/licensing-history/2026-10-15-before-forge-2.0/release-manifest.json": "e61f73efeff83f23aae3978f10463307f75b948cf4cc12006cc281c56212494a",
+    "scripts/check-release.py": "5b2c5b2fe4e3996124d2913d2c3271d708f6761f6b76ee68430aa66302927c64"
+  },
+  "coverage": "Only qualifying new expression in revised/added policy documentation, offline rights page and packaging checks. Existing portions and all unchanged game material keep prior grants.",
+  "edition": "FG2-MEDICAL-MYSTERIES-20261015",
+  "previous_source_commit": "e0124052a8d77b50b21d67797267a7314cebc5cb",
+  "previous_source_tree": "67502d555ef31da7937c53c04a826414721dad0f",
+  "schema": "forge_license_adoption_source_v1"
+}
