@@ -1,6 +1,8 @@
-import { getInvestigationEpisode, restoreInvestigation } from './investigation.mjs';
+import { reasoningChoices, assessInvestigationReasoning } from './investigation_reasoning.mjs';
+import { getInvestigationEpisode, restoreInvestigation, investigationOutcome, getCareWorkflow } from './investigation.mjs';
+import { careSummary } from './care_workflow_view.mjs';
 import { getTransferQuestion } from './investigation_transfer.mjs';
-import { readJournal, recordCompleted, answerTransfer, clearJournal } from './investigation_journal.mjs';
+import { readJournal, recordCompleted, answerTransfer, clearJournal, exportJournal, journalRecordIdentity, transferPracticeStatus } from './investigation_journal.mjs';
 
 function node(tag, className = '', text = '') {
   const value = document.createElement(tag);
@@ -24,32 +26,50 @@ function sourceLink(source) {
   return link;
 }
 
-export function journalRecord(state) {
+export function journalRecord(state, reflection) {
   const canonical = restoreInvestigation(state);
-  return readJournal().records.find((record) => JSON.stringify(record.state) === JSON.stringify(canonical)) ?? null;
+  if (!canonical) return null;
+  if (reflection) {
+    const identity = journalRecordIdentity(canonical, reflection);
+    return readJournal().records.find((record) => journalRecordIdentity(record.state, record.reflection) === identity) ?? null;
+  }
+  const matches = readJournal().records.filter((record) => JSON.stringify(record.state) === JSON.stringify(canonical));
+  return matches.length === 1 ? matches[0] : null;
 }
 
 export function reflectionControls(state, reflection, onChange) {
-  const item = getInvestigationEpisode(state.episodeId);
+  const item = getInvestigationEpisode(state.episodeId, state.version);
   const section = node('details', 'investigation-reflection');
-  section.open = reflection.confidence !== null || reflection.keyActionId !== null;
-  section.append(node('summary', '', 'Your reasoning (optional)'));
-  const clueLabel = node('label', '', 'Key clue');
+  section.open = Boolean(item.reasoning) || reflection.confidence !== null || reflection.keyActionId !== null;
+  section.append(node('summary', '', item.reasoning ? 'Explain your conclusion' : 'Your reasoning (optional)'));
+  if (item.reasoning) section.append(node('p', 'control-help', item.reasoning.prompt || 'Link a visible fact to your hypothesis and identify a limit. You may finish provisionally without collecting every finding; leaving this blank records no justification.'));
+  const choices = reasoningChoices(state);
+  const clueLabel = node('label', '', item.reasoning?.supportLabel || 'Key clue');
   const select = node('select');
   select.id = 'investigationKeyClue';
   clueLabel.htmlFor = select.id;
   const unset = node('option', '', 'Not recorded');
   unset.value = '';
   select.append(unset);
-  for (const id of state.actionIds) {
-    const action = item.actions.find((entry) => entry.id === id);
-    const option = node('option', '', action.label);
-    option.value = id;
+  for (const fact of choices.supports) {
+    const option = node('option', '', `${fact.label}${fact.origin === 'Opening handoff' ? ' · already in opening' : ''}`);
+    option.value = fact.id;
     select.append(option);
   }
   select.value = reflection.keyActionId ?? '';
+  const supportNote = node('p', 'control-help reasoning-support-note');
+  supportNote.setAttribute('aria-live', 'polite');
+  function describeSupport() {
+    const selected = choices.supports.find((fact) => fact.id === select.value);
+    supportNote.textContent = selected?.origin === 'Combined findings'
+      ? `You are citing these findings together: ${selected.requires.map((id) => item.actions.find((action) => action.id === id).label).join('; ')}.`
+      : '';
+    supportNote.hidden = !supportNote.textContent;
+  }
+  describeSupport();
   select.addEventListener('change', () => {
     reflection.keyActionId = select.value || null;
+    describeSupport();
     onChange({ ...reflection });
   });
   const toggleLabel = node('label', 'reflection-toggle');
@@ -82,39 +102,95 @@ export function reflectionControls(state, reflection, onChange) {
     output.textContent = `${range.value}%`;
     onChange({ ...reflection });
   });
-  section.append(clueLabel, select, toggleLabel, fields);
+  section.append(clueLabel, select, supportNote);
+  if (item.reasoning) {
+    const limitationLabel = node('label', '', item.reasoning.limitationLabel || 'What remains uncertain?');
+    const limitation = node('select');
+    limitation.id = 'investigationUncertainty';
+    limitationLabel.htmlFor = limitation.id;
+    const unsetLimit = node('option', '', 'Not recorded'); unsetLimit.value = ''; limitation.append(unsetLimit);
+    for (const option of choices.uncertainties) {
+      const choice = node('option', '', option.label); choice.value = option.id; limitation.append(choice);
+    }
+    limitation.value = reflection.uncertaintyId || '';
+    const limitationNote = node('p', 'control-help reasoning-limit-note');
+    limitationNote.setAttribute('aria-live', 'polite');
+    function describeLimitation() {
+      limitationNote.textContent = choices.uncertainties.find((entry) => entry.id === limitation.value)?.label || '';
+      limitationNote.hidden = !limitationNote.textContent;
+    }
+    describeLimitation();
+    limitation.addEventListener('change', () => {
+      reflection.uncertaintyId = limitation.value || null;
+      describeLimitation();
+      onChange({ ...reflection });
+    });
+    section.append(limitationLabel, limitation, limitationNote);
+  }
+  section.append(toggleLabel, fields);
   return section;
 }
 
 export function reflectionSummary(state, reflection) {
-  const item = getInvestigationEpisode(state.episodeId);
+  const item = getInvestigationEpisode(state.episodeId, state.version);
   const section = node('section', 'learning-reflection-summary');
   section.append(node('h3', '', 'Your reasoning at commitment'));
   section.append(node('p', 'control-help', `Self-reported confidence: ${reflection.confidence === null ? 'not recorded' : `${reflection.confidence}%`}. Not a clinical calibration score.`));
-  const clue = item.actions.find((action) => action.id === reflection.keyActionId);
+  const clue = reasoningChoices(state).supports.find((action) => action.id === reflection.keyActionId);
   if (clue) {
-    section.append(node('p', '', `Your key clue: ${clue.label}`), node('p', 'guided-interpretation', clue.interpretation));
+    section.append(node('p', '', `Your supporting evidence: ${clue.label}`));
+    const action = item.actions.find((entry) => entry.id === clue.id);
+    if (action) section.append(node('p', 'guided-interpretation', action.interpretation));
+    if (clue.origin === 'Combined findings') {
+      const cited = node('ul', 'reasoning-cited-findings');
+      for (const id of clue.requires) cited.append(node('li', '', item.actions.find((entry) => entry.id === id).finding));
+      section.append(cited);
+    }
   } else {
     section.append(node('p', 'control-help', 'Key clue: not recorded.'));
+  }
+  if (item.reasoning) {
+    const uncertainty = reasoningChoices(state).uncertainties.find((entry) => entry.id === reflection.uncertaintyId);
+    section.append(node('p', '', `${item.reasoning.limitationLabel ? 'Your comparison or limit' : 'Your stated limit'}: ${uncertainty?.label || 'not recorded'}`));
+    const assessment = assessInvestigationReasoning(state, reflection);
+    const feedback = node('section', 'reasoning-assessment');
+    feedback.dataset.status = assessment.status;
+    feedback.append(node('h3', '', assessment.label), node('p', '', assessment.feedback));
+    if (assessment.status === 'not-recorded' || assessment.status === 'needs-revision') {
+      feedback.append(node('p', 'control-help', 'To try a revised explanation, start a new investigation from the case board. This committed reflection stays in the journal.'));
+    }
+    section.append(feedback);
   }
   return section;
 }
 
 export function transferQuestion(state, reflection) {
-  const question = getTransferQuestion(state.episodeId);
+  const question = getTransferQuestion(state.episodeId, state.version);
   const section = node('section', 'investigation-transfer');
   section.setAttribute('aria-label', 'One more twist');
   if (!question) return section;
-  let chosen = journalRecord(state)?.transfer?.answerId ?? null;
+  let chosen = journalRecord(state, reflection)?.transfer?.answerId ?? null;
   let persisted = Boolean(chosen);
   function render() {
+    const practice = transferPracticeStatus(state, reflection, readJournal().records);
+    if (practice.deferred && !practice.canAnswer && !chosen) {
+      section.replaceChildren(node('div', 'eyebrow', 'SPACED CONTRAST PRACTICE'),
+        node('h3', '', 'Return after another saved attempt'),
+        node('p', '', practice.reason === 'save-this-exact-attempt-first'
+          ? 'This attempt could not be added to the journal. Export it before leaving; contrast practice needs this saved attempt.'
+          : practice.reason === 'invalid-route-or-reflection'
+            ? 'Contrast practice is unavailable for this saved attempt. You can still export your record.'
+            : 'Save a new attempt in a different arrival, then return to this entry in your learning journal for a changed situation.'),
+        node('p', 'control-help', 'Identical replays keep their original journal record and date. Try a different evidence route or reflection to save a new attempt.'));
+      return;
+    }
     section.replaceChildren(node('div', 'eyebrow', 'OPTIONAL CONTRAST CASE'), node('h3', '', 'One more twist'), node('p', '', question.prompt));
     const choices = node('div', 'transfer-choices');
     for (const choice of question.choices) {
       const pick = button(choice.label, () => {
         if (chosen) return;
         const recorded = recordCompleted(state, reflection);
-        const saved = recorded ? answerTransfer(state, choice.id) : null;
+        const saved = recorded ? answerTransfer(state, choice.id, undefined, reflection) : null;
         chosen = saved?.transfer?.answerId ?? choice.id;
         persisted = Boolean(saved);
         render();
@@ -140,14 +216,14 @@ export function transferQuestion(state, reflection) {
       feedback.append(node('p', 'control-help', persisted ? 'First answer saved in your learning journal.' : 'Answer kept for this view only. The local journal could not be updated.'));
       section.append(feedback);
     }
-    section.append(node('p', 'control-help', 'Synthetic educational question · pending human review.'));
+    section.append(node('p', 'control-help', 'Fictional learning question · Review notes are on the case board.'));
   }
   render();
   return section;
 }
 
 function downloadJournal(records) {
-  const receipt = { schema: 'medical_mysteries_learning_journal_v1', exportedUtc: new Date().toISOString(), synthetic: true, clinicalUse: false, records };
+  const receipt = exportJournal();
   const url = URL.createObjectURL(new Blob([JSON.stringify(receipt, null, 2)], { type: 'application/json' }));
   const link = node('a');
   link.href = url;
@@ -176,26 +252,32 @@ export function openLearningJournal() {
       empty: 'No completed investigations saved yet.',
       invalid: 'This journal is incompatible or damaged. It has not been changed. Clear it only if you want to discard its saved entries.',
       unavailable: 'Browser storage is unavailable. The local journal cannot be read.',
-      ok: `${journal.records.length} saved route${journal.records.length === 1 ? '' : 's'} · up to 20 retained. Identical routes keep their first reflection and answer.`,
+      partial: `${journal.records.length} readable routes. ${journal.unreadableEntries?.length || 0} entries need recovery; their original bytes are retained and included in an export.`,
+      ok: `${journal.records.length} saved route${journal.records.length === 1 ? '' : 's'} · 20-entry capacity. Earlier routes are never removed to add a new one. Matching routes and reflections keep their first contrast answer.`,
     })[journal.status];
     dialog.append(notice);
     const list = node('div', 'journal-records');
     for (const record of journal.records) {
-      const item = getInvestigationEpisode(record.state.episodeId);
+      const item = getInvestigationEpisode(record.state.episodeId, record.state.version);
       const entry = node('details', 'journal-record');
       const summary = node('summary');
-      const verdict = !record.state.conclusion.evidenceComplete ? 'Provisional' : record.state.conclusion.correct ? 'Supported' : 'Reconsider';
-      summary.append(node('strong', '', item.title), node('span', 'journal-mode', record.state.mode === 'challenge' ? 'Challenge' : 'Guided'), node('span', 'journal-verdict', verdict));
+      const verdict = investigationOutcome(record.state).label;
+      summary.append(node('strong', '', item.title), node('span', 'journal-mode', `${item.recordLabel ? `${item.recordLabel} · ` : ''}Version ${record.state.version} · ${record.state.mode === 'challenge' ? 'Challenge' : 'Guided'}`), node('span', 'journal-verdict', verdict));
+      if (item.reasoning) summary.append(node('small', 'control-help', assessInvestigationReasoning(record.state, record.reflection).label));
+      if (getCareWorkflow(record.state)) summary.append(node('small', 'control-help', getCareWorkflow(record.state).assessment.label));
       entry.append(summary);
       const body = node('div', 'journal-record-body');
       const time = node('time', 'control-help', new Date(record.completedUtc).toLocaleString());
       time.dateTime = record.completedUtc;
-      body.append(time, node('p', '', `Conclusion: ${item.hypotheses.find((hypothesis) => hypothesis.id === record.state.hypothesisId).label}`));
+      body.append(node('p', 'control-help', `${item.recordLabel ? `${item.recordLabel} · ` : ''}Case version ${record.state.version} · historical wording retained`), time, node('p', '', `Conclusion: ${item.hypotheses.find((hypothesis) => hypothesis.id === record.state.hypothesisId).label}`));
       body.append(reflectionSummary(record.state, record.reflection));
+      if (getCareWorkflow(record.state)) body.append(careSummary(record.state));
       if (record.transfer) {
-        const question = getTransferQuestion(item.id);
+        const question = getTransferQuestion(item.id, record.state.version);
         const answer = question.choices.find((choice) => choice.id === record.transfer.answerId);
         body.append(node('h3', '', 'One more twist · first answer'), node('p', '', question.prompt), node('p', '', answer.label), node('p', '', answer.feedback), sourceLink(question.source));
+      } else if (getTransferQuestion(record.state.episodeId, record.state.version)?.delivery === 'after-another-arrival') {
+        body.append(transferQuestion(record.state, record.reflection));
       } else body.append(node('p', 'control-help', 'Contrast question: not answered.'));
       entry.append(body);
       list.append(entry);
@@ -203,7 +285,7 @@ export function openLearningJournal() {
     dialog.append(list);
     const actions = node('footer', 'journal-actions');
     const exportButton = button('Export journal', () => downloadJournal(journal.records));
-    exportButton.disabled = journal.status !== 'ok';
+    exportButton.disabled = !['ok', 'partial', 'invalid'].includes(journal.status) || (journal.status === 'invalid' && typeof journal.rawText !== 'string');
     const clear = button('Clear journal', () => { confirmingClear = true; render(); dialog.querySelector('[data-action="cancel-clear"]')?.focus(); });
     clear.disabled = journal.status === 'empty' || journal.status === 'unavailable';
     actions.append(exportButton, clear);
@@ -211,7 +293,7 @@ export function openLearningJournal() {
     if (confirmingClear) {
       const confirm = node('section', 'journal-clear-confirm');
       confirm.setAttribute('role', 'alert');
-      confirm.append(node('p', '', 'Delete this local journal? This cannot be undone. Current case saves, scores and practice history will stay.'));
+      confirm.append(node('p', '', 'Delete this local journal and its recovery copies? This cannot be undone. Current case saves, scores and practice history will stay.'));
       const cancel = button('Keep journal', () => { confirmingClear = false; render(); dialog.querySelector('.journal-actions button:last-child')?.focus(); });
       cancel.dataset.action = 'cancel-clear';
       const remove = button('Delete journal entries', () => {

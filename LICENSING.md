@@ -1,6 +1,8 @@
 # Licensing: Medical Mysteries
 
-Current packaging edition: **FG2-MEDICAL-MYSTERIES-20261015**, October 15, 2026. This is a **licensing-only edition** of `medical-mysteries-itch-beta-20260913-v2-fgl1-20260930.zip`. Gameplay and media are unchanged. The game/package version remains the previously published version; the edition identifier distinguishes the new notices.
+Current gameplay release: **0.7.0 Investigation Edition**, October 17, 2026. See [RELEASE-0.7.0.md](RELEASE-0.7.0.md) for this release’s prospective scope. Forge Game License 2.0 and earlier grants remain in force. The historical notice-only edition below remains part of the release history; its unchanged-gameplay statement does not describe 0.7.0.
+
+Historical licensing-only packaging edition: **FG2-MEDICAL-MYSTERIES-20261015**, October 15, 2026. This is a **licensing-only edition** of `medical-mysteries-itch-beta-20260913-v2-fgl1-20260930.zip`. Gameplay and media are unchanged. The game/package version remains the previously published version; the edition identifier distinguishes the new notices.
 
 ## Forge Game License 2.0
 

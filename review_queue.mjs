@@ -70,7 +70,7 @@ export function scheduleReviewQueue(existing, candidates, now) {
     byIdentity.set(identity, {
       concept_id: candidate.concept_id,
       review_variant_id: candidate.review_variant_id,
-      due_at: timestamp + intervalDays * DAY_MS,
+      due_at: previous && previous.due_at > timestamp ? Math.min(previous.due_at, timestamp + intervalDays * DAY_MS) : timestamp + intervalDays * DAY_MS,
       interval_days: intervalDays,
     });
   }
@@ -80,13 +80,20 @@ export function scheduleReviewQueue(existing, candidates, now) {
 export function reconcileReviewQueue(existing, result, now, { restored = false } = {}) {
   if (restored || !result || result.sandbox === true) return normalizeReviewQueue(existing);
   if (result.finished !== true) return normalizeReviewQueue(existing);
+  if (!Number.isFinite(now) || now < 0) return normalizeReviewQueue(existing);
   const retired = completedSuccessIdentities(result.stage_autopsy);
-  const retained = normalizeReviewQueue(existing).filter((entry) => !retired.has(identityOf(entry)));
+  // An immediate replay cannot discharge a future spaced review.
+  const retained = normalizeReviewQueue(existing).filter((entry) => !retired.has(identityOf(entry)) || entry.due_at > now);
   return scheduleReviewQueue(retained, result.review_queue, now);
 }
 
 export function reviewVariantPrefix(reviewVariantId) {
   return isValidId(reviewVariantId) ? reviewVariantId.split('-')[0] : '';
+}
+
+function mappedCase(entry, routes) {
+  const exact = routes?.[JSON.stringify([entry?.concept_id, entry?.review_variant_id])];
+  return exact?.case_id || routes?.[reviewVariantPrefix(entry?.review_variant_id)] || null;
 }
 
 export function matchingReviewEntries(queue, now = Date.now()) {
@@ -96,12 +103,12 @@ export function matchingReviewEntries(queue, now = Date.now()) {
 
 export function selectDueReview(queue, availableCaseIds, variantCaseMap, now = Date.now()) {
   const available = new Set(Array.isArray(availableCaseIds) ? availableCaseIds : []);
-  return matchingReviewEntries(queue, now).find((entry) => available.has(variantCaseMap?.[reviewVariantPrefix(entry.review_variant_id)])) || null;
+  return matchingReviewEntries(queue, now).find((entry) => available.has(mappedCase(entry, variantCaseMap))) || null;
 }
 
 export function nextReviewEntry(queue, caseId, variantCaseMap, now = Date.now()) {
   return normalizeReviewQueue(queue)
-    .filter((entry) => variantCaseMap?.[reviewVariantPrefix(entry.review_variant_id)] === caseId)
+    .filter((entry) => mappedCase(entry, variantCaseMap) === caseId)
     .sort((a, b) => a.due_at - b.due_at)[0] || null;
 }
 

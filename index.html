@@ -15,8 +15,9 @@
       <span class="release">INVESTIGATION EDITION · EDUCATIONAL BETA</span>
     </header>
     <main id="main-content" class="shell" tabindex="-1">
+      <p id="storyStorageStatus" class="control-help story-storage-status hidden" role="status"></p>
       <section id="menu" class="menu-view" aria-labelledby="menuTitle">
-        <div class="board-header"><div><div class="eyebrow">TITANS FORGE</div><h1 id="menuTitle">Case board</h1></div><div class="board-library-actions"><div id="rankChip" class="rank-chip"></div><button id="openLearningJournal" class="quiet-button hidden" type="button">Learning journal</button></div></div>
+        <div class="board-header"><div><div class="eyebrow">TITANS FORGE</div><h1 id="menuTitle">Case board</h1></div><div class="board-library-actions"><div id="rankChip" class="rank-chip"></div><button id="openStoryHistory" class="quiet-button" type="button">Story history</button><button id="openLearningJournal" class="quiet-button hidden" type="button">Learning journal</button></div></div>
         <section id="flagshipEntry" class="flagship-entry hidden" aria-labelledby="flagshipTitle">
           <div class="investigation-shelf-heading"><div><div class="eyebrow">INVESTIGATION SHELF · SYNTHETIC PREVIEW</div><h2 id="flagshipTitle">Choose an investigation</h2></div></div>
           <div id="investigationShelf" class="investigation-shelf" aria-live="polite"></div>
@@ -31,14 +32,15 @@
         <div class="board-filters"><label for="caseSearch">Find a case<input id="caseSearch" type="search" placeholder="Search stories"></label><label for="caseFilter">Audience<select id="caseFilter"><option value="all">Everyone</option><option value="public">Public</option><option value="student">Student</option><option value="doctor">Doctor</option></select></label><button id="openPracticeLibrary" class="quiet-button" type="button">Practice library</button></div>
         <p id="caseFilterStatus" class="status-line hidden" role="status"></p>
         <div id="tierGrid" class="tier-grid" aria-live="polite"></div>
-        <p class="fineprint">AI-audited educational beta. Not independently clinically reviewed. Generated scene art is illustrative, not a diagnostic image. Never use this game as medical advice.</p>
+        <p class="fineprint">Fictional cases for learning. Generated scene art is illustrative, not a diagnostic image. Never use this game as medical advice.</p>
+        <details class="review-provenance"><summary>Clinical review and this edition</summary><p>The creator reports that a clinician has reviewed the game. The review date, version and scope are not recorded in this package. This edition adds new choices and team-workflow mechanics; those additions are tracked separately from the earlier review. Historical exports retain their original review labels.</p></details>
       </section>
       <section id="investigation" class="investigation-view hidden" aria-label="Case investigation"></section>
       <section id="practiceLibrary" class="hidden" aria-labelledby="practiceLibraryTitle">
         <button id="practiceBack" class="quiet-button" type="button">Back to case board</button>
         <button id="choosePracticePack" class="quiet-button hidden" type="button">All practice</button>
         <h1 id="practiceLibraryTitle" tabindex="-1">Practice library</h1>
-        <p class="side-note">Synthetic educational practice · pending human review. Separate from case scores.</p>
+        <p class="side-note">Fictional practice · Separate from case scores. Review notes are on the case board.</p>
         <div id="practicePacks" class="practice-library"></div>
         <div id="standalonePractice"></div>
         <details class="optional-controls"><summary>Local practice history</summary><p>Clear saved practice answers on this browser. Case scores and scheduled reviews stay unchanged.</p><button id="clearPracticeHistory" class="quiet-button" type="button">Clear practice history</button><p id="practiceStorageStatus" role="status"></p></details>
@@ -113,6 +115,7 @@
         <div id="resultMark" class="result-mark" aria-hidden="true">✓</div>
         <div class="eyebrow">CASE CLOSED</div>
         <h2 id="finalTitle"></h2>
+        <p id="storyResultEdition" class="control-help"></p>
         <p id="finalScore"></p>
         <div id="rankLine" class="rank-line hidden"></div>
         <div id="twistBox" class="twist-box hidden"><div class="section-label">THE TWIST</div><p id="finalTwist"></p></div>
@@ -147,7 +150,7 @@
         </div>
         <section id="transferPractice" class="transfer-practice hidden" aria-labelledby="transferPracticeTitle">
           <div id="transferPracticeTitle" class="section-label">OPTIONAL TRANSFER PRACTICE</div>
-          <p class="control-help">Synthetic practice · pending human review</p>
+          <p class="control-help">Fictional practice · Review notes are on the case board.</p>
           <button id="transferPracticeStart" class="quiet-button" type="button">Try a new situation</button>
           <div id="transferPracticeRegion" class="transfer-practice-region hidden" aria-live="polite"></div>
           <p id="practiceSaveStatus" class="control-help" role="status"></p>

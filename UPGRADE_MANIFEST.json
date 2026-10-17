@@ -1,0 +1,664 @@
+{
+  "schema": "medical_mysteries_upgrade_manifest_v1",
+  "game": "Medical Mysteries",
+  "version": "0.7.0",
+  "status": "release_artifact",
+  "release_edition": "FG2-MEDICAL-MYSTERIES-0.7.0-20261017",
+  "human_review_claimed": false,
+  "clinical_review_status": "prior_review_owner_reported_new_additions_not_separately_reviewed",
+  "clinical_review_provenance": {
+    "owner_reported_prior_clinician_review": true,
+    "prior_review_scope": "not_recorded",
+    "prior_review_artifact_and_version": "not_recorded",
+    "new_workflow_additions": "not_separately_clinician_reviewed",
+    "new_arrival_content": "not_separately_clinician_reviewed",
+    "human_review_claimed_scope": "No separate clinician review is claimed for this exact candidate, its new arrival content or its workflow additions."
+  },
+  "clinical_use": false,
+  "generated_utc": "2026-10-17T14:24:22.911Z",
+  "baseline": {
+    "source_commit": "1c16a334772732ee4360d1d63d2b3ae62a69a55e",
+    "frozen_source_directory": "baselines/published-beta-v2",
+    "original_file_hashes": {
+      "SOURCE_SNAPSHOT.json": "3190d5fbfa3d238d8136c01af6f5fc1b47e2ab83bcfe1e978f1b2520957c66cd",
+      "release-manifest.json": "e61f73efeff83f23aae3978f10463307f75b948cf4cc12006cc281c56212494a",
+      "scripts/check-release.py": "5b2c5b2fe4e3996124d2913d2c3271d708f6761f6b76ee68430aa66302927c64",
+      "LICENSE": "01c53180ca78bee80411c2d07e436014b62f7e48dd37de70c2fed72238ee57dc"
+    },
+    "original_zip_sha256": "3bb3445fd835494d44d74c21cdb593e7796870501ee72105c534b5bd3380e8c1",
+    "authoring_workspace_recovered": false
+  },
+  "changed_runtime_files": [
+    "app.js",
+    "index.html",
+    "investigation.mjs",
+    "investigation_cases.mjs",
+    "investigation_history.mjs",
+    "investigation_journal.mjs",
+    "investigation_learning_view.mjs",
+    "investigation_transfer.mjs",
+    "investigation_view.mjs",
+    "offline_api.mjs",
+    "offline_engine.mjs",
+    "review_queue.mjs",
+    "styles.css"
+  ],
+  "added_runtime_files": [
+    "care_workflow.mjs",
+    "care_workflow_content.mjs",
+    "care_workflow_view.mjs",
+    "confidence_assessment.mjs",
+    "investigation_arrivals.mjs",
+    "investigation_content_versions.mjs",
+    "investigation_reasoning.mjs",
+    "investigation_variants.mjs",
+    "story_decisions.mjs",
+    "story_history_view.mjs",
+    "story_progress.mjs",
+    "story_reviews.mjs"
+  ],
+  "runtime_files": {
+    "CREDITS.txt": {
+      "bytes": 594,
+      "sha256": "74c5ff9cfb21ec55dc7612cacd4de5e39b8c003fd2e540d92a170610bd003e03"
+    },
+    "FORGE-LICENSING.html": {
+      "bytes": 15596,
+      "sha256": "d368492517c398a02ab9f3d87e82c8a33b9434e7b116df09c2e9d630fa20cd2e"
+    },
+    "app.js": {
+      "bytes": 82595,
+      "sha256": "0cdb07422048979af803a6abf2d88d8ad25660a781a5b46b098fcb1a8836e2a9"
+    },
+    "assets/covers/doc-001-melanoma-480.webp": {
+      "bytes": 14844,
+      "sha256": "3c6243ad734a90ba3546556d2bd705f400bd0a0216c7f6052ab56078f92e4669"
+    },
+    "assets/covers/doc-001-melanoma-960.webp": {
+      "bytes": 46292,
+      "sha256": "7f1fdeef757edb7b7583f267afd8b8c88791baddccd6ed3dbaeae8756ec0d67c"
+    },
+    "assets/covers/doc-002-dissection-480.webp": {
+      "bytes": 14458,
+      "sha256": "e2a33ae7eeed23f3c8bb76fedf53da5c19bd12ad092e35b039bae0e7a22bbc86"
+    },
+    "assets/covers/doc-002-dissection-960.webp": {
+      "bytes": 40770,
+      "sha256": "36507a72ac6e93a48eb976444cca99c094dd6ff30084f935c9a19100bfd2aa12"
+    },
+    "assets/covers/pub-001-stroke-480.webp": {
+      "bytes": 10126,
+      "sha256": "3b53f174b42eac6ff03b2f2ade69c386a3d86f6678189ac26e164b630c0a4234"
+    },
+    "assets/covers/pub-001-stroke-960.webp": {
+      "bytes": 25846,
+      "sha256": "51b900a0a471844f159ce58517ceb35c7f00838bd8a7c64d52498e46d5d73ad6"
+    },
+    "assets/covers/pub-002-botulism-480.webp": {
+      "bytes": 9596,
+      "sha256": "557bd940812f9ad4d0809140f86524e4119f1bf18ff04f4a6479b5e5a4f5df5a"
+    },
+    "assets/covers/pub-002-botulism-960.webp": {
+      "bytes": 25394,
+      "sha256": "f344a69b79f34bd505638e0a98b9c45a842f183e25260e42376727ead3c8e96a"
+    },
+    "assets/covers/stu-001-dka-480.webp": {
+      "bytes": 13036,
+      "sha256": "e16a22a046d256f207611311487ebbc9cbb4d573e06eba9e4c509868f2b31741"
+    },
+    "assets/covers/stu-001-dka-960.webp": {
+      "bytes": 35458,
+      "sha256": "f92349080a867799d91db6ff3826de69f0fa552c3948a73cfc65b6c7b22822a4"
+    },
+    "assets/covers/stu-002-ectopic-480.webp": {
+      "bytes": 7128,
+      "sha256": "c2b216252f9eef3b6c4426183f801b37819a4a4f586afcc7fb68683d7c3d3277"
+    },
+    "assets/covers/stu-002-ectopic-960.webp": {
+      "bytes": 18130,
+      "sha256": "a0a0b0174cf3393a65849eef193fb2d85f032cdc8503071eda1fe829db1ba3ac"
+    },
+    "assets/doc-001-melanoma.png": {
+      "bytes": 1772120,
+      "sha256": "be1bcbd1192bfa8cedf5f389970f65fba9f20bc08ee5d0b28a2afd661c2c59fa"
+    },
+    "assets/doc-002-dissection.png": {
+      "bytes": 1780651,
+      "sha256": "ed8bfa16235cffdda410f8a3257d3cd6fc07022546a3ba25465f9b8fedc44d17"
+    },
+    "assets/episodes-v04/doc-001-scatter-sign-s3-b-consequence-1440.webp": {
+      "bytes": 97968,
+      "sha256": "5aa7df903bcc03181929cd320e9094568488f1a79658ea3de66f96a814e43442"
+    },
+    "assets/episodes-v04/doc-001-scatter-sign-s3-b-consequence-720.webp": {
+      "bytes": 35690,
+      "sha256": "3a1d2ee0830555e0fd2dad8cad12a9237635c5851b6e9229e973ac8c0c9f59c1"
+    },
+    "assets/episodes-v04/doc-001-scatter-sign-s3-scene-1440.webp": {
+      "bytes": 102786,
+      "sha256": "0b7c1ae1a7afb55bcb711056d33761f5b992c79dbc06317f58ea0de6acdb014a"
+    },
+    "assets/episodes-v04/doc-001-scatter-sign-s3-scene-720.webp": {
+      "bytes": 37884,
+      "sha256": "f93da93c00007e26a376ec2dc8a01dbf5cd1ef8cbf16e11bc1100726f6b57661"
+    },
+    "assets/episodes-v04/doc-001-scatter-sign-s4-scene-1440.webp": {
+      "bytes": 84222,
+      "sha256": "ceb46ca7281dba1a7a713f66a40092323103ab1862c29e5e4a906a546a5e1297"
+    },
+    "assets/episodes-v04/doc-001-scatter-sign-s4-scene-720.webp": {
+      "bytes": 33614,
+      "sha256": "7d71bace4799f396d82374e454ba4a2a1cb1601cdc0a808a07391da653ced2af"
+    },
+    "assets/episodes-v04/doc-002-tearing-back-s3-b-consequence-1440.webp": {
+      "bytes": 85620,
+      "sha256": "79cde06f2b585a32087fe7118c051e592f2001eabdfa47bb7582d47e655d356b"
+    },
+    "assets/episodes-v04/doc-002-tearing-back-s3-b-consequence-720.webp": {
+      "bytes": 34680,
+      "sha256": "a3393a598bd464be1cb1a75ed7d53ab18f7f23d5869e95cee7295594258ecd23"
+    },
+    "assets/episodes-v04/doc-002-tearing-back-s3-scene-1440.webp": {
+      "bytes": 96344,
+      "sha256": "5508d97b677fa97a539a3431c865a415f6d5ff6760316b4158c3b31bdfacf3d2"
+    },
+    "assets/episodes-v04/doc-002-tearing-back-s3-scene-720.webp": {
+      "bytes": 41690,
+      "sha256": "6cc1c07d02d7b46d2c6bb4fbdd55dff44b970ed83bb9871790d22d2f978d0868"
+    },
+    "assets/episodes-v04/doc-002-tearing-back-s4-scene-1440.webp": {
+      "bytes": 66156,
+      "sha256": "79756052454b3a8d37a296fb02e25fc59dc96f7e1b04fad8115d97e643a08d55"
+    },
+    "assets/episodes-v04/doc-002-tearing-back-s4-scene-720.webp": {
+      "bytes": 28456,
+      "sha256": "17d716c9976894fc087ee129719a631a7562610b6bdafd51c99c1fc828621247"
+    },
+    "assets/episodes-v04/pub-001-dropped-pen-s3-aspirin-consequence-1440.webp": {
+      "bytes": 68274,
+      "sha256": "62d63723fed65b7c4ed745a4ea2eb5424a69a8fd8d820fce902502d8485ff2e3"
+    },
+    "assets/episodes-v04/pub-001-dropped-pen-s3-aspirin-consequence-720.webp": {
+      "bytes": 28496,
+      "sha256": "990d3609b1e4dd6500e6163fc722bcfcf620521d731478da479b4efa0420ebb7"
+    },
+    "assets/episodes-v04/pub-001-dropped-pen-s3-scene-1440.webp": {
+      "bytes": 65192,
+      "sha256": "62f1a8dfa6e1fd861c4734a76754032a4758f725dd97724e331fb331b12d8643"
+    },
+    "assets/episodes-v04/pub-001-dropped-pen-s3-scene-720.webp": {
+      "bytes": 26788,
+      "sha256": "2cbec1977da04efdb08380cf9d4cc5d93b31622ed56e889e31d7641ed057b2f4"
+    },
+    "assets/episodes-v04/pub-002-honey-jar-s3-b-consequence-1440.webp": {
+      "bytes": 54826,
+      "sha256": "d66abd9fa1a1520dcb944f98b3d214ce4fddba71d01f34ff77a85aeeb1d7e345"
+    },
+    "assets/episodes-v04/pub-002-honey-jar-s3-b-consequence-720.webp": {
+      "bytes": 22862,
+      "sha256": "bd8f5894dbe647a0376756ae52eba15aef36ecdb460be5b43553ce9d9acaf352"
+    },
+    "assets/episodes-v04/pub-002-honey-jar-s3-scene-1440.webp": {
+      "bytes": 68200,
+      "sha256": "3b456ea2ce74ca1436dec7520c3afb078093f2cfc0ca487b3643e7b0c4a7bf57"
+    },
+    "assets/episodes-v04/pub-002-honey-jar-s3-scene-720.webp": {
+      "bytes": 27562,
+      "sha256": "533454123b9e6f4eb248779f22aac5ac6ec4f315d833c7adcec3abccc095a44b"
+    },
+    "assets/episodes-v04/stu-001-mountain-acid-s1-b-consequence-1440.webp": {
+      "bytes": 91788,
+      "sha256": "aa9996624b5d991a5de509d33a1c7b053bb68c9d4638a3d4893e78190b994fa6"
+    },
+    "assets/episodes-v04/stu-001-mountain-acid-s1-b-consequence-720.webp": {
+      "bytes": 37902,
+      "sha256": "0f05fdfed7875c349b2f65784317f36f8ddd41cfe5671881a53926ad23cfcad4"
+    },
+    "assets/episodes-v04/stu-001-mountain-acid-s3-scene-1440.webp": {
+      "bytes": 89652,
+      "sha256": "35afe9bef47d4e7e3f61c9309f23e7ab9f21fb7d2f62537fa37f5f5466f75aa6"
+    },
+    "assets/episodes-v04/stu-001-mountain-acid-s3-scene-720.webp": {
+      "bytes": 36770,
+      "sha256": "68ee17ddaf1c43d8fd014934fc7e46ec16e7caf2a5bc62382abc665d6b7a5b32"
+    },
+    "assets/episodes-v04/stu-001-mountain-acid-s4-scene-1440.webp": {
+      "bytes": 82872,
+      "sha256": "8a9061f6d88dddd915c5553c4f1fc78c98d749fa1158c52b520f7a1831e4a1df"
+    },
+    "assets/episodes-v04/stu-001-mountain-acid-s4-scene-720.webp": {
+      "bytes": 34112,
+      "sha256": "10e75d6d97875b71e4de0672d859565a8706d4840146482070cf8950115eb68a"
+    },
+    "assets/episodes-v04/stu-002-saturday-pain-s3-scene-1440.webp": {
+      "bytes": 58026,
+      "sha256": "f0ff96a6a53c9524523239afd79b79f594c2eaab8ea4ae66cc6911f40b0b88f0"
+    },
+    "assets/episodes-v04/stu-002-saturday-pain-s3-scene-720.webp": {
+      "bytes": 22732,
+      "sha256": "3c5196f5690d6270922b34e8e35ed5ee4314c38be54ec01407f9a095a71cfa14"
+    },
+    "assets/episodes-v04/stu-002-saturday-pain-s4-b-consequence-1440.webp": {
+      "bytes": 38044,
+      "sha256": "a1e382f11624b1ca0945cf181fb294d8b5fa0a89404400ac9db51a8043cc3d80"
+    },
+    "assets/episodes-v04/stu-002-saturday-pain-s4-b-consequence-720.webp": {
+      "bytes": 15872,
+      "sha256": "059a7ff90b4ad0b1a5fffabc37f99ee26c0a0c7f5518b0ecb17d05a46c3f77c6"
+    },
+    "assets/episodes-v04/stu-002-saturday-pain-s4-scene-1440.webp": {
+      "bytes": 61184,
+      "sha256": "98deadecef3be474472a054eabd381af34db4145338f68c1f179d6dedb6d4498"
+    },
+    "assets/episodes-v04/stu-002-saturday-pain-s4-scene-720.webp": {
+      "bytes": 24912,
+      "sha256": "d3baabc5b2bb1d5c339bc7abca3e37c2a8b797c0369eb649c4b1f616cd792fff"
+    },
+    "assets/episodes/doc-001-melanoma-epilogue-1440.webp": {
+      "bytes": 76864,
+      "sha256": "487950e9d2d1aa137ff140ae35b229d4ca5dc73cb6b279a623c5daf69c2b8719"
+    },
+    "assets/episodes/doc-001-melanoma-epilogue-720.webp": {
+      "bytes": 29514,
+      "sha256": "2ab1198cb65a713c6bb9aaf5eca75dd97d9b889eb2decec02abda14e73c6b44a"
+    },
+    "assets/episodes/doc-001-melanoma-escalation-1440.webp": {
+      "bytes": 66182,
+      "sha256": "b8f58cad88b2494172b62ebc5d3039aa174278e19347ad61ba802c72a8c8162f"
+    },
+    "assets/episodes/doc-001-melanoma-escalation-720.webp": {
+      "bytes": 25868,
+      "sha256": "c29c800f255eb3330058b062659557b690df40ea552c66fe43c02a6b96b0c177"
+    },
+    "assets/episodes/doc-002-aorta-epilogue-1440.webp": {
+      "bytes": 66010,
+      "sha256": "ca45799a288124f335f0f5c8b13caecdf4e074568f9cd3d1d76566da7f49dd7b"
+    },
+    "assets/episodes/doc-002-aorta-epilogue-720.webp": {
+      "bytes": 29244,
+      "sha256": "f10fe3b8b11047dbd331d7a1261f31203ce8b8bbeedaada4b600458afb26cf96"
+    },
+    "assets/episodes/doc-002-aorta-escalation-1440.webp": {
+      "bytes": 89314,
+      "sha256": "acd08efa3b380deef61212d2fdab6e24ad15c94cc3be4d4e36f93d9f8cdb99ab"
+    },
+    "assets/episodes/doc-002-aorta-escalation-720.webp": {
+      "bytes": 35960,
+      "sha256": "be057f76dc37d8e7cfcd33074fd0db896eb37725aef4cda8a6c0d4971d82b339"
+    },
+    "assets/episodes/pub-001-stroke-epilogue-1440.webp": {
+      "bytes": 94642,
+      "sha256": "ea6ea1114ae1b08234a9bf22bc7d9f0aca95746ab9d4882377a5993f04c59f8f"
+    },
+    "assets/episodes/pub-001-stroke-epilogue-720.webp": {
+      "bytes": 36494,
+      "sha256": "b871b744ee851145500d61175df032e27134ebd90c723f01861db7e845f15d57"
+    },
+    "assets/episodes/pub-001-stroke-escalation-1440.webp": {
+      "bytes": 60882,
+      "sha256": "71ef3415043d2a83fffe71e615529971b6c42fbd063db7f8a5581104aef1cddc"
+    },
+    "assets/episodes/pub-001-stroke-escalation-720.webp": {
+      "bytes": 24800,
+      "sha256": "3c54f32665a21a2ec30e581f825912ac3381022c55b2acb5503eb17ce66d675d"
+    },
+    "assets/episodes/pub-002-botulism-epilogue-1440.webp": {
+      "bytes": 72928,
+      "sha256": "a2a413f9adb0477329f377a9691c7201f3581d41eb962ee31bd53bec43475edc"
+    },
+    "assets/episodes/pub-002-botulism-epilogue-720.webp": {
+      "bytes": 27300,
+      "sha256": "0e4bdcb820a4f4f37a7c0c55dc9b54ef781b8b70e6ee27b018df03bdf51f230a"
+    },
+    "assets/episodes/pub-002-botulism-escalation-1440.webp": {
+      "bytes": 65856,
+      "sha256": "46c3c2ac9a629b2a52f03e18a597c8220934603cf2f7fd9c3bb125c746c27118"
+    },
+    "assets/episodes/pub-002-botulism-escalation-720.webp": {
+      "bytes": 25414,
+      "sha256": "61293843d1d584d177a98683e253687db66c9e08c593ca2175238217b80c8549"
+    },
+    "assets/episodes/stu-001-dka-epilogue-1440.webp": {
+      "bytes": 120130,
+      "sha256": "dfe8e2147b1f7283549dedb121453ec05130b2effe751de8cada072347f49dea"
+    },
+    "assets/episodes/stu-001-dka-epilogue-720.webp": {
+      "bytes": 49270,
+      "sha256": "2ff4d2bd57291c3f4edbfbddb4ebceb1a7ccd64fe4dcfd5224c4fe281f308a40"
+    },
+    "assets/episodes/stu-001-dka-escalation-1440.webp": {
+      "bytes": 85056,
+      "sha256": "6352c45fe1d10ef1f486abccec8b68c77537e7ab327a1424267e37b170c895f2"
+    },
+    "assets/episodes/stu-001-dka-escalation-720.webp": {
+      "bytes": 33338,
+      "sha256": "80be6a2e7920ce8ddaad7b73aa8f0ea39733620a6ec0536d09c65441eafd9a35"
+    },
+    "assets/episodes/stu-002-ectopic-epilogue-1440.webp": {
+      "bytes": 49298,
+      "sha256": "5da12e5504668e227d94e0465718c07e30557345976848be1cb833177869ba0c"
+    },
+    "assets/episodes/stu-002-ectopic-epilogue-720.webp": {
+      "bytes": 20148,
+      "sha256": "09f101434a791ecf6de0d01d9d602105f636b4a4d05138b55cb210e63f5fb330"
+    },
+    "assets/episodes/stu-002-ectopic-escalation-1440.webp": {
+      "bytes": 46926,
+      "sha256": "2dd191199ae4e37b5b8f3b4cdbe8c1d2b06dcc93fb3d08da7e38fe4673e0a8a6"
+    },
+    "assets/episodes/stu-002-ectopic-escalation-720.webp": {
+      "bytes": 18376,
+      "sha256": "82346564c3278c636e2906f6fe5511d3d942b5090873dc38ea5fe303a82703e6"
+    },
+    "assets/pub-001-stroke.png": {
+      "bytes": 1678986,
+      "sha256": "2e8695374e1006debf8e53c076f96eda864a47ad095f2122c74ba3946dc490c7"
+    },
+    "assets/pub-002-botulism.png": {
+      "bytes": 1753200,
+      "sha256": "105e1edaa965a2fa198803fe9c7b10ee8035cec10079efd1e35905885debe6af"
+    },
+    "assets/stu-001-dka.png": {
+      "bytes": 1691775,
+      "sha256": "562a7c8a7671ae07f9766d5f611acff19df8a504f0adc7302039573c33aaf98e"
+    },
+    "assets/stu-002-ectopic.png": {
+      "bytes": 1409369,
+      "sha256": "6f282f7d19066fa7eba5ed0d4b92250340224cf984e1ee68f164776f873b2dfc"
+    },
+    "care_workflow.mjs": {
+      "bytes": 15796,
+      "sha256": "44ce078fb24771b61a3584f0f9a240b3ea63ba62cd6831c859f32b49f27d8cf5"
+    },
+    "care_workflow_content.mjs": {
+      "bytes": 31542,
+      "sha256": "fbe9920ef704b82ad0aa8fa4402b975f6d52aef7be3eeaa580013868bf744784"
+    },
+    "care_workflow_view.mjs": {
+      "bytes": 15649,
+      "sha256": "84cfdf7201dadc4205e575a5676e34aaa9566c6cd65f8c5307c705d4fb76b907"
+    },
+    "confidence_assessment.mjs": {
+      "bytes": 7561,
+      "sha256": "2aee20205d22d78add45e79def43cdb0a0b6bf475ba1dfbb90b5a106212a7338"
+    },
+    "game-data.mjs": {
+      "bytes": 181084,
+      "sha256": "a039e00d7993c2842f0722a46c5c15df6dfc0666ff281e21797c110151adf764"
+    },
+    "index.html": {
+      "bytes": 14491,
+      "sha256": "3e49d0d577d0ebe4d0db41a8471cafe3c7605f90503ea7b872b444149196b0d8"
+    },
+    "investigation.mjs": {
+      "bytes": 17121,
+      "sha256": "f4402046174f8f3e0d1edb873a1293ca289b5120c98131a44f41c936e809dfe5"
+    },
+    "investigation_arrivals.mjs": {
+      "bytes": 2111,
+      "sha256": "fe2bd22cca029966897ff1216d33dadc0c08239660fe563d04a59bf5beb71781"
+    },
+    "investigation_cases.mjs": {
+      "bytes": 18773,
+      "sha256": "c8c51623485354780731a286e0f53b35fc14ec9cd3e4795b0e7daa715ea8b9e3"
+    },
+    "investigation_content_versions.mjs": {
+      "bytes": 143384,
+      "sha256": "564df229db20966d6b00d8574d02b28d9f52ee1c7fed905f9b58e22fb1211089"
+    },
+    "investigation_history.mjs": {
+      "bytes": 7883,
+      "sha256": "136a8d3bd2d66aa5f6b643b274995d064de72c0f354d6d0ac6dc11103d65b534"
+    },
+    "investigation_journal.mjs": {
+      "bytes": 18402,
+      "sha256": "1954d313c843298dace7f9266efc4d7b4d8438b6174321a3ea01aa7447cabc12"
+    },
+    "investigation_learning_view.mjs": {
+      "bytes": 18351,
+      "sha256": "725c3ddee9092cbdaa939db30d40a8c401835e72a4e08e77f9657511704e3486"
+    },
+    "investigation_reasoning.mjs": {
+      "bytes": 6367,
+      "sha256": "6452db69df7bce943ea9d12e6921dda82c9d26599d5f1adab0a8732ff882cd17"
+    },
+    "investigation_transfer.mjs": {
+      "bytes": 4866,
+      "sha256": "764f17944007eeccdbca257d4f40021c6e16d5e5b560e2166061ba663cb127ac"
+    },
+    "investigation_variants.mjs": {
+      "bytes": 42055,
+      "sha256": "a57a739371761ddee41019c881173e031f01fa8f216f937f939745378a60d63a"
+    },
+    "investigation_view.mjs": {
+      "bytes": 27508,
+      "sha256": "a3fa83c129a143f60b9a5a5f82c882a958e560e927b39f6ae607dcc5521a99d4"
+    },
+    "offline_api.mjs": {
+      "bytes": 324,
+      "sha256": "e67f57cb12ce938381269c8e81e0f236f21ee352c6c24a9e7f4e280a4c47565c"
+    },
+    "offline_engine.mjs": {
+      "bytes": 33293,
+      "sha256": "d790f350431424d7e58796191778feede41d97882e5207681ddc9cc5ebca7d25"
+    },
+    "practice_history.mjs": {
+      "bytes": 7186,
+      "sha256": "4003e09556ab6352293d600a78635d1e6862790f45dd357e368296130efabbc5"
+    },
+    "review_queue.mjs": {
+      "bytes": 6135,
+      "sha256": "51b52f9711dec6fd4ab2ff2c297230198e1c4e477058d8453368af1ee0bd42b9"
+    },
+    "story_decisions.mjs": {
+      "bytes": 34006,
+      "sha256": "3e6c35a61745cd06696fd983ab686d232c80bfed5af7db1ac589abb751ed6055"
+    },
+    "story_history_view.mjs": {
+      "bytes": 5492,
+      "sha256": "2b01cb2dc2f1d62eaa05d09440582990d8b58d2a4a621ca346c5a50bb6f2a529"
+    },
+    "story_progress.mjs": {
+      "bytes": 14127,
+      "sha256": "61babe19e27386da541458a5fb2115a8e4e8e2714f1d0a59e8f41307d2ce6e96"
+    },
+    "story_reviews.mjs": {
+      "bytes": 1426,
+      "sha256": "c46832341b540d5197b0aac9004b365ca034f987c25461dfba2bbade1853a978"
+    },
+    "styles.css": {
+      "bytes": 45400,
+      "sha256": "bcc0b90456327624dcfbad545fed794cfc29a300c1a48af105ff7987bf2b55d5"
+    },
+    "transfer_practice.mjs": {
+      "bytes": 10014,
+      "sha256": "20780d21c8711f1144ea29b67c6115428fc2d7a854c2feff84b74f93f3c16b9c"
+    }
+  },
+  "support_files": {
+    ".github/workflows/check.yml": {
+      "bytes": 361,
+      "sha256": "a9aec047081e3f9d0c1fed4cd7aee0a738cc04a8be4f221b7237c8f95dc5ceef"
+    },
+    "LICENSE": {
+      "bytes": 6784,
+      "sha256": "01c53180ca78bee80411c2d07e436014b62f7e48dd37de70c2fed72238ee57dc"
+    },
+    "LICENSE-LEGACY-PRE-FORGE-2.0.txt": {
+      "bytes": 4128,
+      "sha256": "28638be413f7815704fe68aed52a4ea4cb7bd4d28b35f2dca9b78d438a4a90bf"
+    },
+    "LICENSING.md": {
+      "bytes": 4309,
+      "sha256": "a7d6a6f7979975ec4cc64dcc6af00a3586cc272685df5ad82dcb41a76adad4bc"
+    },
+    "README.md": {
+      "bytes": 12342,
+      "sha256": "24ace2a2674075189ca205638280b3a5460424578da2be5f3f3683870dc5a316"
+    },
+    "SOURCE_SNAPSHOT.json": {
+      "bytes": 16991,
+      "sha256": "3190d5fbfa3d238d8136c01af6f5fc1b47e2ab83bcfe1e978f1b2520957c66cd"
+    },
+    "baselines/published-beta-v2/BASELINE.json": {
+      "bytes": 2850,
+      "sha256": "3f8f4eae05b66d9887c85fe9cb399e0834a55421f950de38afdfe3763dc371a5"
+    },
+    "baselines/published-beta-v2/FORGE-LICENSING.html": {
+      "bytes": 15596,
+      "sha256": "d368492517c398a02ab9f3d87e82c8a33b9434e7b116df09c2e9d630fa20cd2e"
+    },
+    "baselines/published-beta-v2/app.js": {
+      "bytes": 84678,
+      "sha256": "ea5bbdfb056c1323a4886f4924b6b8c084c65bfe73aef380ea3b08f8836b87ad"
+    },
+    "baselines/published-beta-v2/game-data.mjs": {
+      "bytes": 181084,
+      "sha256": "a039e00d7993c2842f0722a46c5c15df6dfc0666ff281e21797c110151adf764"
+    },
+    "baselines/published-beta-v2/index.html": {
+      "bytes": 13844,
+      "sha256": "07d2b21e68254f5fb0aa5e3f0844cc2f5193393535257a22ad4bb1f1005f217d"
+    },
+    "baselines/published-beta-v2/investigation.mjs": {
+      "bytes": 15073,
+      "sha256": "0f3a2be547361fc645941941433e466f3388bf5f2d7c5c81576c8752152114ef"
+    },
+    "baselines/published-beta-v2/investigation_cases.mjs": {
+      "bytes": 10502,
+      "sha256": "1c638a3cc7de92338bdb46b7de3b1b997546210718693121c4e2be1ea847fd54"
+    },
+    "baselines/published-beta-v2/investigation_history.mjs": {
+      "bytes": 3371,
+      "sha256": "2997b22ab28aefa11dfd4ac503a50ce23ea483f9d91bd6ac08b7fc7aa7162ab5"
+    },
+    "baselines/published-beta-v2/investigation_journal.mjs": {
+      "bytes": 8182,
+      "sha256": "7035b231416d51f5f96a779c55500a1e0ba3d842508747cb53c3f6e4e80cd8e8"
+    },
+    "baselines/published-beta-v2/investigation_learning_view.mjs": {
+      "bytes": 12151,
+      "sha256": "f874859da72ae77a8bcc3321e4e7db50485a2a2afe7611fddf5eb2677482f909"
+    },
+    "baselines/published-beta-v2/investigation_transfer.mjs": {
+      "bytes": 4216,
+      "sha256": "77bb18e71baf7c30640e871573965b0e76f7d858c38c5b6789d222c8c93a05c1"
+    },
+    "baselines/published-beta-v2/investigation_view.mjs": {
+      "bytes": 21142,
+      "sha256": "61a42c8bdd145f41d827d15ff84b0460709830e055cd2235a2860a900c1ff9bf"
+    },
+    "baselines/published-beta-v2/offline_api.mjs": {
+      "bytes": 225,
+      "sha256": "3fe04de0636abd202b9325fd95a1d8d74530addf0eccd3257d0141a55ec5d949"
+    },
+    "baselines/published-beta-v2/offline_engine.mjs": {
+      "bytes": 17182,
+      "sha256": "cc5c5b675e1b5f2298b84c418cb2c5dfab52159beaecd7046ebb1dd6758138bf"
+    },
+    "baselines/published-beta-v2/practice_history.mjs": {
+      "bytes": 7186,
+      "sha256": "4003e09556ab6352293d600a78635d1e6862790f45dd357e368296130efabbc5"
+    },
+    "baselines/published-beta-v2/review_queue.mjs": {
+      "bytes": 5700,
+      "sha256": "7003069e492872a99945b505ec46f226d660bea63f6a658399979a7780b5765e"
+    },
+    "baselines/published-beta-v2/styles.css": {
+      "bytes": 39554,
+      "sha256": "7293827f37cb9fd900d72aa4c4d807c7a5069e5d451603acf77c4dc686470494"
+    },
+    "baselines/published-beta-v2/transfer_practice.mjs": {
+      "bytes": 10014,
+      "sha256": "20780d21c8711f1144ea29b67c6115428fc2d7a854c2feff84b74f93f3c16b9c"
+    },
+    "package.json": {
+      "bytes": 723,
+      "sha256": "d282c80224fe512d423f5ee88d8a4cfb2bf2713fe59092313f07c012d523e7de"
+    },
+    "release-manifest.json": {
+      "bytes": 32157,
+      "sha256": "e61f73efeff83f23aae3978f10463307f75b948cf4cc12006cc281c56212494a"
+    },
+    "scripts/check-release.py": {
+      "bytes": 1479,
+      "sha256": "5b2c5b2fe4e3996124d2913d2c3271d708f6761f6b76ee68430aa66302927c64"
+    },
+    "scripts/check-upgrade.py": {
+      "bytes": 12207,
+      "sha256": "07889260f82e1a0c7d44f07bde46e4b04160b0aa3b02cef5e84815c45c0c26c6"
+    },
+    "scripts/fixtures/investigation-journal-v1.json": {
+      "bytes": 10124,
+      "sha256": "618b843e638b58c682c5f1be110a93b76f8684ec4b29cfdb7dfdf0d9d69f7f27"
+    },
+    "scripts/fixtures/investigation-upgrade-0.3.0.json": {
+      "bytes": 86878,
+      "sha256": "b491f78ca2ecf2326d165dfd63835bd1f915f27745eb7a07ddc8f9763ecc1b53"
+    },
+    "scripts/fixtures/investigation-upgrade-0.6.0.json": {
+      "bytes": 663629,
+      "sha256": "52ffb3fbd1ea05842f82043578b8ac53f95dbda5b511e99168b172f9b0a67c72"
+    },
+    "scripts/fixtures/investigation-v2-before-care.json": {
+      "bytes": 26212,
+      "sha256": "3d379448b6813892d983ccec30d1123d896ac12e291ea79aa939e28e4b876ca9"
+    },
+    "scripts/fixtures/investigation-v3-before-variants.json": {
+      "bytes": 84208,
+      "sha256": "3be79f9f60df4f999157d51fdfc619e216384720e0b2c54dd20054a6f815ff45"
+    },
+    "scripts/fixtures/story-sessions-legacy-v1.json": {
+      "bytes": 263865,
+      "sha256": "44aac34f4fde5371aec42e3fb76c2bcc0158f2e31b2898f7ad6b6e1e93b21c08"
+    },
+    "scripts/test-additional-case-content.mjs": {
+      "bytes": 15744,
+      "sha256": "91e36b736d532d045be066e8cd3188cfba6fb7f2b6941f7d5c238f4fbd556dbb"
+    },
+    "scripts/test-care-journal.mjs": {
+      "bytes": 2956,
+      "sha256": "5727257a81f34075fc3e3dd02aa343e96848bd6e60fe5bf2c0f985fb5e987ad2"
+    },
+    "scripts/test-care-workflow.mjs": {
+      "bytes": 24160,
+      "sha256": "e382bda59db78754a876807284afbb40eaec20d7f09e31ba98a7a6dcd911871b"
+    },
+    "scripts/test-confidence-assessment.mjs": {
+      "bytes": 10538,
+      "sha256": "feddb53c2eb2a19d692306f55903605713f532f4ea83318d670e12b09e4ea716"
+    },
+    "scripts/test-investigation-arrivals.mjs": {
+      "bytes": 3045,
+      "sha256": "4c50c9340d455ff7b4cfaa6452d2fca48fcf7987e2f6b796cc7af11f5d3a1e83"
+    },
+    "scripts/test-investigation-reasoning.mjs": {
+      "bytes": 10396,
+      "sha256": "70d0cdf0bef854063f9873f68854dca98d91bf69b10458b31d3da37dd1427700"
+    },
+    "scripts/test-investigation-v4.mjs": {
+      "bytes": 31053,
+      "sha256": "98397493f4b3adfee5a684eb59716c1e25e036d2852c693787794e048a5075b9"
+    },
+    "scripts/test-investigation-versions.mjs": {
+      "bytes": 27961,
+      "sha256": "b7c5f236ca02e923e9097545f969993dbe7003b4cd6faf41069f3db9db3a7c12"
+    },
+    "scripts/test-review-retention.mjs": {
+      "bytes": 7926,
+      "sha256": "7386c5f137d599745d3de09b1d166d2c65016731c48bb1598895c2e622baa4a4"
+    },
+    "scripts/test-story-decisions.mjs": {
+      "bytes": 15384,
+      "sha256": "da7edc5c65c1d74c142eeb586a958cf34765f51d878afd908bdd7326d92547e9"
+    },
+    "scripts/test-story-history.mjs": {
+      "bytes": 24850,
+      "sha256": "f548a0f348708f610c2142585f1ccb2613d690bc3751b34dc4a3f9f85f09acc5"
+    },
+    "scripts/test-story-progress.mjs": {
+      "bytes": 13216,
+      "sha256": "de71f5bcb74756c556350596e0ff2b5ae2f78d56cd45143a91feb7ca5e012d0e"
+    }
+  }
+}

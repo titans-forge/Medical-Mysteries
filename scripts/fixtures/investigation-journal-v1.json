@@ -1,0 +1,76 @@
+{
+  "schema": "medical_mysteries_learning_journal_v1",
+  "exportedUtc": "2026-10-16T03:47:46.415Z",
+  "synthetic": true,
+  "clinicalUse": false,
+  "records": [
+    {
+      "episodeContent": "{\"id\":\"doc-002-tearing-back-investigation\",\"version\":1,\"title\":\"The Night Shift\",\"subtitle\":\"A bounded, synthetic evidence-discovery episode\",\"opening\":\"A 61-year-old arrives with sudden severe chest discomfort. The team is already arranging urgent assessment. The initial handoff is incomplete.\",\"disclaimer\":\"Educational game only. All measurements and events in this investigation are authored fictional content pending human review, not clinical advice or source facts.\",\"hypotheses\":[{\"id\":\"acute-aortic-syndrome\",\"label\":\"Acute aortic syndrome\"},{\"id\":\"acute-coronary-syndrome\",\"label\":\"Acute coronary syndrome\"},{\"id\":\"pulmonary-embolism\",\"label\":\"Pulmonary embolism\"}],\"sources\":[{\"title\":\"2022 ACC/AHA Guideline for the Diagnosis and Management of Aortic Disease\",\"url\":\"https://pmc.ncbi.nlm.nih.gov/articles/PMC10784847/\"}],\"actions\":[{\"id\":\"symptom-timeline\",\"label\":\"Build the symptom timeline\",\"category\":\"history\",\"minutes\":4,\"requires\":[],\"finding\":\"Authored fictional history: abrupt chest pain was maximal at onset and moved through to the back.\",\"interpretation\":\"The onset and radiation are high-risk features, but they do not identify one diagnosis by themselves.\",\"sourceIds\":[0]},{\"id\":\"focused-examination\",\"label\":\"Perform a focused examination\",\"category\":\"examination\",\"minutes\":6,\"requires\":[],\"finding\":\"Authored fictional measurement: arm pressures are 178/105 on the right and 142/88 on the left; the difference is reproducible.\",\"interpretation\":\"The fictional inter-arm difference increases concern for an aortic process and keeps premature coronary anchoring unsafe.\",\"sourceIds\":[0]},{\"id\":\"ecg\",\"label\":\"Review the ECG\",\"category\":\"cardiac\",\"minutes\":5,\"requires\":[],\"finding\":\"Authored fictional tracing: a small, nonspecific ST change is present in aVL without a complete diagnostic pattern.\",\"interpretation\":\"This finding keeps acute coronary syndrome in the differential but is not decisive and cannot erase the aortic warning signs.\",\"sourceIds\":[0]},{\"id\":\"chest-radiograph\",\"label\":\"Review the chest radiograph\",\"category\":\"imaging\",\"minutes\":5,\"requires\":[],\"finding\":\"Authored fictional radiograph: the mediastinal contour is described as subtly widened, with no single definitive answer.\",\"interpretation\":\"A plain chest radiograph cannot exclude acute aortic syndrome; this fictional image is an ambiguity-preserving clue, not a diagnosis.\",\"sourceIds\":[0]},{\"id\":\"aortic-cta\",\"label\":\"Obtain CT angiography of the aorta\",\"category\":\"imaging\",\"minutes\":12,\"requires\":[],\"finding\":\"Authored fictional CTA report: an intimal flap is seen in the ascending aorta and extends into the arch.\",\"interpretation\":\"In this fictional episode, the CTA is the decisive clue favoring acute aortic syndrome over the competing hypotheses.\",\"sourceIds\":[0]},{\"id\":\"specialist-handoff\",\"label\":\"Make a specialist handoff\",\"category\":\"coordination\",\"minutes\":8,\"requires\":[\"aortic-cta\"],\"finding\":\"The fictional handoff carries the symptom report and CTA finding; it does not imply that other observations were performed.\",\"interpretation\":\"A structured handoff preserves uncertainty and the decisive clue for human review; it does not model treatment or outcome.\",\"sourceIds\":[0]}]}",
+      "completedUtc": "2026-10-16T03:47:08.998Z",
+      "state": {
+        "version": 1,
+        "episodeId": "doc-002-tearing-back-investigation",
+        "mode": "challenge",
+        "actionIds": [
+          "symptom-timeline",
+          "focused-examination",
+          "ecg",
+          "chest-radiograph",
+          "aortic-cta",
+          "specialist-handoff"
+        ],
+        "elapsedMinutes": 40,
+        "hypothesisId": "acute-aortic-syndrome",
+        "hypothesisHistory": [
+          {
+            "hypothesisId": "acute-aortic-syndrome",
+            "afterActionCount": 6
+          }
+        ],
+        "conclusion": {
+          "hypothesisId": "acute-aortic-syndrome",
+          "correct": true,
+          "evidenceComplete": true
+        },
+        "completed": true
+      },
+      "reflection": {
+        "confidence": null,
+        "keyActionId": "aortic-cta"
+      },
+      "transfer": {
+        "questionContent": "{\"id\":\"aortic-image-quality-contrast\",\"version\":1,\"prompt\":\"A different fictional patient has sudden severe chest pain. The CTA report says motion obscures the ascending aorta and calls that segment nondiagnostic. No definite flap is reported. Which conclusion best respects this evidence?\",\"choices\":[{\"id\":\"excluded\",\"label\":\"The absence of a reported flap excludes an aortic process.\",\"feedback\":\"A nondiagnostic segment is not a reliable negative finding. The report explicitly limits what can be concluded.\"},{\"id\":\"unresolved\",\"label\":\"The aortic question remains unresolved; the team needs to clarify the inadequate study.\",\"feedback\":\"The limitation matters. Image acquisition and motion affect diagnostic confidence, so an inadequate segment cannot carry an exclusion claim.\"},{\"id\":\"confirmed\",\"label\":\"The symptom pattern alone confirms dissection despite the report.\",\"feedback\":\"The symptoms justify concern, not certainty. The fictional report has not established the diagnosis.\"}],\"answerId\":\"unresolved\",\"source\":{\"title\":\"2022 ACC/AHA Aortic Disease Guideline: CT image quality\",\"url\":\"https://www.ahajournals.org/doi/10.1161/CIR.0000000000001106\"},\"synthetic\":true,\"reviewStatus\":\"pending_human_review\",\"sourceCheckedDate\":\"2026-09-11\"}",
+        "answerId": "unresolved"
+      }
+    },
+    {
+      "episodeContent": "{\"id\":\"doc-002-tearing-back-investigation\",\"version\":1,\"title\":\"The Night Shift\",\"subtitle\":\"A bounded, synthetic evidence-discovery episode\",\"opening\":\"A 61-year-old arrives with sudden severe chest discomfort. The team is already arranging urgent assessment. The initial handoff is incomplete.\",\"disclaimer\":\"Educational game only. All measurements and events in this investigation are authored fictional content pending human review, not clinical advice or source facts.\",\"hypotheses\":[{\"id\":\"acute-aortic-syndrome\",\"label\":\"Acute aortic syndrome\"},{\"id\":\"acute-coronary-syndrome\",\"label\":\"Acute coronary syndrome\"},{\"id\":\"pulmonary-embolism\",\"label\":\"Pulmonary embolism\"}],\"sources\":[{\"title\":\"2022 ACC/AHA Guideline for the Diagnosis and Management of Aortic Disease\",\"url\":\"https://pmc.ncbi.nlm.nih.gov/articles/PMC10784847/\"}],\"actions\":[{\"id\":\"symptom-timeline\",\"label\":\"Build the symptom timeline\",\"category\":\"history\",\"minutes\":4,\"requires\":[],\"finding\":\"Authored fictional history: abrupt chest pain was maximal at onset and moved through to the back.\",\"interpretation\":\"The onset and radiation are high-risk features, but they do not identify one diagnosis by themselves.\",\"sourceIds\":[0]},{\"id\":\"focused-examination\",\"label\":\"Perform a focused examination\",\"category\":\"examination\",\"minutes\":6,\"requires\":[],\"finding\":\"Authored fictional measurement: arm pressures are 178/105 on the right and 142/88 on the left; the difference is reproducible.\",\"interpretation\":\"The fictional inter-arm difference increases concern for an aortic process and keeps premature coronary anchoring unsafe.\",\"sourceIds\":[0]},{\"id\":\"ecg\",\"label\":\"Review the ECG\",\"category\":\"cardiac\",\"minutes\":5,\"requires\":[],\"finding\":\"Authored fictional tracing: a small, nonspecific ST change is present in aVL without a complete diagnostic pattern.\",\"interpretation\":\"This finding keeps acute coronary syndrome in the differential but is not decisive and cannot erase the aortic warning signs.\",\"sourceIds\":[0]},{\"id\":\"chest-radiograph\",\"label\":\"Review the chest radiograph\",\"category\":\"imaging\",\"minutes\":5,\"requires\":[],\"finding\":\"Authored fictional radiograph: the mediastinal contour is described as subtly widened, with no single definitive answer.\",\"interpretation\":\"A plain chest radiograph cannot exclude acute aortic syndrome; this fictional image is an ambiguity-preserving clue, not a diagnosis.\",\"sourceIds\":[0]},{\"id\":\"aortic-cta\",\"label\":\"Obtain CT angiography of the aorta\",\"category\":\"imaging\",\"minutes\":12,\"requires\":[],\"finding\":\"Authored fictional CTA report: an intimal flap is seen in the ascending aorta and extends into the arch.\",\"interpretation\":\"In this fictional episode, the CTA is the decisive clue favoring acute aortic syndrome over the competing hypotheses.\",\"sourceIds\":[0]},{\"id\":\"specialist-handoff\",\"label\":\"Make a specialist handoff\",\"category\":\"coordination\",\"minutes\":8,\"requires\":[\"aortic-cta\"],\"finding\":\"The fictional handoff carries the symptom report and CTA finding; it does not imply that other observations were performed.\",\"interpretation\":\"A structured handoff preserves uncertainty and the decisive clue for human review; it does not model treatment or outcome.\",\"sourceIds\":[0]}]}",
+      "completedUtc": "2026-10-16T03:36:14.266Z",
+      "state": {
+        "version": 1,
+        "episodeId": "doc-002-tearing-back-investigation",
+        "mode": "guided",
+        "actionIds": [],
+        "elapsedMinutes": 0,
+        "hypothesisId": "pulmonary-embolism",
+        "hypothesisHistory": [
+          {
+            "hypothesisId": "pulmonary-embolism",
+            "afterActionCount": 0
+          }
+        ],
+        "conclusion": {
+          "hypothesisId": "pulmonary-embolism",
+          "correct": false,
+          "evidenceComplete": false
+        },
+        "completed": true
+      },
+      "reflection": {
+        "confidence": null,
+        "keyActionId": null
+      },
+      "transfer": null
+    }
+  ]
+}

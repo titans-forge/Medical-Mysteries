@@ -1,0 +1,76 @@
+{
+  "schema": "medical_mysteries_published_beta_baseline_v1",
+  "source_commit": "1c16a334772732ee4360d1d63d2b3ae62a69a55e",
+  "source_repository": "https://github.com/titans-forge/Medical-Mysteries",
+  "description": "Original root browser source from the published beta recovery and its licensing edition. The unchanged original assets and credits are verified at the candidate root. This partial baseline is not a standalone playable build.",
+  "files": {
+    "FORGE-LICENSING.html": {
+      "bytes": 15596,
+      "sha256": "d368492517c398a02ab9f3d87e82c8a33b9434e7b116df09c2e9d630fa20cd2e"
+    },
+    "app.js": {
+      "bytes": 84678,
+      "sha256": "ea5bbdfb056c1323a4886f4924b6b8c084c65bfe73aef380ea3b08f8836b87ad"
+    },
+    "game-data.mjs": {
+      "bytes": 181084,
+      "sha256": "a039e00d7993c2842f0722a46c5c15df6dfc0666ff281e21797c110151adf764"
+    },
+    "index.html": {
+      "bytes": 13844,
+      "sha256": "07d2b21e68254f5fb0aa5e3f0844cc2f5193393535257a22ad4bb1f1005f217d"
+    },
+    "investigation.mjs": {
+      "bytes": 15073,
+      "sha256": "0f3a2be547361fc645941941433e466f3388bf5f2d7c5c81576c8752152114ef"
+    },
+    "investigation_cases.mjs": {
+      "bytes": 10502,
+      "sha256": "1c638a3cc7de92338bdb46b7de3b1b997546210718693121c4e2be1ea847fd54"
+    },
+    "investigation_history.mjs": {
+      "bytes": 3371,
+      "sha256": "2997b22ab28aefa11dfd4ac503a50ce23ea483f9d91bd6ac08b7fc7aa7162ab5"
+    },
+    "investigation_journal.mjs": {
+      "bytes": 8182,
+      "sha256": "7035b231416d51f5f96a779c55500a1e0ba3d842508747cb53c3f6e4e80cd8e8"
+    },
+    "investigation_learning_view.mjs": {
+      "bytes": 12151,
+      "sha256": "f874859da72ae77a8bcc3321e4e7db50485a2a2afe7611fddf5eb2677482f909"
+    },
+    "investigation_transfer.mjs": {
+      "bytes": 4216,
+      "sha256": "77bb18e71baf7c30640e871573965b0e76f7d858c38c5b6789d222c8c93a05c1"
+    },
+    "investigation_view.mjs": {
+      "bytes": 21142,
+      "sha256": "61a42c8bdd145f41d827d15ff84b0460709830e055cd2235a2860a900c1ff9bf"
+    },
+    "offline_api.mjs": {
+      "bytes": 225,
+      "sha256": "3fe04de0636abd202b9325fd95a1d8d74530addf0eccd3257d0141a55ec5d949"
+    },
+    "offline_engine.mjs": {
+      "bytes": 17182,
+      "sha256": "cc5c5b675e1b5f2298b84c418cb2c5dfab52159beaecd7046ebb1dd6758138bf"
+    },
+    "practice_history.mjs": {
+      "bytes": 7186,
+      "sha256": "4003e09556ab6352293d600a78635d1e6862790f45dd357e368296130efabbc5"
+    },
+    "review_queue.mjs": {
+      "bytes": 5700,
+      "sha256": "7003069e492872a99945b505ec46f226d660bea63f6a658399979a7780b5765e"
+    },
+    "styles.css": {
+      "bytes": 39554,
+      "sha256": "7293827f37cb9fd900d72aa4c4d807c7a5069e5d451603acf77c4dc686470494"
+    },
+    "transfer_practice.mjs": {
+      "bytes": 10014,
+      "sha256": "20780d21c8711f1144ea29b67c6115428fc2d7a854c2feff84b74f93f3c16b9c"
+    }
+  }
+}

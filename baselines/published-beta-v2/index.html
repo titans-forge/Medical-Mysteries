@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <link rel="icon" href="data:,">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#101a28">
+    <title>Medical Mysteries · Investigation Edition</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <header class="topbar">
+      <a class="brand" href="./index.html"><span class="brand-mark" aria-hidden="true">✦</span><span>Medical <b>Mysteries</b></span></a>
+      <span class="release">INVESTIGATION EDITION · EDUCATIONAL BETA</span>
+    </header>
+    <main id="main-content" class="shell" tabindex="-1">
+      <section id="menu" class="menu-view" aria-labelledby="menuTitle">
+        <div class="board-header"><div><div class="eyebrow">TITANS FORGE</div><h1 id="menuTitle">Case board</h1></div><div class="board-library-actions"><div id="rankChip" class="rank-chip"></div><button id="openLearningJournal" class="quiet-button hidden" type="button">Learning journal</button></div></div>
+        <section id="flagshipEntry" class="flagship-entry hidden" aria-labelledby="flagshipTitle">
+          <div class="investigation-shelf-heading"><div><div class="eyebrow">INVESTIGATION SHELF · SYNTHETIC PREVIEW</div><h2 id="flagshipTitle">Choose an investigation</h2></div></div>
+          <div id="investigationShelf" class="investigation-shelf" aria-live="polite"></div>
+        </section>
+        <div id="tierInfo" class="status-line" aria-live="polite">Loading case bank…</div>
+        <div class="board-actions" aria-label="Case actions">
+          <button id="boardContinue" class="primary-button" type="button" disabled>Continue <span aria-hidden="true">→</span></button>
+          <button id="boardNew" class="quiet-button" type="button" disabled>New case</button>
+          <button id="boardReview" class="quiet-button" type="button" disabled>Review case</button>
+        </div>
+        <details class="game-settings"><summary>Session settings</summary><label class="pressure-toggle"><input type="checkbox" id="pressureToggle"> Pressure mode (countdowns on code stages — optional, never affects scoring)</label></details>
+        <div class="board-filters"><label for="caseSearch">Find a case<input id="caseSearch" type="search" placeholder="Search stories"></label><label for="caseFilter">Audience<select id="caseFilter"><option value="all">Everyone</option><option value="public">Public</option><option value="student">Student</option><option value="doctor">Doctor</option></select></label><button id="openPracticeLibrary" class="quiet-button" type="button">Practice library</button></div>
+        <p id="caseFilterStatus" class="status-line hidden" role="status"></p>
+        <div id="tierGrid" class="tier-grid" aria-live="polite"></div>
+        <p class="fineprint">AI-audited educational beta. Not independently clinically reviewed. Generated scene art is illustrative, not a diagnostic image. Never use this game as medical advice.</p>
+      </section>
+      <section id="investigation" class="investigation-view hidden" aria-label="Case investigation"></section>
+      <section id="practiceLibrary" class="hidden" aria-labelledby="practiceLibraryTitle">
+        <button id="practiceBack" class="quiet-button" type="button">Back to case board</button>
+        <button id="choosePracticePack" class="quiet-button hidden" type="button">All practice</button>
+        <h1 id="practiceLibraryTitle" tabindex="-1">Practice library</h1>
+        <p class="side-note">Synthetic educational practice · pending human review. Separate from case scores.</p>
+        <div id="practicePacks" class="practice-library"></div>
+        <div id="standalonePractice"></div>
+        <details class="optional-controls"><summary>Local practice history</summary><p>Clear saved practice answers on this browser. Case scores and scheduled reviews stay unchanged.</p><button id="clearPracticeHistory" class="quiet-button" type="button">Clear practice history</button><p id="practiceStorageStatus" role="status"></p></details>
+      </section>
+
+      <section id="game" class="game-view hidden" aria-labelledby="caseTitle">
+        <div id="previewBanner" class="preview-banner" role="status"></div>
+        <div class="workspace">
+          <aside class="side-panel">
+            <div class="case-kicker">ACTIVE CASE</div>
+            <h2 id="caseTitle"></h2>
+            <div id="caseDisclaimer" class="side-note"></div>
+            <div class="scene-wrap">
+              <button id="sceneOpen" class="image-button" type="button" aria-label="Open active scene image">
+                <img id="scene" alt="">
+              </button>
+              <div id="sceneHotspots" class="scene-hotspots" aria-label="Interactive scene observations"></div>
+              <span class="scene-label">GENERATED SCENE ART · NOT DIAGNOSTIC EVIDENCE</span>
+            </div>
+            <div class="side-section"><div class="section-label">VITALS</div><div id="vitals" class="vitals"></div></div>
+            <div class="side-section"><div class="section-label">CASE TIMELINE</div><div id="timeline" class="timeline"></div></div>
+            <button id="restartBtn" class="quiet-button" type="button">Restart case</button>
+          </aside>
+
+          <section class="main-panel" aria-label="Case workspace">
+            <div class="mobile-tabs" role="tablist" aria-label="Case panes">
+              <button class="tab active" id="tabEvidence" data-tab="evidence" role="tab" aria-controls="evidencePanel" type="button">Evidence</button>
+              <button class="tab" id="tabScene" data-tab="scene" role="tab" aria-controls="mobileScene" type="button">Scene</button>
+              <button class="tab" id="tabTimeline" data-tab="timeline" role="tab" aria-controls="mobileTimeline" type="button">Timeline</button>
+            </div>
+            <div id="mobileScene" class="mobile-pane hidden" role="tabpanel" aria-labelledby="tabScene"></div>
+            <div id="mobileTimeline" class="mobile-pane hidden" role="tabpanel" aria-labelledby="tabTimeline"></div>
+            <div class="stage-head">
+            <div><span id="stageMeta" class="eyebrow"></span><h2 id="mobileCaseTitle"></h2><h3 id="stageTitle" tabindex="-1">Investigation</h3><div id="codeTimer" class="code-timer hidden" role="timer"></div></div>
+              <div id="progress" class="progress" aria-label="Investigation progress"></div>
+            </div>
+            <div id="evidencePanel" class="evidence-panel" role="tabpanel" aria-labelledby="tabEvidence">
+              <div class="section-label">EVIDENCE TRAY</div>
+              <div id="clues" class="clues"></div>
+              <div id="hotspots" class="hotspots" aria-label="Evidence hotspots"></div>
+              <div id="observations" class="observations" aria-live="polite"></div>
+              <div id="pinnedHypothesis" class="pinned-hypothesis hidden" aria-live="polite"></div>
+              <div id="scars" class="scars" aria-live="polite"></div>
+            </div>
+            <article class="decision-card">
+              <div class="decision-tag">DECISION POINT</div>
+              <p id="narrative" class="narrative"></p>
+              <h4 id="question"></h4>
+              <div id="decisionControls" class="decision-controls">
+                <label><input type="checkbox" id="recordConfidence"> Record confidence</label>
+                <div id="confidenceFields" class="hidden">
+                <label for="confidenceInput">Confidence before commit: <output id="confidenceValue" for="confidenceInput">Not recorded</output></label>
+                <input id="confidenceInput" name="confidence" type="range" min="0" max="100" step="10" value="70" aria-describedby="confidenceHelp">
+                <div id="confidenceHelp" class="control-help">Optional confidence, not a score bonus.</div>
+                </div>
+                <fieldset id="rankingControls" class="ranking-controls hidden">
+                  <legend>Your working differential</legend>
+                  <div id="rankingRows"></div>
+                </fieldset>
+                <label id="rankToggleLabel" class="hidden"><input type="checkbox" id="rankAlternatives"> Rank alternatives</label>
+                <div id="decisionStatus" class="decision-status" role="status" aria-live="polite"></div>
+              </div>
+              <div id="options" class="options"></div>
+              <div id="feedback" aria-live="polite"></div>
+              <button id="continueBtn" class="primary-button hidden" type="button">Continue to next finding <span aria-hidden="true">→</span></button>
+            </article>
+          </section>
+        </div>
+      </section>
+
+      <section id="result" class="result-view hidden" aria-labelledby="finalTitle">
+        <div id="resultMark" class="result-mark" aria-hidden="true">✓</div>
+        <div class="eyebrow">CASE CLOSED</div>
+        <h2 id="finalTitle"></h2>
+        <p id="finalScore"></p>
+        <div id="rankLine" class="rank-line hidden"></div>
+        <div id="twistBox" class="twist-box hidden"><div class="section-label">THE TWIST</div><p id="finalTwist"></p></div>
+        <p id="finalTeaching" class="result-teaching"></p>
+        <p id="reviewStatus" class="review-status"></p>
+        <div class="source-list"><div class="section-label">CANONICAL SOURCES</div><div id="sources"></div></div>
+        <section id="visualAutopsy" class="visual-autopsy hidden" aria-labelledby="visualAutopsyTitle">
+          <div id="visualAutopsyTitle" class="section-label">VISUAL AUTOPSY</div>
+          <p class="control-help">A concise record of the choices and evidence path in this completed case.</p>
+          <div id="visualAutopsyTimeline" class="visual-autopsy-timeline"></div>
+          <button id="visualAutopsyExpand" class="quiet-button" type="button" aria-controls="reasoningAutopsy" aria-expanded="false">Show reasoning details</button>
+          <div id="reasoningAutopsy" class="reasoning-autopsy hidden" role="region" aria-label="Clinical reasoning autopsy"></div>
+          <button id="reviewComplete" class="quiet-button" type="button">Mark debrief read</button>
+          <div id="visualAutopsyStatus" class="debrief-status" role="status" aria-live="polite"></div>
+        </section>
+        <div id="resultMediaWrap" class="result-media-wrap hidden">
+          <button id="resultMediaOpen" class="image-button" type="button" aria-label="Open result image">
+            <img id="resultMedia" alt="">
+          </button>
+          <p id="resultMediaCaption" class="media-caption"></p>
+        </div>
+        <div id="epilogueBox" class="epilogue-box hidden"><div class="section-label">EPILOGUE</div><p id="finalEpilogue"></p></div>
+        <div id="debrief" class="debrief hidden" aria-labelledby="debriefTitle">
+          <div id="debriefTitle" class="section-label">HOW DID THIS CASE LAND?</div>
+          <div class="debrief-buttons" role="group" aria-label="Case feedback">
+            <button class="feedback-button" type="button" data-rating="helpful">Helpful</button>
+            <button class="feedback-button" type="button" data-rating="unclear">Unclear</button>
+            <button class="feedback-button" type="button" data-rating="too_easy">Too easy</button>
+            <button class="feedback-button" type="button" data-rating="too_hard">Too hard</button>
+          </div>
+          <div id="debriefStatus" class="debrief-status" role="status" aria-live="polite"></div>
+        </div>
+        <section id="transferPractice" class="transfer-practice hidden" aria-labelledby="transferPracticeTitle">
+          <div id="transferPracticeTitle" class="section-label">OPTIONAL TRANSFER PRACTICE</div>
+          <p class="control-help">Synthetic practice · pending human review</p>
+          <button id="transferPracticeStart" class="quiet-button" type="button">Try a new situation</button>
+          <div id="transferPracticeRegion" class="transfer-practice-region hidden" aria-live="polite"></div>
+          <p id="practiceSaveStatus" class="control-help" role="status"></p>
+        </section>
+        <button id="playAgain" class="primary-button" type="button">Choose another case <span aria-hidden="true">→</span></button>
+      </section>
+      <div id="coldOpen" class="cold-open hidden" role="dialog" aria-modal="true" aria-labelledby="coldOpenTitle">
+        <div class="cold-open-card">
+          <div id="coldOpenTitle" class="eyebrow">THE CASE</div>
+          <button id="coldOpenMediaOpen" class="image-button" type="button" aria-label="Open cover image">
+            <img id="coldOpenMedia" alt="">
+          </button>
+          <p id="coldOpenText"></p>
+          <button id="coldOpenBtn" class="primary-button" type="button">Begin <span aria-hidden="true">→</span></button>
+        </div>
+      </div>
+      <dialog id="mediaViewer" class="media-viewer" aria-labelledby="mediaViewerCaption">
+        <div class="media-viewer-card">
+          <button id="mediaViewerClose" class="icon-button" type="button">× <span>Close image</span></button>
+          <img id="mediaViewerImage" alt="">
+          <p id="mediaViewerCaption" class="media-caption"></p>
+        </div>
+      </dialog>
+      <div id="error" class="error-view hidden" role="alert"></div>
+    </main>
+    <footer>MEDICAL MYSTERIES / EDUCATIONAL USE ONLY / NO CLINICAL ADVICE</footer>
+    <footer class="fineprint" style="padding:16px 24px">Found a problem? Post the case, question, and suggested correction in the itch.io comments. Do not share patient information. Progress and ratings stay in this browser; no feedback is sent automatically. Browser storage may be unavailable in private mode.</footer>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

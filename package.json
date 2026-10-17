@@ -1,9 +1,10 @@
 {
-  "name": "medical-mysteries-release-recovery",
+  "name": "medical-mysteries",
   "private": true,
   "type": "module",
   "license": "SEE LICENSE IN LICENSE",
   "scripts": {
-    "test": "python3 scripts/check-release.py"
-  }
+    "test": "python3 scripts/check-upgrade.py && node scripts/test-investigation-versions.mjs && node scripts/test-investigation-reasoning.mjs && node scripts/test-confidence-assessment.mjs && node scripts/test-review-retention.mjs && node scripts/test-additional-case-content.mjs && node scripts/test-story-decisions.mjs && node scripts/test-story-history.mjs && node scripts/test-story-progress.mjs && node scripts/test-care-workflow.mjs && node scripts/test-care-journal.mjs && node scripts/test-investigation-arrivals.mjs && node scripts/test-investigation-v4.mjs"
+  },
+  "version": "0.7.0"
 }

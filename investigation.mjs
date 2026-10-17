@@ -1,100 +1,11 @@
-const EPISODE_VERSION = 1;
+import { getLegacyInvestigationEpisode, V3_INVESTIGATION_CONTENT } from './investigation_content_versions.mjs';
+import { buildCurrentInvestigations } from './investigation_variants.mjs';
+import { createCareWorkflow, replayCareWorkflow, appendCareEvent } from './care_workflow.mjs';
 const AORTIC_HYPOTHESIS = 'acute-aortic-syndrome';
 const VALID_MODES = new Set(['guided', 'challenge']);
 
-const SOURCE = Object.freeze({
-  title: '2022 ACC/AHA Guideline for the Diagnosis and Management of Aortic Disease',
-  url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10784847/',
-});
-
-const HYPOTHESES = Object.freeze([
-  Object.freeze({ id: AORTIC_HYPOTHESIS, label: 'Acute aortic syndrome' }),
-  Object.freeze({ id: 'acute-coronary-syndrome', label: 'Acute coronary syndrome' }),
-  Object.freeze({ id: 'pulmonary-embolism', label: 'Pulmonary embolism' }),
-]);
-
-const ACTIONS = Object.freeze([
-  Object.freeze({
-    id: 'symptom-timeline',
-    label: 'Build the symptom timeline',
-    category: 'history',
-    minutes: 4,
-    requires: Object.freeze([]),
-    finding: 'Authored fictional history: abrupt chest pain was maximal at onset and moved through to the back.',
-    interpretation: 'The onset and radiation are high-risk features, but they do not identify one diagnosis by themselves.',
-    sourceIds: Object.freeze([0]),
-  }),
-  Object.freeze({
-    id: 'focused-examination',
-    label: 'Perform a focused examination',
-    category: 'examination',
-    minutes: 6,
-    requires: Object.freeze([]),
-    finding: 'Authored fictional measurement: arm pressures are 178/105 on the right and 142/88 on the left; the difference is reproducible.',
-    interpretation: 'The fictional inter-arm difference increases concern for an aortic process and keeps premature coronary anchoring unsafe.',
-    sourceIds: Object.freeze([0]),
-  }),
-  Object.freeze({
-    id: 'ecg',
-    label: 'Review the ECG',
-    category: 'cardiac',
-    minutes: 5,
-    requires: Object.freeze([]),
-    finding: 'Authored fictional tracing: a small, nonspecific ST change is present in aVL without a complete diagnostic pattern.',
-    interpretation: 'This finding keeps acute coronary syndrome in the differential but is not decisive and cannot erase the aortic warning signs.',
-    sourceIds: Object.freeze([0]),
-  }),
-  Object.freeze({
-    id: 'chest-radiograph',
-    label: 'Review the chest radiograph',
-    category: 'imaging',
-    minutes: 5,
-    requires: Object.freeze([]),
-    finding: 'Authored fictional radiograph: the mediastinal contour is described as subtly widened, with no single definitive answer.',
-    interpretation: 'A plain chest radiograph cannot exclude acute aortic syndrome; this fictional image is an ambiguity-preserving clue, not a diagnosis.',
-    sourceIds: Object.freeze([0]),
-  }),
-  Object.freeze({
-    id: 'aortic-cta',
-    label: 'Obtain CT angiography of the aorta',
-    category: 'imaging',
-    minutes: 12,
-    requires: Object.freeze([]),
-    finding: 'Authored fictional CTA report: an intimal flap is seen in the ascending aorta and extends into the arch.',
-    interpretation: 'In this fictional episode, the CTA is the decisive clue favoring acute aortic syndrome over the competing hypotheses.',
-    sourceIds: Object.freeze([0]),
-  }),
-  Object.freeze({
-    id: 'specialist-handoff',
-    label: 'Make a specialist handoff',
-    category: 'coordination',
-    minutes: 8,
-    requires: Object.freeze(['aortic-cta']),
-    finding: 'The fictional handoff carries the symptom report and CTA finding; it does not imply that other observations were performed.',
-    interpretation: 'A structured handoff preserves uncertainty and the decisive clue for human review; it does not model treatment or outcome.',
-    sourceIds: Object.freeze([0]),
-  }),
-]);
-
-// Preserve the legacy episode object and its JSON shape exactly.
-export const INVESTIGATION_EPISODE = Object.freeze({
-  id: 'doc-002-tearing-back-investigation',
-  version: EPISODE_VERSION,
-  title: 'The Night Shift',
-  subtitle: 'A bounded, synthetic evidence-discovery episode',
-  opening: 'A 61-year-old arrives with sudden severe chest discomfort. The team is already arranging urgent assessment. The initial handoff is incomplete.',
-  disclaimer: 'Educational game only. All measurements and events in this investigation are authored fictional content pending human review, not clinical advice or source facts.',
-  hypotheses: HYPOTHESES,
-  sources: Object.freeze([SOURCE]),
-  actions: ACTIONS,
-});
-
-import { ADDITIONAL_INVESTIGATIONS } from './investigation_cases.mjs';
-
-export const INVESTIGATION_EPISODES = Object.freeze([
-  INVESTIGATION_EPISODE,
-  ...ADDITIONAL_INVESTIGATIONS,
-]);
+export const INVESTIGATION_EPISODES = buildCurrentInvestigations(V3_INVESTIGATION_CONTENT.map(({ episode }) => episode));
+export const INVESTIGATION_EPISODE = INVESTIGATION_EPISODES.find((episode) => episode.id === 'doc-002-tearing-back-investigation');
 const EPISODES = new Map(INVESTIGATION_EPISODES.map((episode) => [episode.id, episode]));
 const STATE_KEYS = ['version', 'episodeId', 'mode', 'actionIds', 'elapsedMinutes', 'hypothesisId', 'hypothesisHistory', 'conclusion', 'completed'];
 const HISTORY_KEYS = ['hypothesisId', 'afterActionCount'];
@@ -104,12 +15,15 @@ const hasExactKeys = (value, keys) => isRecord(value)
   && keys.every((key) => Object.hasOwn(value, key));
 const isSafeInteger = (value, minimum = 0) => Number.isSafeInteger(value) && value >= minimum;
 
-export function getInvestigationEpisode(id) {
-  return typeof id === 'string' ? EPISODES.get(id) ?? null : null;
+export function getInvestigationEpisode(id, version) {
+  if (typeof id !== 'string') return null;
+  const current = EPISODES.get(id);
+  if (version === undefined || current?.version === version) return current ?? null;
+  return getLegacyInvestigationEpisode(id, version);
 }
 
-export function getInvestigationPresentation(id) {
-  const episode = getInvestigationEpisode(id);
+export function getInvestigationPresentation(id, version) {
+  const episode = getInvestigationEpisode(id, version);
   if (!episode) return null;
   return episode.presentation
     ? { ...episode.presentation }
@@ -139,6 +53,7 @@ function makeInitialState(mode, episode) {
     hypothesisHistory: [],
     conclusion: null,
     completed: false,
+    ...(episode.careWorkflow ? { workflow: createCareWorkflow() } : {}),
   };
 }
 
@@ -148,6 +63,7 @@ function copyState(state) {
     actionIds: [...state.actionIds],
     hypothesisHistory: state.hypothesisHistory.map((entry) => ({ ...entry })),
     conclusion: state.conclusion ? { ...state.conclusion } : null,
+    ...(state.workflow ? { workflow: JSON.parse(JSON.stringify(state.workflow)) } : {}),
   };
 }
 
@@ -206,8 +122,9 @@ function resolutionFor(episode) {
 }
 
 function canonicalize(raw) {
-  if (!hasExactKeys(raw, STATE_KEYS)) return null;
-  const episode = getInvestigationEpisode(raw.episodeId);
+  if (!isRecord(raw)) return null;
+  const episode = getInvestigationEpisode(raw.episodeId, raw.version);
+  if (!episode || !hasExactKeys(raw, episode.careWorkflow ? [...STATE_KEYS, 'workflow'] : STATE_KEYS)) return null;
   if (!episode
     || raw.version !== episode.version
     || !VALID_MODES.has(raw.mode)
@@ -225,6 +142,11 @@ function canonicalize(raw) {
   if (!actions || actions.elapsedMinutes !== raw.elapsedMinutes) return null;
   const history = replayHistory(raw.hypothesisHistory, actions.actionIds.length, episode);
   if (!history || history.hypothesisId !== raw.hypothesisId) return null;
+  const care = episode.careWorkflow ? replayCareWorkflow(raw.workflow, episode) : null;
+  if (episode.careWorkflow && (!care
+    || JSON.stringify(care.reviewedActionIds) !== JSON.stringify(actions.actionIds)
+    || care.hypothesisId !== history.hypothesisId
+    || JSON.stringify(care.hypothesisHistory) !== JSON.stringify(history.hypothesisHistory))) return null;
   if (raw.completed !== (raw.conclusion !== null)) return null;
 
   const resolution = resolutionFor(episode);
@@ -246,11 +168,12 @@ function canonicalize(raw) {
     hypothesisHistory: history.hypothesisHistory,
     conclusion: raw.conclusion ? { ...raw.conclusion } : null,
     completed: raw.completed,
+    ...(care ? { workflow: care.workflow } : {}),
   };
 }
 
-export function createInvestigation(mode = 'guided', episodeId = INVESTIGATION_EPISODE.id) {
-  const episode = getInvestigationEpisode(episodeId);
+export function createInvestigation(mode = 'guided', episodeId = INVESTIGATION_EPISODE.id, version) {
+  const episode = getInvestigationEpisode(episodeId, version);
   return episode && VALID_MODES.has(mode) ? makeInitialState(mode, episode) : null;
 }
 
@@ -261,10 +184,11 @@ export function restoreInvestigation(raw) {
 export function availableActions(state) {
   const canonical = canonicalize(state);
   if (!canonical || canonical.completed) return [];
-  const episode = getInvestigationEpisode(canonical.episodeId);
+  const episode = getInvestigationEpisode(canonical.episodeId, canonical.version);
+  const care = episode.careWorkflow ? replayCareWorkflow(canonical.workflow, episode) : null;
   return episode.actions
-    .filter((action) => !canonical.actionIds.includes(action.id)
-      && action.requires.every((required) => canonical.actionIds.includes(required)))
+    .filter((action) => care ? care.tasks.some((task) => task.actionId === action.id && task.status === 'available')
+      : !canonical.actionIds.includes(action.id) && action.requires.every((required) => canonical.actionIds.includes(required)))
     .map((action) => canonical.mode === 'guided'
       ? { ...action, requires: [...action.requires], sourceIds: [...action.sourceIds] }
       : {
@@ -281,9 +205,10 @@ export function availableActions(state) {
 export function investigate(state, actionId) {
   const canonical = canonicalize(state);
   if (!canonical || canonical.completed || typeof actionId !== 'string') return null;
+  if (canonical.workflow) return reviewCareTask(canonical, actionId);
   if (canonical.actionIds.includes(actionId)) return copyState(canonical);
   if (!availableActions(canonical).some((action) => action.id === actionId)) return null;
-  const action = details(getInvestigationEpisode(canonical.episodeId)).actionById.get(actionId);
+  const action = details(getInvestigationEpisode(canonical.episodeId, canonical.version)).actionById.get(actionId);
   return {
     ...canonical,
     actionIds: [...canonical.actionIds, actionId],
@@ -294,10 +219,11 @@ export function investigate(state, actionId) {
 export function setHypothesis(state, hypothesisId) {
   const canonical = canonicalize(state);
   if (!canonical || canonical.completed) return null;
-  const { hypothesisById } = details(getInvestigationEpisode(canonical.episodeId));
+  const { hypothesisById } = details(getInvestigationEpisode(canonical.episodeId, canonical.version));
   if (!hypothesisById.has(hypothesisId)) return null;
   if (canonical.hypothesisId === hypothesisId) return copyState(canonical);
   if (canonical.hypothesisHistory.length >= 256) return null;
+  if (canonical.workflow) return applyCareEvent(canonical, { type: 'hypothesis', hypothesisId });
   return {
     ...canonical,
     hypothesisId,
@@ -310,7 +236,7 @@ export function concludeInvestigation(state, hypothesisId) {
   if (canonical?.conclusion) return copyState(canonical);
   const selected = setHypothesis(canonical, hypothesisId);
   if (!selected) return null;
-  const resolution = resolutionFor(getInvestigationEpisode(selected.episodeId));
+  const resolution = resolutionFor(getInvestigationEpisode(selected.episodeId, selected.version));
   return {
     ...selected,
     conclusion: {
@@ -325,7 +251,7 @@ export function concludeInvestigation(state, hypothesisId) {
 export function investigationDebrief(state) {
   const canonical = canonicalize(state);
   if (!canonical?.conclusion) return null;
-  const episode = getInvestigationEpisode(canonical.episodeId);
+  const episode = getInvestigationEpisode(canonical.episodeId, canonical.version);
   const resolution = resolutionFor(episode);
   const { actionById, hypothesisById } = details(episode);
   const complete = resolution.evidenceActionIds.every((id) => canonical.actionIds.includes(id));
@@ -337,7 +263,15 @@ export function investigationDebrief(state) {
         ? resolution.supportedSummary
         : resolution.mismatchSummary,
     decisiveClue: complete ? resolution.decisiveClue : resolution.missingClue,
-    nextLearning: resolution.nextLearning,
+    outcome: investigationOutcome(canonical),
+    evidenceSummary: canonical.actionIds.length
+      ? `At commitment, you had the opening handoff and ${canonical.actionIds.length} collected finding${canonical.actionIds.length === 1 ? '' : 's'}. Additional teaching below was not part of that evidence.`
+      : 'At commitment, you had only the opening handoff and no collected investigation findings. Your conclusion is provisional.',
+    nextLearning: episode.reasoning
+      ? episode.reasoning.caseLearningText || 'Separate a concerning presentation, a limited finding, and evidence that supports a specific conclusion. State what remains uncertain.'
+      : resolution.nextLearning,
+    additionalTeaching: episode.actions.filter((action) => !canonical.actionIds.includes(action.id))
+      .map((action) => ({ label: action.label, interpretation: action.interpretation })),
     route: canonical.actionIds.map((id) => {
       const action = actionById.get(id);
       return { label: action.label, finding: action.finding, minutes: action.minutes };
@@ -348,5 +282,57 @@ export function investigationDebrief(state) {
     })),
     limitations: [...resolution.limitations],
     sources: episode.sources.map((source) => ({ ...source })),
+    ...(episode.careWorkflow ? { careWorkflow: getCareWorkflow(canonical).assessment } : {}),
+    ...(canonical.version >= 4 ? { kind: resolution.conclusionKind ?? 'diagnostic',
+      clinicalConfirmation: investigationOutcome(canonical).clinicalConfirmation,
+      patientUpdates: (getCareWorkflow(canonical)?.patientUpdates ?? []).map((update) => ({ id: update.id, text: update.text,
+        response: update.response ? { ...update.response } : null, responseAttempts: update.responseAttempts.map((attempt) => ({ ...attempt })) })) } : {}),
   };
 }
+
+// These labels describe a bounded fictional conclusion, not clinical competence.
+export function investigationOutcome(state) {
+  const canonical = canonicalize(state);
+  if (canonical?.version >= 4) {
+    const resolution = resolutionFor(getInvestigationEpisode(canonical.episodeId, canonical.version));
+    const kind = resolution.conclusionKind ?? 'diagnostic';
+    const result = !canonical.completed ? { status: 'in-progress', label: 'In progress' }
+      : !canonical.conclusion.evidenceComplete ? { status: 'provisional', label: 'Provisional' }
+        : !canonical.conclusion.correct ? { status: 'reconsider', label: 'Needs reconsideration' }
+          : { status: 'supported', label: kind === 'unresolved' ? 'Uncertainty justified · cause unresolved' : 'Supported' };
+    return { ...result, kind, clinicalConfirmation: result.status === 'supported' && kind === 'diagnostic' };
+  }
+  if (!canonical?.completed) return { status: 'in-progress', label: 'In progress' };
+  if (!canonical.conclusion.evidenceComplete) return { status: 'provisional', label: 'Provisional' };
+  return canonical.conclusion.correct
+    ? { status: 'supported', label: 'Supported' }
+    : { status: 'reconsider', label: 'Needs reconsideration' };
+}
+
+// v3 care events are replayed against bundled content; earlier editions keep their original state shape.
+function applyCareEvent(state, event) {
+  const canonical = canonicalize(state);
+  if (!canonical?.workflow || canonical.completed) return null;
+  const episode = getInvestigationEpisode(canonical.episodeId, canonical.version);
+  const care = appendCareEvent(canonical.workflow, event, episode);
+  if (!care) return null;
+  const actions = applyActionIds(care.reviewedActionIds, episode);
+  return canonicalize({ ...canonical, workflow: care.workflow, actionIds: actions.actionIds,
+    elapsedMinutes: actions.elapsedMinutes, hypothesisId: care.hypothesisId, hypothesisHistory: care.hypothesisHistory });
+}
+
+export function getCareWorkflow(state) {
+  const canonical = canonicalize(state);
+  if (!canonical?.workflow) return null;
+  return replayCareWorkflow(canonical.workflow, getInvestigationEpisode(canonical.episodeId, canonical.version));
+}
+
+export const chooseCarePriority = (state, choiceId) => applyCareEvent(state, { type: 'priority', choiceId });
+export const requestCareTask = (state, actionId) => applyCareEvent(state, { type: 'request', actionId });
+export const advanceCareUpdate = (state) => applyCareEvent(state, { type: 'update' });
+export const reviewCareTask = (state, actionId) => applyCareEvent(state, { type: 'review', actionId });
+export const reassessCare = (state, choiceId) => applyCareEvent(state, { type: 'reassess', choiceId });
+export const sendCareHandoff = (state, selections) => applyCareEvent(state, { type: 'handoff', selections });
+export const acknowledgeCareHandoff = (state, handoffId, choiceId) => applyCareEvent(state, { type: 'readback', handoffId, choiceId });
+
+export const respondCareUpdate = (state, updateId, choiceId) => applyCareEvent(state, { type: 'patient-response', updateId, choiceId });

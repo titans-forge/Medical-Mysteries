@@ -16,7 +16,7 @@ const LIMITATIONS = [
 
 export const ADDITIONAL_INVESTIGATIONS = freeze([
   {
-    id: 'pub-003-missed-turn-investigation', version: 1,
+    id: 'pub-003-missed-turn-investigation', version: 3,
     title: 'The Missed Turn', subtitle: 'A sudden interruption. An incomplete picture.',
     opening: 'At dinner, a 68-year-old suddenly cannot finish a sentence and has trouble holding a fork. Emergency help is already on the way. Follow the fictional team record as it arrives.',
     disclaimer: DISCLAIMER,
@@ -27,8 +27,8 @@ export const ADDITIONAL_INVESTIGATIONS = freeze([
       imageAlt: 'Generated illustration of a dinner interrupted by an emergency response. Not diagnostic evidence.',
     },
     sources: [
-      { title: 'NICE NG128: stroke recognition and initial assessment, recommendations 1.1.1-1.1.3', url: 'https://www.nice.org.uk/guidance/ng128/chapter/recommendations', checkedUtc: '2026-09-07T22:08:50Z', scope: 'Recognition, glucose check and urgent professional assessment; no treatment content is used.' },
-      { title: 'NINDS: Assess and Treat, CT and MRI sections', url: 'https://www.ninds.nih.gov/health-information/stroke/assess-and-treat', checkedUtc: '2026-09-07T22:08:50Z', scope: 'Early CT limitations and diffusion-weighted MRI; scenario reports are fictional.' },
+      { title: 'NICE NG128: stroke recognition and initial assessment, recommendations 1.1.1-1.1.3', url: 'https://www.nice.org.uk/guidance/ng128/chapter/recommendations', checkedUtc: '2026-10-16T04:29:45Z', scope: 'Sudden focal symptoms and checking hypoglycaemia as a competing explanation. The fictional normal glucose weakens that rival without establishing stroke; no treatment content is used.' },
+      { title: 'NINDS: Assess and Treat, CT and MRI sections', url: 'https://www.ninds.nih.gov/health-information/stroke/assess-and-treat', checkedUtc: '2026-10-16T04:29:45Z', scope: 'CT detects bleeding; diffusion MRI can show ischemia before a non-contrast CT. Supports limits of the authored reports, not a required scan sequence or patient-specific advice.' },
     ],
     hypotheses: [
       { id: 'ischemic-stroke', label: 'Ischemic stroke (interrupted blood flow)' },
@@ -55,9 +55,34 @@ export const ADDITIONAL_INVESTIGATIONS = freeze([
         finding: 'The fictional handoff preserves the witnessed onset and persisting changes. It makes no claim about examinations or scans you did not read.',
         interpretation: 'A useful handoff separates what was witnessed from what remains unknown.' },
     ],
+    reasoning: {
+      supportLabel: 'Evidence supporting your explanation',
+      limitationLabel: 'Compare explanations or identify a limit',
+      prompt: 'Explain how a finding you read supports your concern, how the alternatives compare, and what the record still cannot establish.',
+      caseLearningText: 'Weakening one explanation does not prove another. Connect each collected finding to the concern it supports or weakens, and keep a working hypothesis provisional when decisive evidence is absent.',
+      insufficientCitationFeedback: 'Your route includes the matching fictional imaging finding. Cite that finding to support the conclusion rather than an earlier concern or a result that only weakens a rival.',
+      openingFacts: [
+        { id: 'opening:speech-hand-change', label: 'Sudden speech and hand-use changes in the opening handoff', strength: 'concern', supports: ['ischemic-stroke', 'hypoglycemia', 'migraine-aura'] },
+      ],
+      supportRules: {
+        'witness-account': { strength: 'suggestive', supports: ['ischemic-stroke'] },
+        'team-examination': { strength: 'suggestive', supports: ['ischemic-stroke'] },
+        'glucose-result': { strength: 'limited', supports: [], conflictsWith: ['hypoglycemia'], conflictFeedback: 'The glucose result you read during the symptoms does not support low glucose as the current explanation. It weakens that rival without proving ischemic stroke.' },
+        'initial-ct': { strength: 'limited', supports: [] },
+        'team-mri-summary': { strength: 'decisive', supports: ['ischemic-stroke'] },
+        'witness-handoff': { strength: 'coordination', supports: [] },
+      },
+      uncertaintyOptions: [
+        { id: 'symptoms-not-confirmation', label: 'The opening symptoms raise concern but do not establish a cause.', requires: [], scope: 'provisional' },
+        { id: 'glucose-discriminator', label: 'The glucose result weakens the low-glucose explanation; it is not a positive stroke test.', requires: ['glucose-result'], forHypotheses: ['ischemic-stroke', 'migraine-aura'], scope: 'any' },
+        { id: 'ct-limit', label: 'The first CT report does not exclude an early ischemic stroke.', requires: ['initial-ct'], scope: 'any' },
+        { id: 'mri-scope', label: 'The matching MRI finding supports ischemic stroke here; it does not determine every cause or later care decision.', requires: ['team-mri-summary'], forHypotheses: ['ischemic-stroke'], scope: 'supported' },
+        { id: 'all-excluded', label: 'Every competing cause has now been ruled out.', requires: [], scope: 'unsupported' },
+      ],
+    },
     resolution: {
       hypothesisId: 'ischemic-stroke', evidenceActionIds: ['team-mri-summary'],
-      supportedSummary: 'Your conclusion fits the later fictional imaging review. A less revealing first scan did not settle the mystery.',
+      supportedSummary: 'Your conclusion fits the matching acute infarct described in the fictional imaging review. This is support from that recorded finding, beyond the opening symptoms alone.',
       mismatchSummary: 'The chosen explanation does not account for the matching acute infarct described in the fictional imaging review.',
       provisionalSummary: 'Your route ended before the later imaging review. The conclusion remains provisional; a working hypothesis is not confirmation.',
       decisiveClue: 'The later fictional MRI report describes an acute left frontal infarct matching the symptoms.',
@@ -67,7 +92,7 @@ export const ADDITIONAL_INVESTIGATIONS = freeze([
     },
   },
   {
-    id: 'stu-003-after-weekend-investigation', version: 1,
+    id: 'stu-003-after-weekend-investigation', version: 3,
     title: 'After the Weekend', subtitle: 'A familiar complaint. Three pieces that must fit.',
     opening: 'A 26-year-old arrives after a weekend away with vomiting, fatigue and abdominal discomfort. The team is already assessing the patient. The first handoff suggests a stomach illness, but the record is incomplete.',
     disclaimer: DISCLAIMER,
@@ -78,11 +103,12 @@ export const ADDITIONAL_INVESTIGATIONS = freeze([
       imageAlt: 'Generated illustration of a young adult under observation with a hospital team. Not diagnostic evidence.',
     },
     sources: [
-      { title: 'ADA/EASD and partner societies: Hyperglycemic Crises in Adults With Diabetes, 2024 consensus report', url: 'https://doi.org/10.2337/dci24-0032', checkedUtc: '2026-09-07T22:08:50Z', scope: 'Diagnostic triad and competing hyperglycemic states, not treatment. Fictional values are not source patient data.' },
+      { title: 'ADA/EASD and partner societies: Hyperglycemic Crises in Adults With Diabetes, 2024 consensus report', url: 'https://doi.org/10.2337/dci24-0032', checkedUtc: '2026-10-16T04:29:45Z', scope: 'Diagnosis requires the combined glucose/diabetes, ketone and metabolic-acidosis criteria. HHS involves hyperosmolality without significant ketosis or acidosis; no treatment recommendations are used. Fictional values are not source patient data.' },
+      { title: '2024 consensus report: open full text, diagnostic criteria section', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11272983/', checkedUtc: '2026-10-16T04:29:45Z', scope: 'Primary consensus text for the three-part DKA argument and the competing HHS pattern. Used only to check authored evidence relations, not care decisions.' },
     ],
     hypotheses: [
       { id: 'diabetic-ketoacidosis', label: 'Diabetic ketoacidosis' },
-      { id: 'hyperosmolar-state', label: 'Hyperglycemic hyperosmolar state' },
+      { id: 'hyperosmolar-state', label: 'Hyperglycemic hyperosmolar state (HHS) alone' },
       { id: 'gastroenteritis', label: 'Gastroenteritis with dehydration' },
     ],
     actions: [
@@ -105,9 +131,40 @@ export const ADDITIONAL_INVESTIGATIONS = freeze([
         finding: 'Fictional laboratory result: measured total serum osmolality is 297 mOsm/kg.',
         interpretation: 'This fictional result does not support a markedly hyperosmolar explanation. It does not replace the three-part ketoacidosis assessment.' },
     ],
+    reasoning: {
+      supportLabel: 'Evidence supporting your explanation',
+      limitationLabel: 'Compare explanations or identify a limit',
+      prompt: 'Choose a relevant fact or the combined glucose, ketone and acid-base argument. Explain what it supports, how the alternatives compare, and what remains uncertain.',
+      caseLearningText: 'Keep glucose, ketones and acid-base evidence distinct until you can connect them. Compare the metabolic explanation with its rivals; one abnormal result is not the whole argument. These alternatives are simplified; real presentations can overlap.',
+      insufficientCitationFeedback: 'The three-part argument needs the glucose, ketone and acid-base findings together. Select their combined argument to justify this conclusion; citing one component does not demonstrate that connection.',
+      openingFacts: [
+        { id: 'opening:vomiting-fatigue-discomfort', label: 'Vomiting, fatigue and abdominal discomfort in the opening handoff', strength: 'concern', supports: ['diabetic-ketoacidosis', 'hyperosmolar-state', 'gastroenteritis'] },
+      ],
+      supportRules: {
+        'recent-history': { strength: 'suggestive', supports: ['diabetic-ketoacidosis', 'hyperosmolar-state'] },
+        'bedside-observations': { strength: 'concern', supports: ['diabetic-ketoacidosis', 'hyperosmolar-state', 'gastroenteritis'] },
+        'plasma-glucose': { strength: 'component', supports: ['diabetic-ketoacidosis'], conflictsWith: ['hyperosmolar-state'], conflictFeedback: 'The glucose value you read does not fit HHS alone in this fictional case. It does not establish DKA without the remaining findings; real presentations can overlap.' },
+        'blood-ketones': { strength: 'component', supports: ['diabetic-ketoacidosis'], conflictsWith: ['hyperosmolar-state'], conflictFeedback: 'The ketone elevation you read does not fit HHS alone in this fictional case. It does not establish DKA without the remaining findings; real presentations can overlap.' },
+        'acid-base': { strength: 'component', supports: ['diabetic-ketoacidosis'], conflictsWith: ['hyperosmolar-state'], conflictFeedback: 'The acidosis you read does not fit HHS alone in this fictional case. It does not establish DKA without the remaining findings; real presentations can overlap.' },
+        'serum-osmolality': { strength: 'limited', supports: [], conflictsWith: ['hyperosmolar-state'], conflictFeedback: 'The osmolality result you read does not support HHS alone in this fictional case. It does not establish DKA without the remaining findings; real presentations can overlap.' },
+      },
+      supportGroups: [
+        { id: 'pattern:metabolic-triad', label: 'Glucose, blood ketones and acid-base results together', requires: ['plasma-glucose', 'blood-ketones', 'acid-base'], strength: 'decisive', supports: ['diabetic-ketoacidosis'] },
+      ],
+      uncertaintyOptions: [
+        { id: 'symptoms-not-confirmation', label: 'Vomiting and discomfort alone do not establish a metabolic diagnosis.', requires: [], scope: 'provisional' },
+        { id: 'history-limits', label: 'Thirst and frequent urination before vomiting weaken a stomach-only explanation; the metabolic cause is still unresolved.', requires: ['recent-history'], missingAny: ['plasma-glucose', 'blood-ketones', 'acid-base'], scope: 'provisional' },
+        { id: 'glucose-with-missing-components', label: 'Glucose is raised, but a ketone or acid-base report is still missing from my route.', requires: ['plasma-glucose'], missingAny: ['blood-ketones', 'acid-base'], forHypotheses: ['diabetic-ketoacidosis'], scope: 'provisional' },
+        { id: 'ketones-with-missing-components', label: 'Ketones are raised, but a glucose or acid-base report is still missing from my route.', requires: ['blood-ketones'], missingAny: ['plasma-glucose', 'acid-base'], forHypotheses: ['diabetic-ketoacidosis'], scope: 'provisional' },
+        { id: 'acidosis-with-missing-components', label: 'A glucose or ketone report is still missing, so this acidosis has not been linked to the full pattern.', requires: ['acid-base'], missingAny: ['plasma-glucose', 'blood-ketones'], forHypotheses: ['diabetic-ketoacidosis'], scope: 'provisional' },
+        { id: 'triad-scope', label: 'The laboratory pattern supports ketoacidosis here; it does not determine why it developed or settle every care decision.', requires: ['plasma-glucose', 'blood-ketones', 'acid-base'], forHypotheses: ['diabetic-ketoacidosis'], scope: 'supported' },
+        { id: 'osmolality-discriminator', label: 'This osmolality result weakens a markedly hyperosmolar explanation; it cannot establish ketoacidosis on its own.', requires: ['serum-osmolality'], forHypotheses: ['diabetic-ketoacidosis', 'gastroenteritis'], scope: 'any' },
+        { id: 'all-excluded', label: 'Every other cause of vomiting has now been ruled out.', requires: [], scope: 'unsupported' },
+      ],
+    },
     resolution: {
       hypothesisId: 'diabetic-ketoacidosis', evidenceActionIds: ['plasma-glucose', 'blood-ketones', 'acid-base'],
-      supportedSummary: 'Your conclusion connects all three collected findings: elevated glucose, ketones and acidosis. The opening complaint alone was not enough.',
+      supportedSummary: 'The collected three-part pattern supports ketoacidosis in this fictional case: elevated glucose, ketones and acidosis. The opening complaint alone was not enough.',
       mismatchSummary: 'The collected glucose, ketone and acid-base findings fit ketoacidosis more closely than the selected explanation in this fictional case.',
       provisionalSummary: 'Your conclusion remains provisional because the glucose, ketone and acid-base results were not all collected. A partial pattern is not the complete evidence set.',
       decisiveClue: 'The fictional combination is glucose 286 mg/dL, beta-hydroxybutyrate 4.8 mmol/L, pH 7.22 and bicarbonate 13 mmol/L.',

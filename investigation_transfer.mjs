@@ -1,3 +1,5 @@
+import { getLegacyTransferQuestion } from './investigation_content_versions.mjs';
+import { getInvestigationEpisode } from './investigation.mjs';
 const questions = {
   'doc-002-tearing-back-investigation': {
     id: 'aortic-image-quality-contrast', version: 1,
@@ -45,6 +47,15 @@ for (const question of Object.values(questions)) {
 }
 Object.freeze(questions);
 
-export function getTransferQuestion(episodeId) {
+export function getTransferQuestion(episodeId, contentVersion) {
+  if (contentVersion !== undefined) {
+    // Historical questions remain attached to their immutable saved episode.
+    const legacy = getLegacyTransferQuestion(episodeId, contentVersion);
+    if (legacy) return legacy;
+    const current = getInvestigationEpisode(episodeId);
+    if (!current || current.version !== contentVersion) return null;
+  }
+  const episode = getInvestigationEpisode(episodeId, contentVersion);
+  if (episode?.version >= 4) return episode.transferQuestion ?? null;
   return Object.hasOwn(questions, episodeId) ? questions[episodeId] : null;
 }

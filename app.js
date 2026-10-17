@@ -11,8 +11,7 @@ async function loadModule(path) {
 }
 
 const {
-  normalizeReviewQueue, reconcileReviewQueue, selectDueReview, nextReviewEntry,
-  summarizeReviewChange, REVIEW_QUEUE_KEY,
+  reconcileReviewQueue, selectDueReview, nextReviewEntry, summarizeReviewChange,
 } = await loadModule('./review_queue.mjs');
 const {
   TRANSFER_PRACTICE_PACKS, supportsPractice, createPracticeState,
@@ -20,6 +19,11 @@ const {
 } = await loadModule('./transfer_practice.mjs');
 const { savePractice, loadPractice, practiceSummary, clearPracticeHistory } = await loadModule('./practice_history.mjs');
 const { mountInvestigation } = await loadModule('./investigation_view.mjs');
+
+const { assessResultConfidence, assessConfidenceRecord } = await loadModule('./confidence_assessment.mjs');
+const { loadStoryProfile, saveStoryPreferences, recordStoryCompletion, STORY_REVIEW_ROUTES, storyReviewRoute, CURRENT_STORY_BUILD } = await loadModule('./story_progress.mjs');
+const { openStoryHistory } = await loadModule('./story_history_view.mjs');
+const { readStoryReviews, writeStoryReviews } = await loadModule('./story_reviews.mjs');
 
 const $ = (id) => document.getElementById(id);
 let session = null;
@@ -48,7 +52,8 @@ function activeSessionReference() {
   return ref && typeof ref.session_id === 'string' && typeof ref.case_id === 'string' && typeof ref.tier === 'string' ? ref : null;
 }
 function saveActiveSessionReference(value) {
-  writeStorage(ACTIVE_SESSION_KEY, { session_id: value.session_id, case_id: value.case_id, tier: value.tier });
+  writeStorage(ACTIVE_SESSION_KEY, { session_id: value.session_id, case_id: value.case_id, tier: value.tier,
+    build_id: value.build_id, content_version: value.content_version });
 }
 function draftKey(value) { return value?.session_id && value?.stage_id ? `${DRAFT_PREFIX}${value.session_id}` : null; }
 function readDraft(value) {
@@ -83,7 +88,15 @@ async function api(path, options = {}) {
   const response = await offlineRequest(path, options);
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || `Request failed (${response.status})`);
+  if (data.persistence_status && !['saved', 'available', 'ok'].includes(data.persistence_status)) showStoryStorage(data.persistence_note || 'This play may not survive a reload. Existing records have not been replaced.');
   return data;
+}
+
+function showStoryStorage(message) {
+  const notice = $('storyStorageStatus');
+  if (!notice) return;
+  text(notice, message);
+  notice.classList.remove('hidden');
 }
 
 function text(node, value) {
@@ -235,9 +248,12 @@ function renderList(data) {
       const count = document.createElement('div');
       count.className = 'case-status';
       text(count, play ? `Best first-try accuracy · ${Math.round((play.best_accuracy || 0) * 100)}% · Complete` : 'Not attempted · New');
+      const edition = document.createElement('div'); edition.className = 'case-meta';
+      const earlier = profile.legacy_plays?.[entry.case_id];
+      text(edition, `Story version ${entry.content_version || 2}${earlier ? ` · Earlier edition summary retained (${Math.round((earlier.best_accuracy ?? earlier.accuracy ?? 0) * 100)}%)` : ''}`);
       const review = document.createElement('div'); review.className = 'case-review'; text(review, nextReviewLabel(entry.case_id, play));
       const open = document.createElement('button'); open.className = 'case-open'; open.type = 'button'; open.setAttribute('aria-label', entry.title); text(open, play ? 'Open case' : 'Start case'); open.addEventListener('click', () => start(tier, entry.case_id, true));
-      button.append(cover, name, detail, count, review, open);
+      button.append(cover, name, detail, edition, count, review, open);
       if (supportsPractice(entry.case_id) && !data.release_mode) {
         const practice = document.createElement('button'); practice.type = 'button'; practice.className = 'quiet-button case-practice';
         text(practice, 'Practice'); practice.setAttribute('aria-label', `Practice ${entry.title}`);
@@ -246,7 +262,7 @@ function renderList(data) {
       $('tierGrid').appendChild(button);
     }
   }
-  text($('tierInfo'), data.release_mode ? 'Release mode · reviewed cases only' : 'Educational beta · AI-audited · community review invited');
+  text($('tierInfo'), data.release_mode ? 'Release mode · reviewed cases only' : 'Educational beta · Fictional cases · See clinical review notes below');
   tierListing = data;
   const investigations = investigationUI.refresh();
   text($('rankChip'), `${Object.values(data.tiers).flat().length} stories${investigations.totalCount ? ` · ${investigations.totalCount} investigations` : ''}`);
@@ -271,25 +287,19 @@ async function loadTiers() {
   }
 }
 
-async function start(tier, caseId = '', markStarted = false) {
+async function start(tier, caseId = '', markStarted = false, buildId = CURRENT_STORY_BUILD) {
   try {
     closeExtraViews();
     // Case cards and New case are always fresh starts; only Board Continue
     // uses the persisted session reference.
-    writeStorage(ACTIVE_SESSION_KEY, null);
-    if (markStarted && caseId) {
-      const profile = loadProfile();
-      profile.last_started_case_id = caseId;
-      profile.last_started_at = Date.now();
-      try { localStorage.setItem('mmProfile', JSON.stringify(profile)); } catch { /* profile is optional */ }
-    }
     clearSessionMedia();
     $('result').classList.add('hidden');
     $('coldOpen').classList.add('hidden');
     coldOpenReturnFocus = document.activeElement;
     const suffix = caseId ? `&case_id=${encodeURIComponent(caseId)}` : '';
-    session = await api(`/api/start?tier=${encodeURIComponent(tier)}${suffix}`);
+    session = await api(`/api/start?tier=${encodeURIComponent(tier)}${suffix}&build_id=${encodeURIComponent(buildId)}`);
     saveActiveSessionReference(session);
+    if (markStarted && caseId && !saveStoryPreferences({ last_started_case_id: caseId, last_started_build_id: buildId, last_started_at: Date.now() })) showStoryStorage('The case is open, but the last-start preference could not be saved.');
     pending = null;
     feedbackSubmitted = false;
     debriefEventsSent.clear();
@@ -307,20 +317,16 @@ async function start(tier, caseId = '', markStarted = false) {
 
 // Replay mapping for the six authored cases; review starts the source case,
 // not a newly generated variant.
-const reviewVariantCaseMap = {
-  stroke: 'pub-001-dropped-pen', botulism: 'pub-002-honey-jar', dka: 'stu-001-mountain-acid',
-  ectopic: 'stu-002-saturday-pain', melanoma: 'doc-001-scatter-sign', aortic: 'doc-002-tearing-back',
-};
+const reviewVariantCaseMap = STORY_REVIEW_ROUTES;
 function nextReviewLabel(caseId, play) {
   const matching = nextReviewEntry(readReviewQueue(), caseId, reviewVariantCaseMap);
-  if (matching) return matching.due_at <= Date.now() ? 'Next review · Due now' : `Next review · ${new Date(matching.due_at).toLocaleDateString()}`;
+  if (matching) return `${matching.due_at <= Date.now() ? 'Next review · Due now' : `Next review · ${new Date(matching.due_at).toLocaleDateString()}`} · Story version ${storyReviewRoute(matching)?.content_version || '?'}`;
   return play?.completed_at ? `Last completed · ${new Date(play.completed_at).toLocaleDateString()}` : 'Next review · Not scheduled';
 }
 function readReviewQueue() {
-  try { return normalizeReviewQueue(JSON.parse(localStorage.getItem(REVIEW_QUEUE_KEY) || '[]')); } catch { return []; }
-}
-function writeReviewQueue(queue) {
-  try { localStorage.setItem(REVIEW_QUEUE_KEY, JSON.stringify(normalizeReviewQueue(queue))); return true; } catch { return false; }
+  const saved = readStoryReviews();
+  if (saved.status === 'invalid') showStoryStorage('Some earlier scheduled-review data could not be read. Its original bytes are preserved; new reviews cannot replace it.');
+  return saved.entries;
 }
 function eligibleEntries() {
   if (!tierListing) return [];
@@ -338,28 +344,30 @@ function updateBoardActions() {
   const fresh = entries.find((entry) => !profile.plays?.[entry.case_id]);
   let due = null;
   const item = selectDueReview(readReviewQueue(), [...byId.keys()], reviewVariantCaseMap);
-  if (item) due = byId.get(reviewVariantCaseMap[item.review_variant_id.split('-')[0]]) || null;
+  const reviewRoute = item && storyReviewRoute(item);
+  if (reviewRoute) due = { ...byId.get(reviewRoute.case_id), ...reviewRoute };
   const configure = (id, target, label, enabled) => { const button = $(id); button.disabled = !enabled; button.dataset.caseId = enabled ? target.case_id : ''; text(button, label); };
-  configure('boardContinue', continuation, continuation ? `Continue · ${continuation.title} →` : 'Continue · Nothing started', Boolean(continuation));
+  configure('boardContinue', continuation, continuation ? `Continue · ${continuation.title} · Story version ${active.content_version || 1} →` : 'Continue · Nothing started', Boolean(continuation));
   configure('boardNew', fresh, fresh ? 'New case' : 'New case · All played', Boolean(fresh));
-  configure('boardReview', due, due ? `Review case · ${due.title}` : 'Review case · None due', Boolean(due));
-  $('boardContinue').onclick = continuation ? resumeActiveSession : null;
+  configure('boardReview', due, due ? `Review case · ${due.title} · Story version ${due.content_version}` : 'Review case · None due', Boolean(due));
+  $('boardContinue').onclick = continuation ? () => resumeActiveSession() : null;
   $('boardNew').onclick = fresh ? () => start(fresh.tier, fresh.case_id, true) : null;
-  $('boardReview').onclick = due ? () => start(due.tier, due.case_id, true) : null;
+  $('boardReview').onclick = due ? () => start(due.tier, due.case_id, true, due.build_id) : null;
   $('boardContinue').classList.toggle('primary-button', Boolean(continuation));
   $('boardContinue').classList.toggle('quiet-button', !continuation);
   $('boardNew').classList.toggle('primary-button', !continuation && Boolean(fresh));
   $('boardNew').classList.toggle('quiet-button', Boolean(continuation) || !fresh);
 }
 
-async function resumeActiveSession() {
-  const reference = activeSessionReference();
+async function resumeActiveSession(sessionId) {
+  const reference = typeof sessionId === 'string' ? { session_id: sessionId } : activeSessionReference();
   if (!reference) return;
   try {
     closeExtraViews();
     clearSessionMedia();
     const restored = await api(`/api/resume?session_id=${encodeURIComponent(reference.session_id)}`);
     session = restored;
+    saveActiveSessionReference(restored);
     pending = null;
     feedbackSubmitted = false;
     debriefEventsSent.clear();
@@ -641,6 +649,9 @@ function activeSessionFromStage(stage) {
     ...stage,
     session_id: session.session_id,
     sandbox: session.sandbox,
+    build_id: stage.build_id || session.build_id,
+    content_version: stage.content_version || session.content_version,
+    edition_label: stage.edition_label || session.edition_label,
   };
 }
 
@@ -791,7 +802,7 @@ function renderStage(stage) {
   text($('mobileCaseTitle'), stage.title);
   text($('caseDisclaimer'), 'Fictional case · educational use only');
   const sandboxPrefix = session && session.sandbox ? 'SANDBOX DRAFT · NO PROGRESSION CREDIT · ' : '';
-  text($('previewBanner'), `${sandboxPrefix}${stage.preview_status}`);
+  text($('previewBanner'), `${sandboxPrefix}${stage.edition_label || 'Earlier story version 1'} · Fictional learning case`);
   $('previewBanner').classList.remove('hidden');
   const activeMedia = stage.active_media || stage.media;
   applyMedia($('scene'), activeMedia, { sizes: '(max-width: 800px) 92vw, 350px', title: stage.title });
@@ -1048,10 +1059,11 @@ function finish(result, restored = false) {
   const perfect = result.score.accuracy === 1 && (result.stage_autopsy || []).every((stage) => stage.first_try);
   text($('resultMark'), perfect ? '✓' : '!');
   $('resultMark').classList.toggle('result-warning', !perfect);
-  text($('finalTitle'), perfect ? `Case closed clean · ${session.title}` : `Case closed with scars · ${session.title}`);
+  text($('finalTitle'), `Story completed · ${session.title}`);
+  text($('storyResultEdition'), session.edition_label || 'Earlier story version 1');
   text($('finalScore'), session.sandbox
     ? `Score ${result.score.earned} / ${result.score.possible} · SANDBOX DRAFT — no progression credit`
-    : `Score ${result.score.earned} / ${result.score.possible} · ${result.score.performance} · first-try accuracy ${Math.round(result.score.accuracy * 100)}%`);
+    : `Answer score ${result.score.earned} / ${result.score.possible} · first-answer match ${Math.round(result.score.accuracy * 100)}%. This records answers, not demonstrated clinical reasoning.`);
   text($('finalTeaching'), result.key_teaching);
   const resultMediaWrap = $('resultMediaWrap');
   if (result.result_media) {
@@ -1060,7 +1072,7 @@ function finish(result, restored = false) {
     $('resultMediaOpen').onclick = () => openMediaViewer($('resultMedia'));
     resultMediaWrap.classList.remove('hidden');
   } else clearMedia($('resultMedia'), { caption: $('resultMediaCaption'), wrapper: resultMediaWrap });
-  text($('reviewStatus'), `${result.review_status} · not independently clinically reviewed`);
+  text($('reviewStatus'), 'Fictional learning case · Clinical review history is described on the case board.');
   clear($('sources'));
   for (const source of result.sources || []) {
     const link = document.createElement('a');
@@ -1082,24 +1094,13 @@ function finish(result, restored = false) {
   }
   if (!session.sandbox && !restored) queueReview(result);
   const rankLine = $('rankLine');
-  if (progression) {
+  if (!session.sandbox) {
+    const confidence = assessResultConfidence(result);
     rankLine.classList.remove('hidden');
-    const brierStr = progression.brier_score != null ? `Brier Score: ${progression.brier_score.toFixed(3)}` : '';
-    const accStr = `Concordance: ${Math.round((result.score?.accuracy || 0) * 100)}%`;
-    const flags = progression.brier_score == null
-      ? ' · Not recorded'
-      : progression.overconfident_misses > 0
-      ? ` · ⚠️ ${progression.overconfident_misses} overconfident miss${progression.overconfident_misses === 1 ? '' : 'es'}`
-      : ' · Calibrated';
-    const line = ['Diagnostic Calibration', brierStr, accStr, flags.replace(/^ · /, '')]
-      .filter(Boolean)
-      .join(' · ');
-    text(rankLine, line);
+    text(rankLine, `${confidence.title} · ${confidence.summary}`);
     rankLine.setAttribute('role', 'status');
     rankLine.setAttribute('aria-live', 'polite');
-  } else {
-    rankLine.classList.add('hidden');
-  }
+  } else rankLine.classList.add('hidden');
   const twistBox = $('twistBox');
   if (result.twist) { twistBox.classList.remove('hidden'); text($('finalTwist'), result.twist); }
   else twistBox.classList.add('hidden');
@@ -1263,28 +1264,24 @@ function renderReasoningAutopsy(autopsy, stages, path) {
   clear(box);
   if (autopsy) {
     const heading = document.createElement('h3');
-    text(heading, 'Clinical reasoning autopsy');
+    text(heading, 'Reasoning review');
     box.appendChild(heading);
     const divergence = document.createElement('p');
     if (autopsy.first_divergence) {
       divergence.className = 'autopsy-alert';
-      text(divergence, `First divergence: Investigation ${autopsy.first_divergence.stage_number} — your first choice was ${autopsy.first_divergence.learner_choice}; expert path: ${autopsy.first_divergence.expert_choice}.`);
-    } else text(divergence, 'First divergence: none — your first choices matched the expert path.');
+      text(divergence, `First divergence: Investigation ${autopsy.first_divergence.stage_number} — your first choice was ${autopsy.first_divergence.learner_choice}; authored teaching path: ${autopsy.first_divergence.expert_choice}.`);
+    } else text(divergence, 'First divergence: none — your first choices matched the authored teaching path.');
     box.appendChild(divergence);
     const expert = document.createElement('p');
-    text(expert, `Expert path: ${(autopsy.expert_path || []).map((step) => step.choice).join(' → ') || 'not available'}.`);
+    text(expert, `Authored teaching path: ${(autopsy.expert_path || []).map((step) => step.choice).join(' → ') || 'not available'}.`);
     box.appendChild(expert);
     const counterfactual = document.createElement('p');
     text(counterfactual, `Counterfactual: ${autopsy.counterfactual || 'not available'}`);
     box.appendChild(counterfactual);
-    if (autopsy.calibration?.brier_score != null) {
-      const brierP = document.createElement('p');
-      const b = autopsy.calibration.brier_score;
-      const brierQuality = b <= 0.08 ? 'Sharp calibration' : b <= 0.18 ? 'Moderate calibration' : 'Calibration alert (high overconfidence discordance)';
-      const bias = autopsy.calibration.calibration_bias != null ? ` · Bias: ${autopsy.calibration.calibration_bias > 0 ? '+' : ''}${autopsy.calibration.calibration_bias}` : '';
-      text(brierP, `Diagnostic calibration: Brier Score ${b.toFixed(3)} (${brierQuality}${bias}).`);
-      box.appendChild(brierP);
-    }
+    const confidence = assessConfidenceRecord({ calibration: autopsy.calibration, stages });
+    const confidenceDetail = document.createElement('p');
+    text(confidenceDetail, `${confidence.title}: ${confidence.detail}`);
+    box.appendChild(confidenceDetail);
     const calibration = document.createElement('p');
     const errors = stages.filter((stage) => stage.confidence_error != null).map((stage) => `I${stage.stage_number}: ${stage.confidence_error}`);
     text(calibration, `Confidence error by investigation: ${errors.join(' · ') || 'not available'}.`);
@@ -1323,8 +1320,8 @@ function renderReasoningAutopsy(autopsy, stages, path) {
       pathBox.append(heading, list);
     };
     addPathList('YOUR ATTEMPTS', path.learner_path || [], (attempt) => `${attempt.choice} — ${attempt.correct ? 'correct' : 'wrong attempt'}${attempt.error_mode_label ? ` · ${attempt.error_mode_label}` : ''}${attempt.consequence ? ` · consequence: ${attempt.consequence}` : ''}`);
-    addPathList('FIRST TRY VS EXPERT', path.comparison || [], (row) => row.matched ? `Investigation ${row.stage_number}: first try matched · ${row.expert_choice}` : `Investigation ${row.stage_number}: you chose ${row.first_try_choice}; expert path: ${row.expert_choice}${row.error_mode_label ? ` · ${row.error_mode_label}` : ''}`, 'path-compare');
-    addPathList('EXPERT PATH', path.expert_path || [], (choice) => choice);
+    addPathList('FIRST ANSWER VS AUTHORED ANSWER', path.comparison || [], (row) => row.matched ? `Investigation ${row.stage_number}: first try matched · ${row.expert_choice}` : `Investigation ${row.stage_number}: you chose ${row.first_try_choice}; authored teaching path: ${row.expert_choice}${row.error_mode_label ? ` · ${row.error_mode_label}` : ''}`, 'path-compare');
+    addPathList('AUTHORED TEACHING PATH', path.expert_path || [], (choice) => choice);
     if (path.scars?.length) addPathList('SCARS CARRIED FORWARD', path.scars, (scar) => `${scar.option_label || 'Wrong choice'} · ${scar.consequence}`);
     const activeErrors = (path.comparison || []).filter((row) => row.error_mode);
     if (activeErrors.length) {
@@ -1359,97 +1356,20 @@ async function submitFeedback(rating) {
   } catch (error) { text($('debriefStatus'), `Could not record rating: ${error.message}`); }
 }
 
-// ── diagnostic calibration (local profile) ──────────────────────────────────
-// Plays are keyed by case_id with stated confidence, Brier scores, and cognitive
-// error modes recorded for attending-grade calibration feedback.
-const RANK_FRACTIONS = [0.05, 0.15, 0.3, 0.5, 0.7, 0.9];
-const RANK_NAMES = ['Observer', 'Medical Student', 'Resident', 'Fellow', 'Attending', 'Chief of Medicine'];
-
-function loadProfile() {
-  try {
-    const parsed = JSON.parse(localStorage.getItem('mmProfile'));
-    if (parsed && typeof parsed === 'object') {
-      parsed.plays = parsed.plays || {};
-      parsed.calibration = parsed.calibration || { brier_score: null, mean_accuracy: null, error_matrix: {}, overconfident_count: 0, cases_completed: 0 };
-      return parsed;
-    }
-  } catch { /* malformed profile */ }
-  return { xp: 0, plays: {}, calibration: { brier_score: null, mean_accuracy: null, error_matrix: {}, overconfident_count: 0, cases_completed: 0 } };
-}
-
-function rankFor(xp, attainable) {
-  // Retained for calibration index compatibility
-  return { name: 'Not recorded', xp: 0, index: 0 };
-}
+// Completion receipts are immutable and edition-specific; legacy mmProfile is read-only.
+function loadProfile() { return loadStoryProfile(); }
 
 function recordCalibrationTelemetry(result, attainableTotal) {
-  const profile = loadProfile();
-  const caseId = session?.case_id || 'preview-case';
-  const previous = profile.plays[caseId] || {};
-  const brierScore = result.score?.brier_score ?? result.clinical_autopsy?.calibration?.brier_score ?? null;
-  const overconfidentMisses = result.clinical_autopsy?.calibration?.overconfident_first_misses || [];
-  const errorModesInCase = (result.path_debrief?.comparison || [])
-    .filter((row) => row.error_mode)
-    .map((row) => ({ mode: row.error_mode, label: row.error_mode_label }));
-
-  const bestAccuracy = Math.max(previous.best_accuracy || 0, result.score?.accuracy || 0);
-  const bestEarned = Math.max(previous.best_earned || 0, result.score?.earned || 0);
-  const gained = bestEarned - (previous.best_earned || 0);
-  profile.xp = (profile.xp || 0) + gained;
-
-  const seenErrors = new Set();
-  const mergedErrors = [];
-  [...(previous.error_modes || []), ...errorModesInCase].forEach((em) => {
-    const key = `${em.mode}:${em.label}`;
-    if (!seenErrors.has(key)) {
-      seenErrors.add(key);
-      mergedErrors.push(em);
-    }
-  });
-
-  profile.plays[caseId] = {
-    case_id: caseId,
-    tier: session?.tier || 'public',
-    accuracy: result.score?.accuracy ?? 0,
-    best_accuracy: bestAccuracy,
-    best_earned: bestEarned,
-    brier_score: brierScore,
-    overconfident_misses: overconfidentMisses.length,
-    error_modes: mergedErrors,
-    completed_at: Date.now(),
-  };
-
-  const completed = Object.values(profile.plays).filter((item) => item && item.completed_at);
-  const brierList = completed.map((item) => item.brier_score).filter((b) => typeof b === 'number');
-  const avgBrier = brierList.length ? Number((brierList.reduce((sum, v) => sum + v, 0) / brierList.length).toFixed(3)) : brierScore;
-  const avgAcc = completed.length ? Math.round((completed.reduce((sum, item) => sum + (item.accuracy ?? item.best_accuracy ?? 0), 0) / completed.length) * 100) : Math.round((result.score?.accuracy || 0) * 100);
-
-  const errorMatrix = {};
-  let totalOverconfident = 0;
-  completed.forEach((item) => {
-    totalOverconfident += (item.overconfident_misses || 0);
-    (item.error_modes || []).forEach((em) => {
-      const key = em.label || em.mode;
-      errorMatrix[key] = (errorMatrix[key] || 0) + 1;
-    });
-  });
-
-  profile.calibration = {
-    cases_completed: completed.length,
-    mean_accuracy: avgAcc,
-    brier_score: avgBrier,
-    error_matrix: errorMatrix,
-    overconfident_count: totalOverconfident,
-  };
-  profile.rank = profile.calibration.brier_score == null ? 'Not recorded' : 'Calibrated';
-  localStorage.setItem('mmProfile', JSON.stringify(profile));
+  const before = loadStoryProfile(undefined, session.build_id);
+  const receipt = recordStoryCompletion(session, result);
+  if (!receipt.saved) showStoryStorage('This result is available here, but its completion receipt could not be saved. Earlier records are preserved.');
+  const profile = loadStoryProfile(undefined, session.build_id);
   updateBoardActions();
-
   return {
-    gained,
-    brier_score: brierScore,
+    gained: Math.max(0, profile.xp - before.xp),
+    brier_score: result.score?.brier_score ?? null,
     accuracy: result.score?.accuracy ?? 0,
-    overconfident_misses: overconfidentMisses.length,
+    overconfident_misses: result.clinical_autopsy?.calibration?.overconfident_first_misses?.length || 0,
     calibration: profile.calibration,
     rank: { name: profile.rank, xp: profile.xp, index: 0 },
     leveledUp: false,
@@ -1461,9 +1381,11 @@ function awardXp(result, attainableTotal) {
 }
 
 function queueReview(result) {
-  const before = readReviewQueue();
+  const saved = readStoryReviews();
+  const before = saved.entries;
   const after = reconcileReviewQueue(before, result, Date.now());
-  if (writeReviewQueue(after)) text($('visualAutopsyStatus'), summarizeReviewChange(before, after).text);
+  if (writeStoryReviews(saved, after)) text($('visualAutopsyStatus'), summarizeReviewChange(before, after).text);
+  else { text($('visualAutopsyStatus'), 'Review scheduling could not be saved. Earlier review data is preserved.'); showStoryStorage('Scheduled reviews could not be updated. Earlier saved data has not been replaced.'); }
 }
 
 function renderRankChip() {
@@ -1472,12 +1394,12 @@ function renderRankChip() {
   if (!chip) return;
   const cal = profile.calibration;
   if (!cal || !cal.cases_completed) {
-    text(chip, 'Diagnostic Calibration · Ready');
+    text(chip, 'Confidence record · Ready');
     return;
   }
   const brierText = cal.brier_score != null ? `Brier ${cal.brier_score.toFixed(2)}` : 'Not recorded';
   const flagText = cal.overconfident_count ? ` · ${cal.overconfident_count} overconfident miss${cal.overconfident_count === 1 ? '' : 'es'}` : '';
-  text(chip, `Calibration · ${brierText} · ${cal.mean_accuracy}% Concordance${flagText}`);
+  text(chip, `Confidence record · ${brierText} · descriptive only${flagText}`);
 }
 
 let attainableByTier = {};
@@ -1485,8 +1407,7 @@ let attainableByTier = {};
 // ── pressure mode (opt-in display; the server owns the real deadline) ───────
 let codeTimerHandle = null;
 function pressureModeEnabled() {
-  try { return JSON.parse(localStorage.getItem('mmProfile')).pressure === true; }
-  catch { return false; }
+  return loadProfile().pressure === true;
 }
 
 function startCodeMode(stage) {
@@ -1611,12 +1532,9 @@ $('reviewComplete').addEventListener('click', async () => {
 function setupPressureToggle() {
   const pressureToggle = document.getElementById('pressureToggle');
   if (!pressureToggle) return;
-  try { pressureToggle.checked = JSON.parse(localStorage.getItem('mmProfile')).pressure === true; }
-  catch { pressureToggle.checked = false; }
+  pressureToggle.checked = loadProfile().pressure === true;
   pressureToggle.addEventListener('change', () => {
-    const profile = loadProfile();
-    profile.pressure = pressureToggle.checked;
-    localStorage.setItem('mmProfile', JSON.stringify(profile));
+    if (!saveStoryPreferences({ pressure: pressureToggle.checked })) showStoryStorage('The pressure preference could not be saved. Earlier profile data is preserved.');
   });
 }
 document.querySelectorAll('.tab').forEach((tab, index, tabs) => {
@@ -1645,6 +1563,7 @@ document.addEventListener('keydown', (event) => {
     }
     return;
   }
+  if (document.querySelector('dialog[open]')) return;
   if (!$('coldOpen').classList.contains('hidden')) {
     if (event.key === 'Escape') {
       event.preventDefault();
@@ -1673,4 +1592,5 @@ document.addEventListener('keydown', (event) => {
   if (option && !option.disabled) { event.preventDefault(); option.click(); }
 });
 setupPressureToggle();
+$('openStoryHistory').addEventListener('click', () => openStoryHistory({ api, onResume: resumeActiveSession }));
 loadTiers();

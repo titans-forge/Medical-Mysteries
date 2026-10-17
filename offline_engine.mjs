@@ -1,13 +1,14 @@
-// Browser-only beta runtime. Authored teaching payloads come from the Python
-// engine at build time; this module owns only learner interaction and scoring.
+// Browser runtime for bundled authored stories. This module owns learner
+// interaction, scoring and versioned replay; stored records never define cases.
 const clone = (value) => JSON.parse(JSON.stringify(value));
 const round = (value, places = 3) => Number(value.toFixed(places));
 const points = { public: 1, student: 2, doctor: 3 };
 const check = (condition, message) => { if (!condition) throw new Error(message); };
 
 export class OfflineSession {
-  constructor(spec, { id = `mm-${crypto.randomUUID()}`, clock = () => Date.now() / 1000, order } = {}) {
+  constructor(spec, { id = `mm-${crypto.randomUUID()}`, clock = () => Date.now() / 1000, order, content = null } = {}) {
     this.spec = spec;
+    this.content = content;
     this.clock = clock;
     this.id = id;
     this.index = 0;
@@ -30,6 +31,10 @@ export class OfflineSession {
       return ids;
     });
   }
+  identity() {
+    return this.content ? { build_id: this.content.build_id, content_version: this.content.content_version,
+      edition_label: this.content.edition_label, case_id: this.spec.case_id, tier: this.spec.tier, session_id: this.id } : {};
+  }
   current() { return this.spec.stages[this.index]; }
   deadline() {
     const v = this.current().view;
@@ -41,8 +46,12 @@ export class OfflineSession {
     delete view.hypothesis;
     delete view.pinned_hypothesis;
     view.options = this.order[this.index].map((id) => clone(stage.view.options.find((o) => o.id === id)));
-    view.preview_status = 'EDUCATIONAL BETA · AI-AUDITED';
+    view.preview_status = this.content?.content_version > 1
+      ? 'SYNTHETIC EDUCATIONAL PREVIEW · PENDING HUMAN REVIEW' : 'EDUCATIONAL BETA · AI-AUDITED';
     view.case_context.preview_status = view.preview_status;
+    Object.assign(view, this.identity());
+    if (this.content) Object.assign(view.case_context, { build_id: this.content.build_id,
+      content_version: this.content.content_version, edition_label: this.content.edition_label });
     view.examined_hotspots = [...this.examined].sort();
     view.observations = stage.hotspots.filter((h) => this.examined.includes(h.id)).map(({ id, label, finding }) => ({ id, label, finding }));
     view.observations_complete = stage.required.every((id) => this.examined.includes(id));
@@ -59,7 +68,7 @@ export class OfflineSession {
     const h = this.current().hotspots.find((item) => item.id === id);
     check(h, 'unknown or hidden hotspot');
     if (!this.examined.includes(id)) this.examined.push(id);
-    return { hotspot_id: id, label: h.label, finding: h.finding, examined: true,
+    return { ...this.identity(), hotspot_id: id, label: h.label, finding: h.finding, examined: true,
       required_observations_complete: this.view().observations_complete, stage: this.view() };
   }
   attach(stageId, optionId, evidenceId, stance) {
@@ -71,7 +80,7 @@ export class OfflineSession {
     this.differential[stageId] ||= {};
     this.differential[stageId][optionId] ||= {};
     this.differential[stageId][optionId][evidenceId] = stance;
-    return { stage_id: stageId, option_id: optionId, evidence_id: evidenceId, stance, differential: clone(this.differential) };
+    return { ...this.identity(), stage_id: stageId, option_id: optionId, evidence_id: evidenceId, stance, differential: clone(this.differential) };
   }
   answer(optionId, confidence = null, ranking = null) {
     check(!this.finished, 'case already finished');
@@ -100,7 +109,7 @@ export class OfflineSession {
         consequence: choice.result.consequence || '', ...this.error(choice) });
     }
     if (correct && stage.view.supports_ranking) this.hypothesis = choice.label;
-    const response = { ...clone(choice.result), earned, time_expired: expired, confidence };
+    const response = { ...clone(choice.result), ...this.identity(), earned, time_expired: expired, confidence };
     this.displayed = this.view();
     if (!correct) response.stage = this.view();
     else if (this.index + 1 === this.spec.stages.length) {
@@ -169,7 +178,8 @@ export class OfflineSession {
       comparison: stages.map((s) => { const first = this.transcript.find((t) => t.stage_id === s.stage_id);
         return { stage_number: s.stage_number, expert_choice: s.expert_choice, first_try_choice: first?.option_label ?? null,
           matched: Boolean(first?.correct), ...(first && !first.correct ? this.error(choiceFor(first)) : {}) }; }) };
-    Object.assign(result, { finished: true, score: this.score(), review_status: 'AI-audited educational beta; community review invited',
+    Object.assign(result, { ...this.identity(), finished: true, score: this.score(), review_status: this.content?.content_version > 1
+      ? 'Synthetic educational preview; pending human review' : 'AI-audited educational beta; community review invited',
       stage_autopsy: stages, clinical_autopsy: clinical, reasoning_autopsy: { stages, ...clinical }, review_queue: queue, path_debrief: path,
       visual_autopsy: { score: this.score(), timeline: stages.map((s) => {
         const first = this.transcript.find((t) => t.stage_id === s.stage_id);
@@ -181,83 +191,341 @@ export class OfflineSession {
   resume() { return { ...this.snapshot(), last_result: clone(this.lastResult), displayed_stage: clone(this.displayed || this.view()) }; }
 }
 
-export function createOfflineAPI(bundle, { storage, clock = () => Date.now() / 1000 } = {}) {
-  check(bundle.schema === 1, 'Unsupported game package version');
+const STORY_KEY_PREFIX = 'mmStorySession:v2:';
+const FEEDBACK_KEY_PREFIX = 'mmStoryFeedback:v2:';
+const LEGACY_KEY = 'mmBetaSessions:v1';
+const MAX_SESSION_BYTES = 256 * 1024;
+const MAX_LEGACY_BYTES = 4 * 1024 * 1024;
+const MAX_ACTIONS = 500;
+const MAX_CACHE = 12;
+const RATINGS = ['helpful', 'unclear', 'too_easy', 'too_hard'];
+const isRecord = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
+const exactKeys = (value, keys) => isRecord(value) && Object.keys(value).length === keys.length && keys.every((key) => Object.hasOwn(value, key));
+const validId = (value) => typeof value === 'string' && /^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$/.test(value);
+const validTime = (value) => typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= Number.MAX_SAFE_INTEGER / 1000;
+const withinBytes = (text, maximum) => typeof text === 'string' && text.length <= maximum
+  && (typeof TextEncoder === 'undefined' || new TextEncoder().encode(text).length <= maximum);
+const keyFor = (id) => `${STORY_KEY_PREFIX}${id}`;
+const savedNote = 'Saved on this browser.';
+
+function contentFor(bundle) {
+  return Object.freeze({ build_id: bundle.build_id, content_version: bundle.content_version ?? 1,
+    edition_label: bundle.edition_label ?? 'Original story edition' });
+}
+
+function recordKeys(record) {
+  return Object.hasOwn(record ?? {}, 'rating')
+    ? ['id', 'case_id', 'started', 'order', 'actions', 'rating']
+    : ['id', 'case_id', 'started', 'order', 'actions'];
+}
+
+// Replay uses only bundled case definitions. Saved order, IDs and times are data,
+// never authored case content or trusted result/score fields.
+function replayRecord(record, edition, clock) {
+  check(exactKeys(record, recordKeys(record)) && validId(record.id) && typeof record.case_id === 'string'
+    && validTime(record.started) && Array.isArray(record.actions) && record.actions.length <= MAX_ACTIONS
+    && (!Object.hasOwn(record, 'rating') || RATINGS.includes(record.rating)), 'Saved case record is damaged');
+  const spec = edition.bundle.cases.find((item) => item.case_id === record.case_id);
+  check(spec, 'Saved case content is unavailable');
+  check(Array.isArray(record.order) && record.order.length === spec.stages.length, 'Saved option order is damaged');
+  for (const [index, order] of record.order.entries()) {
+    const ids = spec.stages[index].view.options.map((option) => option.id);
+    check(Array.isArray(order) && order.length === ids.length && new Set(order).size === ids.length
+      && order.every((id) => typeof id === 'string' && ids.includes(id)), 'Saved option order is damaged');
+  }
+  let replayTime = record.started;
+  const session = new OfflineSession(spec, { id: record.id, clock: () => replayTime, order: clone(record.order), content: edition.content });
+  for (const action of record.actions) {
+    check(exactKeys(action, ['kind', 'args', 'time']) && ['answer', 'examine', 'attach'].includes(action.kind)
+      && Array.isArray(action.args) && validTime(action.time) && action.time >= replayTime, 'Saved action is damaged');
+    if (action.kind === 'answer') check(action.args.length === 3 && typeof action.args[0] === 'string'
+      && (action.args[1] === null || Number.isInteger(action.args[1]))
+      && (action.args[2] === null || (Array.isArray(action.args[2]) && action.args[2].every((id) => typeof id === 'string'))), 'Saved answer is damaged');
+    if (action.kind === 'examine') check(action.args.length === 1 && typeof action.args[0] === 'string', 'Saved observation is damaged');
+    if (action.kind === 'attach') check(action.args.length === 4 && action.args.every((value) => typeof value === 'string'), 'Saved evidence link is damaged');
+    replayTime = action.time;
+    session[action.kind](...action.args);
+  }
+  session.clock = clock;
+  return session;
+}
+
+export function createOfflineAPI(bundle, { storage, clock = () => Date.now() / 1000, legacyBundles = [] } = {}) {
+  const registry = new Map();
+  for (const candidate of [bundle, ...legacyBundles]) {
+    check(candidate?.schema === 1 && typeof candidate.build_id === 'string' && candidate.build_id.length > 0
+      && candidate.build_id.length <= 200 && Array.isArray(candidate.cases), 'Unsupported game package version');
+    const content = contentFor(candidate);
+    check(Number.isSafeInteger(content.content_version) && content.content_version > 0
+      && typeof content.edition_label === 'string' && content.edition_label.length > 0, 'Unsupported content edition');
+    check(!registry.has(candidate.build_id), 'Duplicate bundled build identity');
+    registry.set(candidate.build_id, { bundle: candidate, content });
+  }
+  const current = registry.get(bundle.build_id);
+  const legacyBuilds = new Set((legacyBundles.length ? legacyBundles : [bundle]).map((item) => item.build_id));
   const sessions = new Map();
-  const key = 'mmBetaSessions:v1';
   const events = new Map();
-  function load(id) {
-    if (sessions.has(id)) return sessions.get(id);
-    let stored;
-    try { stored = JSON.parse(storage?.getItem(key) || 'null'); } catch { /* unavailable or damaged storage */ }
-    const record = stored?.build === bundle.build_id && stored.sessions?.find((s) => s.id === id);
-    check(record && Array.isArray(record.actions) && record.actions.length <= 500, 'Saved case unavailable or changed; choose a new case');
-    const spec = bundle.cases.find((c) => c.case_id === record.case_id);
-    check(spec, 'Saved case unavailable; choose a new case');
-    let replayTime = record.started;
-    const session = new OfflineSession(spec, { id, clock: () => replayTime, order: record.order });
+  const persistence = new Map();
+
+  function unreadable(key, note, session_id) { return { key, note, ...(session_id ? { session_id } : {}) }; }
+  function readSlot(id) {
+    let text;
+    try { text = storage?.getItem(keyFor(id)) ?? null; }
+    catch { return { status: 'unavailable', note: 'Browser storage is unavailable; this route could not be read.' }; }
+    if (text === null) return { status: 'empty', text: null };
     try {
-      for (const action of record.actions) {
-        replayTime = action.time;
-        if (action.kind === 'answer') session.answer(...action.args);
-        else if (action.kind === 'examine') session.examine(...action.args);
-        else if (action.kind === 'attach') session.attach(...action.args);
-        else throw new Error('Unknown saved action');
+      check(withinBytes(text, MAX_SESSION_BYTES), 'Saved case exceeds the supported size');
+      const envelope = JSON.parse(text);
+      check(exactKeys(envelope, ['schema', 'build_id', 'content_version', 'edition_label', 'record']) && envelope.schema === 2,
+        'Saved case format is unsupported');
+      const edition = registry.get(envelope.build_id);
+      check(edition && envelope.content_version === edition.content.content_version
+        && envelope.edition_label === edition.content.edition_label, 'Saved case edition is unavailable');
+      check(envelope.record?.id === id, 'Saved case identity is damaged');
+      const session = replayRecord(envelope.record, edition, clock);
+      return { status: 'ok', text, session, record: clone(envelope.record), edition };
+    } catch (error) { return { status: 'invalid', text, note: `${error.message}. Its stored bytes were preserved.` }; }
+  }
+
+  function readLegacy() {
+    let text;
+    try { text = storage?.getItem(LEGACY_KEY) ?? null; }
+    catch { return { records: new Map(), unreadable: [unreadable(LEGACY_KEY, 'Browser storage is unavailable.')], unavailable: true }; }
+    if (text === null) return { records: new Map(), unreadable: [] };
+    try {
+      check(withinBytes(text, MAX_LEGACY_BYTES), 'Original saved cases exceed the supported size');
+      const envelope = JSON.parse(text);
+      check(exactKeys(envelope, ['build', 'sessions']) && Array.isArray(envelope.sessions), 'Original saved case format is unsupported');
+      const edition = registry.get(envelope.build);
+      check(edition && legacyBuilds.has(envelope.build), 'Original saved case build is unavailable');
+      const counts = new Map();
+      for (const record of envelope.sessions) if (validId(record?.id)) counts.set(record.id, (counts.get(record.id) ?? 0) + 1);
+      const records = new Map();
+      const damaged = [];
+      for (const [index, record] of envelope.sessions.entries()) {
+        try {
+          check(counts.get(record?.id) === 1, 'Original saved case identity is missing or duplicated');
+          const session = replayRecord(record, edition, clock);
+          records.set(record.id, { session, record: clone(record), edition });
+        } catch (error) { damaged.push(unreadable(LEGACY_KEY, `Entry ${index + 1}: ${error.message}.`, validId(record?.id) ? record.id : undefined)); }
       }
-    } catch { throw new Error('Saved case damaged; choose a new case'); }
-    session.clock = clock;
-    sessions.set(id, session);
-    events.set(id, record);
-    return session;
+      return { records, unreadable: damaged };
+    } catch (error) { return { records: new Map(), unreadable: [unreadable(LEGACY_KEY, `${error.message}. Original bytes were preserved.`)] }; }
   }
-  function persist() {
-    let old;
-    try { old = JSON.parse(storage?.getItem(key) || 'null'); } catch { /* optional */ }
-    const records = new Map((old?.build === bundle.build_id && Array.isArray(old.sessions) ? old.sessions : []).map((r) => [r.id, r]));
-    for (const [id, value] of events) { records.delete(id); records.set(id, value); }
-    try { storage?.setItem(key, JSON.stringify({ build: bundle.build_id, sessions: [...records.values()].slice(-12) })); }
-    catch { /* Gameplay remains usable when iframe storage is unavailable. */ }
+
+  function cache(id, value, rawText = null, fromLegacy = false) {
+    sessions.set(id, value.session);
+    events.set(id, clone(value.record));
+    persistence.set(id, { expected: rawText, status: 'saved', note: savedNote,
+      ...(fromLegacy ? { legacyExpected: JSON.stringify(value.record) } : {}) });
+    trimCache(id);
+    return value.session;
   }
+
+  function trimCache(keep) {
+    for (const id of sessions.keys()) {
+      if (sessions.size <= MAX_CACHE) break;
+      if (id !== keep && persistence.get(id)?.status === 'saved') {
+        sessions.delete(id); events.delete(id); persistence.delete(id);
+      }
+    }
+  }
+
+  function load(id) {
+    check(validId(id), 'Saved case identity is invalid');
+    if (sessions.has(id)) { checkUnchanged(id); return sessions.get(id); }
+    const slot = readSlot(id);
+    if (slot.status === 'ok') return cache(id, slot, slot.text);
+    check(slot.status === 'empty', slot.note || 'Saved case is unavailable');
+    const legacy = readLegacy();
+    const value = legacy.records.get(id);
+    check(value, legacy.unreadable.find((item) => item.session_id === id)?.note || 'Saved case unavailable; its original storage was preserved');
+    return cache(id, value, null, true);
+  }
+
+  function storageStatus(id, status, note) {
+    const state = persistence.get(id) ?? { expected: null };
+    Object.assign(state, { status, note });
+    persistence.set(id, state);
+    return { persistence_status: status, persistence_note: note };
+  }
+
+  function persistenceFields(id) {
+    const value = persistence.get(id);
+    return { persistence_status: value?.status ?? 'unavailable', persistence_note: value?.note ?? 'This route is not saved.' };
+  }
+
+  function checkUnchanged(id) {
+    const value = persistence.get(id);
+    const conflict = () => {
+      storageStatus(id, 'conflict', 'Another tab changed this saved route. Reload before continuing; no stored route was overwritten.');
+      throw new Error(persistence.get(id).note);
+    };
+    try {
+      if (storage && storage.getItem(keyFor(id)) !== value.expected) conflict();
+    } catch (error) {
+      if (persistence.get(id)?.status === 'conflict') throw error;
+      storageStatus(id, 'unavailable', 'Browser storage is unavailable. This tab can continue, but its new actions are not saved.');
+      return false;
+    }
+    if (value.legacyExpected !== undefined) {
+      const legacy = readLegacy();
+      if (legacy.unavailable) {
+        storageStatus(id, 'unavailable', 'Original browser storage is unavailable. New actions are kept only in this tab.');
+        return false;
+      }
+      const original = legacy.records.get(id);
+      if (!original || JSON.stringify(original.record) !== value.legacyExpected) conflict();
+    }
+    return true;
+  }
+
+  function persist(id) {
+    const session = sessions.get(id);
+    const state = persistence.get(id);
+    if (!storage) return storageStatus(id, 'unavailable', 'Browser storage is unavailable. This route is kept only in this tab.');
+    try {
+      if (!checkUnchanged(id)) return persistenceFields(id);
+      const text = JSON.stringify({ schema: 2, ...session.content, record: events.get(id) });
+      check(withinBytes(text, MAX_SESSION_BYTES), 'This saved route exceeds the supported size');
+      if (storage.getItem(keyFor(id)) !== state.expected) return storageStatus(id, 'conflict', 'Another tab changed this saved route. No stored route was overwritten.');
+      storage.setItem(keyFor(id), text);
+      state.expected = text;
+      delete state.legacyExpected;
+      return storageStatus(id, 'saved', savedNote);
+    } catch (error) {
+      if (persistence.get(id)?.status === 'conflict') return persistenceFields(id);
+      return storageStatus(id, 'unsaved', 'This action is kept only in this tab because browser storage could not save it. Existing saved bytes were preserved.');
+    }
+  }
+
+  function history() {
+    const legacy = readLegacy();
+    const runs = new Map();
+    const damaged = [...legacy.unreadable];
+    const blocked = new Set();
+    const describe = (session, record, fields = { persistence_status: 'saved', persistence_note: savedNote }) => ({
+      ...session.identity(), title: session.spec.title, finished: session.finished, started: record.started,
+      ...(session.finished ? { score: session.score() } : {}), ...fields,
+    });
+    for (const [id, value] of legacy.records) runs.set(id, describe(value.session, value.record));
+    let unavailable = Boolean(legacy.unavailable || !storage);
+    try {
+      check(storage && Number.isSafeInteger(storage.length) && storage.length >= 0 && typeof storage.key === 'function', 'Browser history enumeration is unavailable');
+      const keys = [];
+      for (let index = 0; index < storage.length; index += 1) {
+        const key = storage.key(index);
+        if (typeof key === 'string' && key.startsWith(STORY_KEY_PREFIX)) keys.push(key);
+      }
+      for (const key of keys) {
+        const id = key.slice(STORY_KEY_PREFIX.length);
+        const slot = validId(id) ? readSlot(id) : { status: 'invalid', note: 'Saved case identity is invalid.' };
+        // A newer unreadable slot must not fall through to an older route under the same ID.
+        runs.delete(id);
+        if (slot.status === 'ok') runs.set(id, describe(slot.session, slot.record));
+        else { blocked.add(id); damaged.push(unreadable(key, slot.note || 'Saved case unavailable.', id)); }
+      }
+    } catch (error) { unavailable = true; }
+    for (const [id, session] of sessions) {
+      // In-memory valid attempts remain visible after quota failure, clearly marked unsaved.
+      if (!blocked.has(id) && persistence.get(id)?.status !== 'saved' && persistence.get(id)?.status !== 'conflict')
+        runs.set(id, describe(session, events.get(id), persistenceFields(id)));
+    }
+    return { ...current.content, runs: [...runs.values()].sort((a, b) => b.started - a.started || a.session_id.localeCompare(b.session_id)),
+      unreadable_count: damaged.length, unreadable: damaged,
+      persistence_status: unavailable ? 'unavailable' : 'saved',
+      persistence_note: unavailable ? 'Some browser storage could not be read. The listed in-memory routes may be incomplete.' : 'History read without changing saved routes.' };
+  }
+
+  function saveFeedback(session, rating) {
+    if (!storage) return { persistence_status: 'unavailable', persistence_note: 'Rating kept only in this tab; browser storage is unavailable.' };
+    const key = `${FEEDBACK_KEY_PREFIX}${session.id}`;
+    try {
+      const existing = storage.getItem(key);
+      if (existing !== null) {
+        const raw = JSON.parse(existing);
+        check(exactKeys(raw, ['schema', 'session_id', 'build_id', 'content_version', 'rating']) && raw.schema === 2
+          && raw.session_id === session.id && raw.build_id === session.content.build_id
+          && raw.content_version === session.content.content_version && RATINGS.includes(raw.rating), 'Saved rating is unavailable');
+      }
+      storage.setItem(key, JSON.stringify({ schema: 2, session_id: session.id,
+        build_id: session.content.build_id, content_version: session.content.content_version, rating }));
+      return { persistence_status: 'saved', persistence_note: 'Rating saved on this browser.' };
+    } catch { return { persistence_status: 'unsaved', persistence_note: 'The local rating could not be saved. Existing saved bytes were preserved.' }; }
+  }
+
+  function withPersistence(data, fields) {
+    const result = { ...data, ...fields };
+    for (const key of ['stage', 'next', 'displayed_stage', 'last_result']) {
+      if (isRecord(result[key])) result[key] = withPersistence(result[key], fields);
+    }
+    return result;
+  }
+
   return async function request(path, options = {}) {
     try {
       const url = new URL(path, 'https://game.invalid');
       const body = options.body ? JSON.parse(options.body) : {};
       let data;
-      if (url.pathname === '/api/tiers') data = { tiers: Object.fromEntries(['public', 'student', 'doctor'].map((tier) => [tier,
-        bundle.cases.filter((c) => c.tier === tier).map((c) => ({ case_id: c.case_id, title: c.title, attainable_xp: c.stages.length * points[tier], cover: c.stages[0].view.media }))])),
-        release_mode: false, review_status: 'AI-audited educational beta' };
+      if (url.pathname === '/api/tiers') data = { ...current.content,
+        tiers: Object.fromEntries(['public', 'student', 'doctor'].map((tier) => [tier,
+          bundle.cases.filter((item) => item.tier === tier).map((item) => ({ ...current.content, case_id: item.case_id,
+            tier, title: item.title, attainable_xp: item.stages.length * points[tier], cover: item.stages[0].view.media }))])),
+        editions: [...registry.values()].map((edition) => edition.content), release_mode: false, review_status: 'Synthetic educational preview; pending human review' };
+      else if (url.pathname === '/api/history') data = history();
       else if (url.pathname === '/api/start' || url.pathname === '/api/restart') {
         const tier = body.tier || url.searchParams.get('tier') || 'public';
         const caseId = body.case_id || url.searchParams.get('case_id');
-        const spec = bundle.cases.find((c) => c.tier === tier && (!caseId || c.case_id === caseId));
+        const buildId = Object.hasOwn(body, 'build_id') ? body.build_id : url.searchParams.get('build_id') ?? bundle.build_id;
+        const edition = registry.get(buildId);
+        check(edition, 'Requested story edition is unavailable');
+        const spec = edition.bundle.cases.find((item) => item.tier === tier && (!caseId || item.case_id === caseId));
         check(spec, 'Case not found');
-        const session = new OfflineSession(spec, { clock });
+        check(sessions.size < MAX_CACHE || [...persistence.values()].some((value) => value.status === 'saved'),
+          'This tab has several unsaved routes. Keep it open and restore browser storage before starting another.');
+        const session = new OfflineSession(spec, { clock, content: edition.content });
+        check(validTime(session.started), 'Session time is invalid');
+        const old = readLegacy();
+        check(!sessions.has(session.id) && !old.records.has(session.id)
+          && !old.unreadable.some((item) => item.session_id === session.id), 'Session identity already exists');
+        const slot = readSlot(session.id);
+        check(slot.status === 'empty' || slot.status === 'unavailable', 'Session identity already has saved content');
         sessions.set(session.id, session);
-        events.set(session.id, { id: session.id, case_id: spec.case_id, started: session.started, order: session.order, actions: [] });
-        while (sessions.size > 12) { const oldest = sessions.keys().next().value; sessions.delete(oldest); events.delete(oldest); }
-        data = session.snapshot();
-        persist();
-      } else if (url.pathname === '/api/resume') data = load(url.searchParams.get('session_id')).resume();
-      else if (['/api/answer', '/api/examine', '/api/attach-evidence'].includes(url.pathname)) {
+        events.set(session.id, { id: session.id, case_id: spec.case_id, started: session.started, order: clone(session.order), actions: [] });
+        persistence.set(session.id, { expected: null, status: 'unavailable', note: 'This route is not saved yet.' });
+        const fields = persist(session.id);
+        trimCache(session.id);
+        data = withPersistence(session.snapshot(), fields);
+      } else if (url.pathname === '/api/resume') {
+        const id = url.searchParams.get('session_id');
+        data = withPersistence(load(id).resume(), persistenceFields(id));
+      } else if (['/api/answer', '/api/examine', '/api/attach-evidence'].includes(url.pathname)) {
         const session = load(body.session_id);
+        checkUnchanged(session.id);
         const kind = url.pathname === '/api/answer' ? 'answer' : url.pathname === '/api/examine' ? 'examine' : 'attach';
-        const args = kind === 'answer' ? [body.option_id, body.confidence ?? null, body.ranking ?? null] : kind === 'examine' ? [body.hotspot_id] : [body.stage_id, body.option_id, body.evidence_id, body.stance];
-        check(events.get(session.id).actions.length < 500, 'Practice session is full; restart this case');
+        const args = kind === 'answer' ? [body.option_id, body.confidence ?? null, body.ranking ?? null]
+          : kind === 'examine' ? [body.hotspot_id] : [body.stage_id, body.option_id, body.evidence_id, body.stance];
+        check(events.get(session.id).actions.length < MAX_ACTIONS, 'Practice session is full; start a new run');
         const time = clock();
-        data = session[kind](...args);
+        const previous = events.get(session.id).actions.at(-1)?.time ?? events.get(session.id).started;
+        check(validTime(time) && time >= previous, 'Session clock moved backwards; retry after the clock is restored');
+        // One logged time governs expiry, duration and the next stage's start.
+        // Reading the wall clock again inside a mutation would make cold replay differ.
+        const liveClock = session.clock;
+        session.clock = () => time;
+        try { data = session[kind](...args); }
+        finally { session.clock = liveClock; }
         events.get(session.id).actions.push({ kind, args, time });
-        persist();
+        data = withPersistence(data, persist(session.id));
       } else if (['/api/feedback', '/api/debrief-event'].includes(url.pathname)) {
         const session = load(body.session_id);
         check(session.finished && session.spec.case_id === body.case_id && session.spec.tier === body.tier, 'Complete this case first');
-        // No collection endpoint exists in the static beta. Never imply that
-        // a developer received a local rating; community reports live on itch.
+        let fields = persistenceFields(session.id);
         if (url.pathname === '/api/feedback') {
-          check(['helpful', 'unclear', 'too_easy', 'too_hard'].includes(body.rating), 'invalid feedback rating');
-          events.get(session.id).rating = body.rating;
-          persist();
+          check(RATINGS.includes(body.rating), 'Invalid feedback rating');
+          fields = saveFeedback(session, body.rating);
         }
-        data = { accepted: true, local_only: true };
+        data = { ...session.identity(), accepted: true, local_only: true, ...fields };
       } else throw new Error('This feature is not available in the browser beta');
       return { ok: true, status: 200, json: async () => clone(data) };
     } catch (error) { return { ok: false, status: 400, json: async () => ({ error: error.message }) }; }

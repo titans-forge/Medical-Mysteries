@@ -1,0 +1,3044 @@
+// These immutable definitions are shipped application content, never storage-authored.
+// Preserve every saved version here before revising an episode or its contrast question.
+function deepFreeze(value) {
+  if (value && typeof value === 'object') {
+    Object.values(value).forEach(deepFreeze);
+    Object.freeze(value);
+  }
+  return value;
+}
+
+export const LEGACY_INVESTIGATION_CONTENT = deepFreeze([
+  {
+    "episode": {
+      "id": "doc-002-tearing-back-investigation",
+      "version": 1,
+      "title": "The Night Shift",
+      "subtitle": "A bounded, synthetic evidence-discovery episode",
+      "opening": "A 61-year-old arrives with sudden severe chest discomfort. The team is already arranging urgent assessment. The initial handoff is incomplete.",
+      "disclaimer": "Educational game only. All measurements and events in this investigation are authored fictional content pending human review, not clinical advice or source facts.",
+      "hypotheses": [
+        {
+          "id": "acute-aortic-syndrome",
+          "label": "Acute aortic syndrome"
+        },
+        {
+          "id": "acute-coronary-syndrome",
+          "label": "Acute coronary syndrome"
+        },
+        {
+          "id": "pulmonary-embolism",
+          "label": "Pulmonary embolism"
+        }
+      ],
+      "sources": [
+        {
+          "title": "2022 ACC/AHA Guideline for the Diagnosis and Management of Aortic Disease",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10784847/"
+        }
+      ],
+      "actions": [
+        {
+          "id": "symptom-timeline",
+          "label": "Build the symptom timeline",
+          "category": "history",
+          "minutes": 4,
+          "requires": [],
+          "finding": "Authored fictional history: abrupt chest pain was maximal at onset and moved through to the back.",
+          "interpretation": "The onset and radiation are high-risk features, but they do not identify one diagnosis by themselves.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "focused-examination",
+          "label": "Perform a focused examination",
+          "category": "examination",
+          "minutes": 6,
+          "requires": [],
+          "finding": "Authored fictional measurement: arm pressures are 178/105 on the right and 142/88 on the left; the difference is reproducible.",
+          "interpretation": "The fictional inter-arm difference increases concern for an aortic process and keeps premature coronary anchoring unsafe.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "ecg",
+          "label": "Review the ECG",
+          "category": "cardiac",
+          "minutes": 5,
+          "requires": [],
+          "finding": "Authored fictional tracing: a small, nonspecific ST change is present in aVL without a complete diagnostic pattern.",
+          "interpretation": "This finding keeps acute coronary syndrome in the differential but is not decisive and cannot erase the aortic warning signs.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "chest-radiograph",
+          "label": "Review the chest radiograph",
+          "category": "imaging",
+          "minutes": 5,
+          "requires": [],
+          "finding": "Authored fictional radiograph: the mediastinal contour is described as subtly widened, with no single definitive answer.",
+          "interpretation": "A plain chest radiograph cannot exclude acute aortic syndrome; this fictional image is an ambiguity-preserving clue, not a diagnosis.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "aortic-cta",
+          "label": "Obtain CT angiography of the aorta",
+          "category": "imaging",
+          "minutes": 12,
+          "requires": [],
+          "finding": "Authored fictional CTA report: an intimal flap is seen in the ascending aorta and extends into the arch.",
+          "interpretation": "In this fictional episode, the CTA is the decisive clue favoring acute aortic syndrome over the competing hypotheses.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "specialist-handoff",
+          "label": "Make a specialist handoff",
+          "category": "coordination",
+          "minutes": 8,
+          "requires": [
+            "aortic-cta"
+          ],
+          "finding": "The fictional handoff carries the symptom report and CTA finding; it does not imply that other observations were performed.",
+          "interpretation": "A structured handoff preserves uncertainty and the decisive clue for human review; it does not model treatment or outcome.",
+          "sourceIds": [
+            0
+          ]
+        }
+      ]
+    },
+    "transfer": {
+      "id": "aortic-image-quality-contrast",
+      "version": 1,
+      "prompt": "A different fictional patient has sudden severe chest pain. The CTA report says motion obscures the ascending aorta and calls that segment nondiagnostic. No definite flap is reported. Which conclusion best respects this evidence?",
+      "choices": [
+        {
+          "id": "excluded",
+          "label": "The absence of a reported flap excludes an aortic process.",
+          "feedback": "A nondiagnostic segment is not a reliable negative finding. The report explicitly limits what can be concluded."
+        },
+        {
+          "id": "unresolved",
+          "label": "The aortic question remains unresolved; the team needs to clarify the inadequate study.",
+          "feedback": "The limitation matters. Image acquisition and motion affect diagnostic confidence, so an inadequate segment cannot carry an exclusion claim."
+        },
+        {
+          "id": "confirmed",
+          "label": "The symptom pattern alone confirms dissection despite the report.",
+          "feedback": "The symptoms justify concern, not certainty. The fictional report has not established the diagnosis."
+        }
+      ],
+      "answerId": "unresolved",
+      "source": {
+        "title": "2022 ACC/AHA Aortic Disease Guideline: CT image quality",
+        "url": "https://www.ahajournals.org/doi/10.1161/CIR.0000000000001106"
+      },
+      "synthetic": true,
+      "reviewStatus": "pending_human_review",
+      "sourceCheckedDate": "2026-09-11"
+    }
+  },
+  {
+    "episode": {
+      "id": "pub-003-missed-turn-investigation",
+      "version": 1,
+      "title": "The Missed Turn",
+      "subtitle": "A sudden interruption. An incomplete picture.",
+      "opening": "At dinner, a 68-year-old suddenly cannot finish a sentence and has trouble holding a fork. Emergency help is already on the way. Follow the fictional team record as it arrives.",
+      "disclaimer": "Educational game only. All measurements, reports and events are authored fiction pending human review, not clinical advice or source facts.",
+      "reviewStatus": "pending_human_review",
+      "presentation": {
+        "audience": "public",
+        "playMinutes": "4-7",
+        "image": "./assets/episodes/pub-001-stroke-escalation-720.webp",
+        "imageAlt": "Generated illustration of a dinner interrupted by an emergency response. Not diagnostic evidence."
+      },
+      "sources": [
+        {
+          "title": "NICE NG128: stroke recognition and initial assessment, recommendations 1.1.1-1.1.3",
+          "url": "https://www.nice.org.uk/guidance/ng128/chapter/recommendations",
+          "checkedUtc": "2026-09-07T22:08:50Z",
+          "scope": "Recognition, glucose check and urgent professional assessment; no treatment content is used."
+        },
+        {
+          "title": "NINDS: Assess and Treat, CT and MRI sections",
+          "url": "https://www.ninds.nih.gov/health-information/stroke/assess-and-treat",
+          "checkedUtc": "2026-09-07T22:08:50Z",
+          "scope": "Early CT limitations and diffusion-weighted MRI; scenario reports are fictional."
+        }
+      ],
+      "hypotheses": [
+        {
+          "id": "ischemic-stroke",
+          "label": "Ischemic stroke (interrupted blood flow)"
+        },
+        {
+          "id": "hypoglycemia",
+          "label": "Low blood glucose"
+        },
+        {
+          "id": "migraine-aura",
+          "label": "Migraine with neurological symptoms"
+        }
+      ],
+      "actions": [
+        {
+          "id": "witness-account",
+          "label": "Ask what changed at dinner",
+          "category": "history",
+          "minutes": 3,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional witness account: speech was normal a moment earlier. Word-finding difficulty and right-hand weakness began together and persist.",
+          "interpretation": "Sudden speech and one-sided movement changes call for urgent assessment, not a wait-and-see conclusion."
+        },
+        {
+          "id": "team-examination",
+          "label": "Read the team examination",
+          "category": "examination",
+          "minutes": 4,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional examination: the clinician records difficulty naming familiar objects and right-arm drift. The patient remains awake.",
+          "interpretation": "The observed pattern strengthens concern but does not establish its cause alone."
+        },
+        {
+          "id": "glucose-result",
+          "label": "Read the blood glucose result",
+          "category": "laboratory",
+          "minutes": 2,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional measurement during the symptoms: blood glucose is 106 mg/dL (5.9 mmol/L).",
+          "interpretation": "This result does not support low glucose as the current explanation; it does not itself prove stroke."
+        },
+        {
+          "id": "initial-ct",
+          "label": "Read the first scan report",
+          "category": "imaging",
+          "minutes": 6,
+          "requires": [],
+          "sourceIds": [
+            1
+          ],
+          "finding": "Fictional non-contrast head CT report: no hemorrhage is seen; no definite early infarct is visible.",
+          "interpretation": "An early CT without a visible infarct does not rule out ischemic stroke."
+        },
+        {
+          "id": "team-mri-summary",
+          "label": "Read the later imaging review",
+          "category": "imaging",
+          "minutes": 8,
+          "requires": [],
+          "sourceIds": [
+            1
+          ],
+          "finding": "Fictional team review: diffusion MRI shows a small acute left frontal infarct corresponding to the speech and right-arm changes.",
+          "interpretation": "The matching imaging finding supports ischemic stroke in this authored story; it is not a rule that every suspected stroke needs MRI before action."
+        },
+        {
+          "id": "witness-handoff",
+          "label": "Pass on the witness account",
+          "category": "coordination",
+          "minutes": 2,
+          "requires": [
+            "witness-account"
+          ],
+          "sourceIds": [
+            0
+          ],
+          "finding": "The fictional handoff preserves the witnessed onset and persisting changes. It makes no claim about examinations or scans you did not read.",
+          "interpretation": "A useful handoff separates what was witnessed from what remains unknown."
+        }
+      ],
+      "resolution": {
+        "hypothesisId": "ischemic-stroke",
+        "evidenceActionIds": [
+          "team-mri-summary"
+        ],
+        "supportedSummary": "Your conclusion fits the later fictional imaging review. A less revealing first scan did not settle the mystery.",
+        "mismatchSummary": "The chosen explanation does not account for the matching acute infarct described in the fictional imaging review.",
+        "provisionalSummary": "Your route ended before the later imaging review. The conclusion remains provisional; a working hypothesis is not confirmation.",
+        "decisiveClue": "The later fictional MRI report describes an acute left frontal infarct matching the symptoms.",
+        "missingClue": "The later imaging review was not collected. No decisive imaging clue was reached on this route.",
+        "nextLearning": "Distinguish a test that finds no bleeding from evidence that excludes interrupted blood flow. Keep uncertainty visible.",
+        "limitations": [
+          "Synthetic preview pending human medical review. This is a reasoning exercise, not a validated diagnostic assessment.",
+          "Reports are fictional text, not scans. Scene art is reused illustration, not a patient record or diagnostic evidence.",
+          "Timing is authored, non-real-time and non-prognostic. Reading order does not prescribe a clinical workup. Emergency assessment continues independently of your choices.",
+          "No treatment, dose, eligibility decision or patient outcome is modeled. A game conclusion is not evidence of clinical competence."
+        ]
+      }
+    },
+    "transfer": {
+      "id": "resolved-symptoms-contrast",
+      "version": 1,
+      "prompt": "In another fictional story, sudden trouble speaking and one-sided weakness disappear after ten minutes. Emergency help has already been called. What changes about the concern?",
+      "choices": [
+        {
+          "id": "resolved-safe",
+          "label": "Because the symptoms stopped, urgent assessment is no longer needed.",
+          "feedback": "Improvement does not remove the concern. Brief neurological symptoms can still represent an important warning event."
+        },
+        {
+          "id": "confirmed-stroke",
+          "label": "The duration proves that a completed stroke occurred.",
+          "feedback": "Duration alone cannot establish the cause. The team still needs to assess what happened."
+        },
+        {
+          "id": "still-urgent",
+          "label": "The cause remains uncertain, and urgent professional assessment still matters.",
+          "feedback": "The uncertainty and urgency coexist. NICE calls for immediate referral for suspected TIA, with specialist assessment within 24 hours of onset."
+        }
+      ],
+      "answerId": "still-urgent",
+      "source": {
+        "title": "NICE NG128: suspected TIA, recommendation 1.1.5",
+        "url": "https://www.nice.org.uk/guidance/ng128/chapter/recommendations"
+      },
+      "synthetic": true,
+      "reviewStatus": "pending_human_review",
+      "sourceCheckedDate": "2026-09-11"
+    }
+  },
+  {
+    "episode": {
+      "id": "stu-003-after-weekend-investigation",
+      "version": 1,
+      "title": "After the Weekend",
+      "subtitle": "A familiar complaint. Three pieces that must fit.",
+      "opening": "A 26-year-old arrives after a weekend away with vomiting, fatigue and abdominal discomfort. The team is already assessing the patient. The first handoff suggests a stomach illness, but the record is incomplete.",
+      "disclaimer": "Educational game only. All measurements, reports and events are authored fiction pending human review, not clinical advice or source facts.",
+      "reviewStatus": "pending_human_review",
+      "presentation": {
+        "audience": "student",
+        "playMinutes": "5-8",
+        "image": "./assets/episodes/stu-001-dka-escalation-720.webp",
+        "imageAlt": "Generated illustration of a young adult under observation with a hospital team. Not diagnostic evidence."
+      },
+      "sources": [
+        {
+          "title": "ADA/EASD and partner societies: Hyperglycemic Crises in Adults With Diabetes, 2024 consensus report",
+          "url": "https://doi.org/10.2337/dci24-0032",
+          "checkedUtc": "2026-09-07T22:08:50Z",
+          "scope": "Diagnostic triad and competing hyperglycemic states, not treatment. Fictional values are not source patient data."
+        }
+      ],
+      "hypotheses": [
+        {
+          "id": "diabetic-ketoacidosis",
+          "label": "Diabetic ketoacidosis"
+        },
+        {
+          "id": "hyperosmolar-state",
+          "label": "Hyperglycemic hyperosmolar state"
+        },
+        {
+          "id": "gastroenteritis",
+          "label": "Gastroenteritis with dehydration"
+        }
+      ],
+      "actions": [
+        {
+          "id": "recent-history",
+          "label": "Clarify the recent history",
+          "category": "history",
+          "minutes": 3,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional history: thirst and frequent urination started before the vomiting. There is no established diabetes diagnosis in the record.",
+          "interpretation": "The chronology weakens a stomach-only explanation but cannot settle the metabolic diagnosis."
+        },
+        {
+          "id": "bedside-observations",
+          "label": "Read the bedside observations",
+          "category": "examination",
+          "minutes": 3,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional observations: the patient is tired but conversant, with deep breathing, dry mouth and diffuse abdominal discomfort.",
+          "interpretation": "These observations require explanation; they are not specific enough to label the illness."
+        },
+        {
+          "id": "plasma-glucose",
+          "label": "Review the plasma glucose",
+          "category": "laboratory",
+          "minutes": 2,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional laboratory result: plasma glucose is 286 mg/dL.",
+          "interpretation": "Elevated glucose alone is not sufficient to establish ketoacidosis."
+        },
+        {
+          "id": "blood-ketones",
+          "label": "Review the blood ketones",
+          "category": "laboratory",
+          "minutes": 3,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional laboratory result: beta-hydroxybutyrate is 4.8 mmol/L.",
+          "interpretation": "The ketone result adds a second piece. Acid-base evidence is still distinct."
+        },
+        {
+          "id": "acid-base",
+          "label": "Review the acid-base results",
+          "category": "laboratory",
+          "minutes": 4,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional laboratory results: venous pH is 7.22 and bicarbonate is 13 mmol/L.",
+          "interpretation": "Acidosis together with elevated glucose and ketones supports the ketoacidosis explanation in this case."
+        },
+        {
+          "id": "serum-osmolality",
+          "label": "Review serum osmolality",
+          "category": "laboratory",
+          "minutes": 4,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional laboratory result: measured total serum osmolality is 297 mOsm/kg.",
+          "interpretation": "This fictional result does not support a markedly hyperosmolar explanation. It does not replace the three-part ketoacidosis assessment."
+        }
+      ],
+      "resolution": {
+        "hypothesisId": "diabetic-ketoacidosis",
+        "evidenceActionIds": [
+          "plasma-glucose",
+          "blood-ketones",
+          "acid-base"
+        ],
+        "supportedSummary": "Your conclusion connects all three collected findings: elevated glucose, ketones and acidosis. The opening complaint alone was not enough.",
+        "mismatchSummary": "The collected glucose, ketone and acid-base findings fit ketoacidosis more closely than the selected explanation in this fictional case.",
+        "provisionalSummary": "Your conclusion remains provisional because the glucose, ketone and acid-base results were not all collected. A partial pattern is not the complete evidence set.",
+        "decisiveClue": "The fictional combination is glucose 286 mg/dL, beta-hydroxybutyrate 4.8 mmol/L, pH 7.22 and bicarbonate 13 mmol/L.",
+        "missingClue": "At least one component of the three-part laboratory pattern is missing from your route.",
+        "nextLearning": "Ask whether the required pieces fit together, rather than letting one abnormal number carry the whole conclusion.",
+        "limitations": [
+          "Synthetic preview pending human medical review. This is a reasoning exercise, not a validated diagnostic assessment.",
+          "Reports are fictional text, not scans. Scene art is reused illustration, not a patient record or diagnostic evidence.",
+          "Timing is authored, non-real-time and non-prognostic. Reading order does not prescribe a clinical workup. Emergency assessment continues independently of your choices.",
+          "No treatment, dose, eligibility decision or patient outcome is modeled. A game conclusion is not evidence of clinical competence."
+        ]
+      }
+    },
+    "transfer": {
+      "id": "hyperosmolar-pattern-contrast",
+      "version": 1,
+      "prompt": "A different fictional patient has dehydration, glucose 720 mg/dL, measured total osmolality 334 mOsm/kg, beta-hydroxybutyrate 0.8 mmol/L, venous pH 7.36 and bicarbonate 23 mmol/L. Which explanation fits this laboratory pattern better?",
+      "choices": [
+        {
+          "id": "dka",
+          "label": "Ketoacidosis, because any very high glucose is sufficient.",
+          "feedback": "High glucose alone does not establish ketoacidosis. The marked ketosis and acidosis from the earlier case are absent here."
+        },
+        {
+          "id": "hhs",
+          "label": "A hyperosmolar hyperglycemic state rather than the earlier ketoacidotic pattern.",
+          "feedback": "This authored pattern combines severe hyperglycemia and hyperosmolality without significant ketosis or acidosis. It contrasts with the three-part ketoacidosis pattern."
+        },
+        {
+          "id": "normal",
+          "label": "No major metabolic problem, because the pH is not low.",
+          "feedback": "A near-normal pH does not make severe hyperglycemia and hyperosmolality harmless. The full pattern matters."
+        }
+      ],
+      "answerId": "hhs",
+      "source": {
+        "title": "Hyperglycemic Crises in Adults With Diabetes: 2024 consensus report",
+        "url": "https://doi.org/10.2337/dci24-0032"
+      },
+      "synthetic": true,
+      "reviewStatus": "pending_human_review",
+      "sourceCheckedDate": "2026-09-11"
+    }
+  }
+]);
+
+export const V2_INVESTIGATION_CONTENT = deepFreeze([
+  {
+    "episode": {
+      "id": "doc-002-tearing-back-investigation",
+      "version": 2,
+      "title": "The Night Shift",
+      "subtitle": "A bounded, synthetic evidence-discovery episode",
+      "opening": "A 61-year-old arrives with sudden severe chest discomfort. The team is already arranging urgent assessment. The initial handoff is incomplete.",
+      "disclaimer": "Educational game only. All measurements and events in this investigation are authored fictional content pending human review, not clinical advice or source facts.",
+      "hypotheses": [
+        {
+          "id": "acute-aortic-syndrome",
+          "label": "Acute aortic syndrome"
+        },
+        {
+          "id": "acute-coronary-syndrome",
+          "label": "Acute coronary syndrome"
+        },
+        {
+          "id": "pulmonary-embolism",
+          "label": "Pulmonary embolism"
+        }
+      ],
+      "sources": [
+        {
+          "title": "2022 ACC/AHA Guideline for the Diagnosis and Management of Aortic Disease",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10784847/"
+        }
+      ],
+      "actions": [
+        {
+          "id": "symptom-timeline",
+          "label": "Build the symptom timeline",
+          "category": "history",
+          "minutes": 4,
+          "requires": [],
+          "finding": "Authored fictional history: abrupt chest pain was maximal at onset and moved through to the back.",
+          "interpretation": "The onset and radiation are high-risk features, but they do not identify one diagnosis by themselves.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "focused-examination",
+          "label": "Perform a focused examination",
+          "category": "examination",
+          "minutes": 6,
+          "requires": [],
+          "finding": "Authored fictional measurement: arm pressures are 178/105 on the right and 142/88 on the left; the difference is reproducible.",
+          "interpretation": "The fictional inter-arm difference increases concern for an aortic process and keeps premature coronary anchoring unsafe.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "ecg",
+          "label": "Review the ECG",
+          "category": "cardiac",
+          "minutes": 5,
+          "requires": [],
+          "finding": "Authored fictional tracing: a small, nonspecific ST change is present in aVL without a complete diagnostic pattern.",
+          "interpretation": "This finding keeps acute coronary syndrome in the differential but is not decisive and cannot erase the aortic warning signs.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "chest-radiograph",
+          "label": "Review the chest radiograph",
+          "category": "imaging",
+          "minutes": 5,
+          "requires": [],
+          "finding": "Authored fictional radiograph: the mediastinal contour is described as subtly widened, with no single definitive answer.",
+          "interpretation": "A plain chest radiograph cannot exclude acute aortic syndrome; this fictional image is an ambiguity-preserving clue, not a diagnosis.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "aortic-cta",
+          "label": "Obtain CT angiography of the aorta",
+          "category": "imaging",
+          "minutes": 12,
+          "requires": [],
+          "finding": "Authored fictional CTA report: an intimal flap is seen in the ascending aorta and extends into the arch.",
+          "interpretation": "In this fictional episode, the CTA is the decisive clue favoring acute aortic syndrome over the competing hypotheses.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "specialist-handoff",
+          "label": "Make a specialist handoff",
+          "category": "coordination",
+          "minutes": 8,
+          "requires": [
+            "aortic-cta"
+          ],
+          "finding": "The fictional handoff carries the symptom report and CTA finding; it does not imply that other observations were performed.",
+          "interpretation": "A structured handoff preserves uncertainty and the decisive clue for human review; it does not model treatment or outcome.",
+          "sourceIds": [
+            0
+          ]
+        }
+      ],
+      "reasoning": {
+        "openingFacts": [
+          {
+            "id": "opening:chest-discomfort",
+            "label": "Sudden severe chest discomfort in the opening handoff",
+            "strength": "concern",
+            "supports": [
+              "acute-aortic-syndrome",
+              "acute-coronary-syndrome",
+              "pulmonary-embolism"
+            ]
+          }
+        ],
+        "supportRules": {
+          "symptom-timeline": {
+            "strength": "suggestive",
+            "supports": [
+              "acute-aortic-syndrome"
+            ]
+          },
+          "focused-examination": {
+            "strength": "suggestive",
+            "supports": [
+              "acute-aortic-syndrome"
+            ]
+          },
+          "ecg": {
+            "strength": "limited",
+            "supports": [
+              "acute-coronary-syndrome"
+            ]
+          },
+          "chest-radiograph": {
+            "strength": "suggestive",
+            "supports": [
+              "acute-aortic-syndrome"
+            ]
+          },
+          "aortic-cta": {
+            "strength": "decisive",
+            "supports": [
+              "acute-aortic-syndrome"
+            ]
+          },
+          "specialist-handoff": {
+            "strength": "coordination",
+            "supports": []
+          }
+        },
+        "uncertaintyOptions": [
+          {
+            "id": "symptoms-not-confirmation",
+            "label": "The opening symptom does not identify one cause.",
+            "requires": [],
+            "scope": "provisional"
+          },
+          {
+            "id": "limited-ecg",
+            "label": "The nonspecific ECG finding does not settle the cause.",
+            "requires": [
+              "ecg"
+            ],
+            "scope": "any"
+          },
+          {
+            "id": "report-scope",
+            "label": "The CTA supports an aortic finding; it does not settle every aspect of care.",
+            "requires": [
+              "aortic-cta"
+            ],
+            "scope": "supported"
+          },
+          {
+            "id": "all-excluded",
+            "label": "Every competing explanation has now been excluded.",
+            "requires": [],
+            "scope": "unsupported"
+          }
+        ]
+      }
+    },
+    "transfer": {
+      "id": "aortic-image-quality-contrast",
+      "version": 1,
+      "prompt": "A different fictional patient has sudden severe chest pain. The CTA report says motion obscures the ascending aorta and calls that segment nondiagnostic. No definite flap is reported. Which conclusion best respects this evidence?",
+      "choices": [
+        {
+          "id": "excluded",
+          "label": "The absence of a reported flap excludes an aortic process.",
+          "feedback": "A nondiagnostic segment is not a reliable negative finding. The report explicitly limits what can be concluded."
+        },
+        {
+          "id": "unresolved",
+          "label": "The aortic question remains unresolved; the team needs to clarify the inadequate study.",
+          "feedback": "The limitation matters. Image acquisition and motion affect diagnostic confidence, so an inadequate segment cannot carry an exclusion claim."
+        },
+        {
+          "id": "confirmed",
+          "label": "The symptom pattern alone confirms dissection despite the report.",
+          "feedback": "The symptoms justify concern, not certainty. The fictional report has not established the diagnosis."
+        }
+      ],
+      "answerId": "unresolved",
+      "source": {
+        "title": "2022 ACC/AHA Aortic Disease Guideline: CT image quality",
+        "url": "https://www.ahajournals.org/doi/10.1161/CIR.0000000000001106"
+      },
+      "synthetic": true,
+      "reviewStatus": "pending_human_review",
+      "sourceCheckedDate": "2026-09-11"
+    }
+  },
+  {
+    "episode": {
+      "id": "pub-003-missed-turn-investigation",
+      "version": 2,
+      "title": "The Missed Turn",
+      "subtitle": "A sudden interruption. An incomplete picture.",
+      "opening": "At dinner, a 68-year-old suddenly cannot finish a sentence and has trouble holding a fork. Emergency help is already on the way. Follow the fictional team record as it arrives.",
+      "disclaimer": "Educational game only. All measurements, reports and events are authored fiction pending human review, not clinical advice or source facts.",
+      "reviewStatus": "pending_human_review",
+      "presentation": {
+        "audience": "public",
+        "playMinutes": "4-7",
+        "image": "./assets/episodes/pub-001-stroke-escalation-720.webp",
+        "imageAlt": "Generated illustration of a dinner interrupted by an emergency response. Not diagnostic evidence."
+      },
+      "sources": [
+        {
+          "title": "NICE NG128: stroke recognition and initial assessment, recommendations 1.1.1-1.1.3",
+          "url": "https://www.nice.org.uk/guidance/ng128/chapter/recommendations",
+          "checkedUtc": "2026-10-16T04:29:45Z",
+          "scope": "Sudden focal symptoms and checking hypoglycaemia as a competing explanation. The fictional normal glucose weakens that rival without establishing stroke; no treatment content is used."
+        },
+        {
+          "title": "NINDS: Assess and Treat, CT and MRI sections",
+          "url": "https://www.ninds.nih.gov/health-information/stroke/assess-and-treat",
+          "checkedUtc": "2026-10-16T04:29:45Z",
+          "scope": "CT detects bleeding; diffusion MRI can show ischemia before a non-contrast CT. Supports limits of the authored reports, not a required scan sequence or patient-specific advice."
+        }
+      ],
+      "hypotheses": [
+        {
+          "id": "ischemic-stroke",
+          "label": "Ischemic stroke (interrupted blood flow)"
+        },
+        {
+          "id": "hypoglycemia",
+          "label": "Low blood glucose"
+        },
+        {
+          "id": "migraine-aura",
+          "label": "Migraine with neurological symptoms"
+        }
+      ],
+      "actions": [
+        {
+          "id": "witness-account",
+          "label": "Ask what changed at dinner",
+          "category": "history",
+          "minutes": 3,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional witness account: speech was normal a moment earlier. Word-finding difficulty and right-hand weakness began together and persist.",
+          "interpretation": "Sudden speech and one-sided movement changes call for urgent assessment, not a wait-and-see conclusion."
+        },
+        {
+          "id": "team-examination",
+          "label": "Read the team examination",
+          "category": "examination",
+          "minutes": 4,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional examination: the clinician records difficulty naming familiar objects and right-arm drift. The patient remains awake.",
+          "interpretation": "The observed pattern strengthens concern but does not establish its cause alone."
+        },
+        {
+          "id": "glucose-result",
+          "label": "Read the blood glucose result",
+          "category": "laboratory",
+          "minutes": 2,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional measurement during the symptoms: blood glucose is 106 mg/dL (5.9 mmol/L).",
+          "interpretation": "This result does not support low glucose as the current explanation; it does not itself prove stroke."
+        },
+        {
+          "id": "initial-ct",
+          "label": "Read the first scan report",
+          "category": "imaging",
+          "minutes": 6,
+          "requires": [],
+          "sourceIds": [
+            1
+          ],
+          "finding": "Fictional non-contrast head CT report: no hemorrhage is seen; no definite early infarct is visible.",
+          "interpretation": "An early CT without a visible infarct does not rule out ischemic stroke."
+        },
+        {
+          "id": "team-mri-summary",
+          "label": "Read the later imaging review",
+          "category": "imaging",
+          "minutes": 8,
+          "requires": [],
+          "sourceIds": [
+            1
+          ],
+          "finding": "Fictional team review: diffusion MRI shows a small acute left frontal infarct corresponding to the speech and right-arm changes.",
+          "interpretation": "The matching imaging finding supports ischemic stroke in this authored story; it is not a rule that every suspected stroke needs MRI before action."
+        },
+        {
+          "id": "witness-handoff",
+          "label": "Pass on the witness account",
+          "category": "coordination",
+          "minutes": 2,
+          "requires": [
+            "witness-account"
+          ],
+          "sourceIds": [
+            0
+          ],
+          "finding": "The fictional handoff preserves the witnessed onset and persisting changes. It makes no claim about examinations or scans you did not read.",
+          "interpretation": "A useful handoff separates what was witnessed from what remains unknown."
+        }
+      ],
+      "reasoning": {
+        "supportLabel": "Evidence supporting your explanation",
+        "limitationLabel": "Compare explanations or identify a limit",
+        "prompt": "Explain how a finding you read supports your concern, how the alternatives compare, and what the record still cannot establish.",
+        "caseLearningText": "Weakening one explanation does not prove another. Connect each collected finding to the concern it supports or weakens, and keep a working hypothesis provisional when decisive evidence is absent.",
+        "insufficientCitationFeedback": "Your route includes the matching fictional imaging finding. Cite that finding to support the conclusion rather than an earlier concern or a result that only weakens a rival.",
+        "openingFacts": [
+          {
+            "id": "opening:speech-hand-change",
+            "label": "Sudden speech and hand-use changes in the opening handoff",
+            "strength": "concern",
+            "supports": [
+              "ischemic-stroke",
+              "hypoglycemia",
+              "migraine-aura"
+            ]
+          }
+        ],
+        "supportRules": {
+          "witness-account": {
+            "strength": "suggestive",
+            "supports": [
+              "ischemic-stroke"
+            ]
+          },
+          "team-examination": {
+            "strength": "suggestive",
+            "supports": [
+              "ischemic-stroke"
+            ]
+          },
+          "glucose-result": {
+            "strength": "limited",
+            "supports": [],
+            "conflictsWith": [
+              "hypoglycemia"
+            ],
+            "conflictFeedback": "The glucose result you read during the symptoms does not support low glucose as the current explanation. It weakens that rival without proving ischemic stroke."
+          },
+          "initial-ct": {
+            "strength": "limited",
+            "supports": []
+          },
+          "team-mri-summary": {
+            "strength": "decisive",
+            "supports": [
+              "ischemic-stroke"
+            ]
+          },
+          "witness-handoff": {
+            "strength": "coordination",
+            "supports": []
+          }
+        },
+        "uncertaintyOptions": [
+          {
+            "id": "symptoms-not-confirmation",
+            "label": "The opening symptoms raise concern but do not establish a cause.",
+            "requires": [],
+            "scope": "provisional"
+          },
+          {
+            "id": "glucose-discriminator",
+            "label": "The glucose result weakens the low-glucose explanation; it is not a positive stroke test.",
+            "requires": [
+              "glucose-result"
+            ],
+            "forHypotheses": [
+              "ischemic-stroke",
+              "migraine-aura"
+            ],
+            "scope": "any"
+          },
+          {
+            "id": "ct-limit",
+            "label": "The first CT report does not exclude an early ischemic stroke.",
+            "requires": [
+              "initial-ct"
+            ],
+            "scope": "any"
+          },
+          {
+            "id": "mri-scope",
+            "label": "The matching MRI finding supports ischemic stroke here; it does not determine every cause or later care decision.",
+            "requires": [
+              "team-mri-summary"
+            ],
+            "forHypotheses": [
+              "ischemic-stroke"
+            ],
+            "scope": "supported"
+          },
+          {
+            "id": "all-excluded",
+            "label": "Every competing cause has now been ruled out.",
+            "requires": [],
+            "scope": "unsupported"
+          }
+        ]
+      },
+      "resolution": {
+        "hypothesisId": "ischemic-stroke",
+        "evidenceActionIds": [
+          "team-mri-summary"
+        ],
+        "supportedSummary": "Your conclusion fits the matching acute infarct described in the fictional imaging review. This is support from that recorded finding, beyond the opening symptoms alone.",
+        "mismatchSummary": "The chosen explanation does not account for the matching acute infarct described in the fictional imaging review.",
+        "provisionalSummary": "Your route ended before the later imaging review. The conclusion remains provisional; a working hypothesis is not confirmation.",
+        "decisiveClue": "The later fictional MRI report describes an acute left frontal infarct matching the symptoms.",
+        "missingClue": "The later imaging review was not collected. No decisive imaging clue was reached on this route.",
+        "nextLearning": "Distinguish a test that finds no bleeding from evidence that excludes interrupted blood flow. Keep uncertainty visible.",
+        "limitations": [
+          "Synthetic preview pending human medical review. This is a reasoning exercise, not a validated diagnostic assessment.",
+          "Reports are fictional text, not scans. Scene art is reused illustration, not a patient record or diagnostic evidence.",
+          "Timing is authored, non-real-time and non-prognostic. Reading order does not prescribe a clinical workup. Emergency assessment continues independently of your choices.",
+          "No treatment, dose, eligibility decision or patient outcome is modeled. A game conclusion is not evidence of clinical competence."
+        ]
+      }
+    },
+    "transfer": {
+      "id": "resolved-symptoms-contrast",
+      "version": 1,
+      "prompt": "In another fictional story, sudden trouble speaking and one-sided weakness disappear after ten minutes. Emergency help has already been called. What changes about the concern?",
+      "choices": [
+        {
+          "id": "resolved-safe",
+          "label": "Because the symptoms stopped, urgent assessment is no longer needed.",
+          "feedback": "Improvement does not remove the concern. Brief neurological symptoms can still represent an important warning event."
+        },
+        {
+          "id": "confirmed-stroke",
+          "label": "The duration proves that a completed stroke occurred.",
+          "feedback": "Duration alone cannot establish the cause. The team still needs to assess what happened."
+        },
+        {
+          "id": "still-urgent",
+          "label": "The cause remains uncertain, and urgent professional assessment still matters.",
+          "feedback": "The uncertainty and urgency coexist. NICE calls for immediate referral for suspected TIA, with specialist assessment within 24 hours of onset."
+        }
+      ],
+      "answerId": "still-urgent",
+      "source": {
+        "title": "NICE NG128: suspected TIA, recommendation 1.1.5",
+        "url": "https://www.nice.org.uk/guidance/ng128/chapter/recommendations"
+      },
+      "synthetic": true,
+      "reviewStatus": "pending_human_review",
+      "sourceCheckedDate": "2026-09-11"
+    }
+  },
+  {
+    "episode": {
+      "id": "stu-003-after-weekend-investigation",
+      "version": 2,
+      "title": "After the Weekend",
+      "subtitle": "A familiar complaint. Three pieces that must fit.",
+      "opening": "A 26-year-old arrives after a weekend away with vomiting, fatigue and abdominal discomfort. The team is already assessing the patient. The first handoff suggests a stomach illness, but the record is incomplete.",
+      "disclaimer": "Educational game only. All measurements, reports and events are authored fiction pending human review, not clinical advice or source facts.",
+      "reviewStatus": "pending_human_review",
+      "presentation": {
+        "audience": "student",
+        "playMinutes": "5-8",
+        "image": "./assets/episodes/stu-001-dka-escalation-720.webp",
+        "imageAlt": "Generated illustration of a young adult under observation with a hospital team. Not diagnostic evidence."
+      },
+      "sources": [
+        {
+          "title": "ADA/EASD and partner societies: Hyperglycemic Crises in Adults With Diabetes, 2024 consensus report",
+          "url": "https://doi.org/10.2337/dci24-0032",
+          "checkedUtc": "2026-10-16T04:29:45Z",
+          "scope": "Diagnosis requires the combined glucose/diabetes, ketone and metabolic-acidosis criteria. HHS involves hyperosmolality without significant ketosis or acidosis; no treatment recommendations are used. Fictional values are not source patient data."
+        },
+        {
+          "title": "2024 consensus report: open full text, diagnostic criteria section",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11272983/",
+          "checkedUtc": "2026-10-16T04:29:45Z",
+          "scope": "Primary consensus text for the three-part DKA argument and the competing HHS pattern. Used only to check authored evidence relations, not care decisions."
+        }
+      ],
+      "hypotheses": [
+        {
+          "id": "diabetic-ketoacidosis",
+          "label": "Diabetic ketoacidosis"
+        },
+        {
+          "id": "hyperosmolar-state",
+          "label": "Hyperglycemic hyperosmolar state (HHS) alone"
+        },
+        {
+          "id": "gastroenteritis",
+          "label": "Gastroenteritis with dehydration"
+        }
+      ],
+      "actions": [
+        {
+          "id": "recent-history",
+          "label": "Clarify the recent history",
+          "category": "history",
+          "minutes": 3,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional history: thirst and frequent urination started before the vomiting. There is no established diabetes diagnosis in the record.",
+          "interpretation": "The chronology weakens a stomach-only explanation but cannot settle the metabolic diagnosis."
+        },
+        {
+          "id": "bedside-observations",
+          "label": "Read the bedside observations",
+          "category": "examination",
+          "minutes": 3,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional observations: the patient is tired but conversant, with deep breathing, dry mouth and diffuse abdominal discomfort.",
+          "interpretation": "These observations require explanation; they are not specific enough to label the illness."
+        },
+        {
+          "id": "plasma-glucose",
+          "label": "Review the plasma glucose",
+          "category": "laboratory",
+          "minutes": 2,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional laboratory result: plasma glucose is 286 mg/dL.",
+          "interpretation": "Elevated glucose alone is not sufficient to establish ketoacidosis."
+        },
+        {
+          "id": "blood-ketones",
+          "label": "Review the blood ketones",
+          "category": "laboratory",
+          "minutes": 3,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional laboratory result: beta-hydroxybutyrate is 4.8 mmol/L.",
+          "interpretation": "The ketone result adds a second piece. Acid-base evidence is still distinct."
+        },
+        {
+          "id": "acid-base",
+          "label": "Review the acid-base results",
+          "category": "laboratory",
+          "minutes": 4,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional laboratory results: venous pH is 7.22 and bicarbonate is 13 mmol/L.",
+          "interpretation": "Acidosis together with elevated glucose and ketones supports the ketoacidosis explanation in this case."
+        },
+        {
+          "id": "serum-osmolality",
+          "label": "Review serum osmolality",
+          "category": "laboratory",
+          "minutes": 4,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional laboratory result: measured total serum osmolality is 297 mOsm/kg.",
+          "interpretation": "This fictional result does not support a markedly hyperosmolar explanation. It does not replace the three-part ketoacidosis assessment."
+        }
+      ],
+      "reasoning": {
+        "supportLabel": "Evidence supporting your explanation",
+        "limitationLabel": "Compare explanations or identify a limit",
+        "prompt": "Choose a relevant fact or the combined glucose, ketone and acid-base argument. Explain what it supports, how the alternatives compare, and what remains uncertain.",
+        "caseLearningText": "Keep glucose, ketones and acid-base evidence distinct until you can connect them. Compare the metabolic explanation with its rivals; one abnormal result is not the whole argument. These alternatives are simplified; real presentations can overlap.",
+        "insufficientCitationFeedback": "The three-part argument needs the glucose, ketone and acid-base findings together. Select their combined argument to justify this conclusion; citing one component does not demonstrate that connection.",
+        "openingFacts": [
+          {
+            "id": "opening:vomiting-fatigue-discomfort",
+            "label": "Vomiting, fatigue and abdominal discomfort in the opening handoff",
+            "strength": "concern",
+            "supports": [
+              "diabetic-ketoacidosis",
+              "hyperosmolar-state",
+              "gastroenteritis"
+            ]
+          }
+        ],
+        "supportRules": {
+          "recent-history": {
+            "strength": "suggestive",
+            "supports": [
+              "diabetic-ketoacidosis",
+              "hyperosmolar-state"
+            ]
+          },
+          "bedside-observations": {
+            "strength": "concern",
+            "supports": [
+              "diabetic-ketoacidosis",
+              "hyperosmolar-state",
+              "gastroenteritis"
+            ]
+          },
+          "plasma-glucose": {
+            "strength": "component",
+            "supports": [
+              "diabetic-ketoacidosis"
+            ],
+            "conflictsWith": [
+              "hyperosmolar-state"
+            ],
+            "conflictFeedback": "The glucose value you read does not fit HHS alone in this fictional case. It does not establish DKA without the remaining findings; real presentations can overlap."
+          },
+          "blood-ketones": {
+            "strength": "component",
+            "supports": [
+              "diabetic-ketoacidosis"
+            ],
+            "conflictsWith": [
+              "hyperosmolar-state"
+            ],
+            "conflictFeedback": "The ketone elevation you read does not fit HHS alone in this fictional case. It does not establish DKA without the remaining findings; real presentations can overlap."
+          },
+          "acid-base": {
+            "strength": "component",
+            "supports": [
+              "diabetic-ketoacidosis"
+            ],
+            "conflictsWith": [
+              "hyperosmolar-state"
+            ],
+            "conflictFeedback": "The acidosis you read does not fit HHS alone in this fictional case. It does not establish DKA without the remaining findings; real presentations can overlap."
+          },
+          "serum-osmolality": {
+            "strength": "limited",
+            "supports": [],
+            "conflictsWith": [
+              "hyperosmolar-state"
+            ],
+            "conflictFeedback": "The osmolality result you read does not support HHS alone in this fictional case. It does not establish DKA without the remaining findings; real presentations can overlap."
+          }
+        },
+        "supportGroups": [
+          {
+            "id": "pattern:metabolic-triad",
+            "label": "Glucose, blood ketones and acid-base results together",
+            "requires": [
+              "plasma-glucose",
+              "blood-ketones",
+              "acid-base"
+            ],
+            "strength": "decisive",
+            "supports": [
+              "diabetic-ketoacidosis"
+            ]
+          }
+        ],
+        "uncertaintyOptions": [
+          {
+            "id": "symptoms-not-confirmation",
+            "label": "Vomiting and discomfort alone do not establish a metabolic diagnosis.",
+            "requires": [],
+            "scope": "provisional"
+          },
+          {
+            "id": "history-limits",
+            "label": "Thirst and frequent urination before vomiting weaken a stomach-only explanation; the metabolic cause is still unresolved.",
+            "requires": [
+              "recent-history"
+            ],
+            "missingAny": [
+              "plasma-glucose",
+              "blood-ketones",
+              "acid-base"
+            ],
+            "scope": "provisional"
+          },
+          {
+            "id": "glucose-with-missing-components",
+            "label": "Glucose is raised, but a ketone or acid-base report is still missing from my route.",
+            "requires": [
+              "plasma-glucose"
+            ],
+            "missingAny": [
+              "blood-ketones",
+              "acid-base"
+            ],
+            "forHypotheses": [
+              "diabetic-ketoacidosis"
+            ],
+            "scope": "provisional"
+          },
+          {
+            "id": "ketones-with-missing-components",
+            "label": "Ketones are raised, but a glucose or acid-base report is still missing from my route.",
+            "requires": [
+              "blood-ketones"
+            ],
+            "missingAny": [
+              "plasma-glucose",
+              "acid-base"
+            ],
+            "forHypotheses": [
+              "diabetic-ketoacidosis"
+            ],
+            "scope": "provisional"
+          },
+          {
+            "id": "acidosis-with-missing-components",
+            "label": "A glucose or ketone report is still missing, so this acidosis has not been linked to the full pattern.",
+            "requires": [
+              "acid-base"
+            ],
+            "missingAny": [
+              "plasma-glucose",
+              "blood-ketones"
+            ],
+            "forHypotheses": [
+              "diabetic-ketoacidosis"
+            ],
+            "scope": "provisional"
+          },
+          {
+            "id": "triad-scope",
+            "label": "The laboratory pattern supports ketoacidosis here; it does not determine why it developed or settle every care decision.",
+            "requires": [
+              "plasma-glucose",
+              "blood-ketones",
+              "acid-base"
+            ],
+            "forHypotheses": [
+              "diabetic-ketoacidosis"
+            ],
+            "scope": "supported"
+          },
+          {
+            "id": "osmolality-discriminator",
+            "label": "This osmolality result weakens a markedly hyperosmolar explanation; it cannot establish ketoacidosis on its own.",
+            "requires": [
+              "serum-osmolality"
+            ],
+            "forHypotheses": [
+              "diabetic-ketoacidosis",
+              "gastroenteritis"
+            ],
+            "scope": "any"
+          },
+          {
+            "id": "all-excluded",
+            "label": "Every other cause of vomiting has now been ruled out.",
+            "requires": [],
+            "scope": "unsupported"
+          }
+        ]
+      },
+      "resolution": {
+        "hypothesisId": "diabetic-ketoacidosis",
+        "evidenceActionIds": [
+          "plasma-glucose",
+          "blood-ketones",
+          "acid-base"
+        ],
+        "supportedSummary": "The collected three-part pattern supports ketoacidosis in this fictional case: elevated glucose, ketones and acidosis. The opening complaint alone was not enough.",
+        "mismatchSummary": "The collected glucose, ketone and acid-base findings fit ketoacidosis more closely than the selected explanation in this fictional case.",
+        "provisionalSummary": "Your conclusion remains provisional because the glucose, ketone and acid-base results were not all collected. A partial pattern is not the complete evidence set.",
+        "decisiveClue": "The fictional combination is glucose 286 mg/dL, beta-hydroxybutyrate 4.8 mmol/L, pH 7.22 and bicarbonate 13 mmol/L.",
+        "missingClue": "At least one component of the three-part laboratory pattern is missing from your route.",
+        "nextLearning": "Ask whether the required pieces fit together, rather than letting one abnormal number carry the whole conclusion.",
+        "limitations": [
+          "Synthetic preview pending human medical review. This is a reasoning exercise, not a validated diagnostic assessment.",
+          "Reports are fictional text, not scans. Scene art is reused illustration, not a patient record or diagnostic evidence.",
+          "Timing is authored, non-real-time and non-prognostic. Reading order does not prescribe a clinical workup. Emergency assessment continues independently of your choices.",
+          "No treatment, dose, eligibility decision or patient outcome is modeled. A game conclusion is not evidence of clinical competence."
+        ]
+      }
+    },
+    "transfer": {
+      "id": "hyperosmolar-pattern-contrast",
+      "version": 1,
+      "prompt": "A different fictional patient has dehydration, glucose 720 mg/dL, measured total osmolality 334 mOsm/kg, beta-hydroxybutyrate 0.8 mmol/L, venous pH 7.36 and bicarbonate 23 mmol/L. Which explanation fits this laboratory pattern better?",
+      "choices": [
+        {
+          "id": "dka",
+          "label": "Ketoacidosis, because any very high glucose is sufficient.",
+          "feedback": "High glucose alone does not establish ketoacidosis. The marked ketosis and acidosis from the earlier case are absent here."
+        },
+        {
+          "id": "hhs",
+          "label": "A hyperosmolar hyperglycemic state rather than the earlier ketoacidotic pattern.",
+          "feedback": "This authored pattern combines severe hyperglycemia and hyperosmolality without significant ketosis or acidosis. It contrasts with the three-part ketoacidosis pattern."
+        },
+        {
+          "id": "normal",
+          "label": "No major metabolic problem, because the pH is not low.",
+          "feedback": "A near-normal pH does not make severe hyperglycemia and hyperosmolality harmless. The full pattern matters."
+        }
+      ],
+      "answerId": "hhs",
+      "source": {
+        "title": "Hyperglycemic Crises in Adults With Diabetes: 2024 consensus report",
+        "url": "https://doi.org/10.2337/dci24-0032"
+      },
+      "synthetic": true,
+      "reviewStatus": "pending_human_review",
+      "sourceCheckedDate": "2026-09-11"
+    }
+  }
+]);
+
+export const V3_INVESTIGATION_CONTENT = deepFreeze([
+  {
+    "episode": {
+      "id": "doc-002-tearing-back-investigation",
+      "version": 3,
+      "careWorkflow": {
+        "episodeId": "doc-002-tearing-back-investigation",
+        "version": 1,
+        "role": {
+          "label": "Doctor coordinating the ED team",
+          "boundary": "Coordinate the current concern, named task owners and the next clinical review. The exercise uses supplied fictional records; it does not authorize treatment or replace team assessment and local clinical responsibilities."
+        },
+        "timingNote": "Update rounds are fictional report-release events, not clinical minutes or recommended waiting periods. Tasks may progress together; report availability does not prescribe an investigation order.",
+        "priority": {
+          "prompt": "A 61-year-old has arrived with sudden severe chest discomfort and an incomplete handoff. What should you coordinate before the cause is confirmed?",
+          "choices": [
+            {
+              "id": "coordinate-early-review",
+              "label": "Bring the sudden chest-discomfort concern to the ED senior now and assign owners while the cause is clarified.",
+              "appropriate": true,
+              "feedback": "The opening concern can be communicated before a particular diagnosis is proved. Clinical review and responsibility should not wait for a complete record.",
+              "requires": []
+            },
+            {
+              "id": "finish-worklist-first",
+              "label": "Complete the diagnostic worklist first, then decide which clinician should receive the concern.",
+              "appropriate": false,
+              "feedback": "A fuller record may refine the differential, but it does not supply an owner for the concern in the meantime. Ask the ED senior to accept review while the information develops.",
+              "requires": []
+            }
+          ]
+        },
+        "tasks": {
+          "symptom-timeline": {
+            "owner": "ED history-taking clinician",
+            "label": "Request review of the symptom timeline",
+            "rounds": 1
+          },
+          "focused-examination": {
+            "owner": "ED examining clinician",
+            "label": "Request review of the focused examination",
+            "rounds": 1
+          },
+          "ecg": {
+            "owner": "ECG reporting clinician",
+            "label": "Request the authored ECG report",
+            "rounds": 1
+          },
+          "chest-radiograph": {
+            "owner": "Radiology reporting clinician",
+            "label": "Request the authored chest radiograph report",
+            "rounds": 2
+          },
+          "aortic-cta": {
+            "owner": "ED senior clinician",
+            "label": "Follow up the authored aortic CTA report with radiology",
+            "rounds": 2
+          },
+          "specialist-handoff": {
+            "owner": "ED senior clinician",
+            "label": "Confirm that the receiving specialist acknowledged the recorded handoff",
+            "rounds": 1
+          }
+        },
+        "reassessment": {
+          "minimumReviewed": 1,
+          "update": "Fictional team update: the opening concern was sudden severe chest discomfort. The team asks which findings have actually been reviewed and who owns the next clinical review. A report becoming available does not answer that ownership question.",
+          "prompt": "After reviewing a finding and receiving this team update, what should you clarify?",
+          "choices": [
+            {
+              "id": "restate-and-name-owner",
+              "label": "Restate the chest-discomfort concern, distinguish reviewed from pending information, and confirm the ED senior responsible for the next review.",
+              "appropriate": true,
+              "feedback": "This reassesses the communication state without inventing a new patient change. A finding and a named review owner answer different questions.",
+              "requires": []
+            },
+            {
+              "id": "let-worklist-own-review",
+              "label": "Let completion of the remaining worklist determine when somebody next reviews the patient.",
+              "appropriate": false,
+              "feedback": "A worklist tracks tasks; it does not name the clinician responsible for reassessment. The opening concern still needs explicit ownership.",
+              "requires": []
+            }
+          ],
+          "variants": [
+            {
+              "id": "ecg-interpretation",
+              "requires": [
+                "ecg"
+              ],
+              "prompt": "The ECG report you reviewed describes a small, nonspecific ST change in aVL. How should that report affect your reassessment message?",
+              "choices": [
+                {
+                  "id": "reassess-ecg-limited",
+                  "label": "Report the ST change as a limited finding: this ECG alone does not settle the coronary explanation or the aortic question. State what other reviewed findings add separately.",
+                  "appropriate": true,
+                  "feedback": "The ECG is information to include, but it does not account for the whole presentation by itself. A later report may strengthen a conclusion; that does not make this ECG independently decisive.",
+                  "requires": []
+                },
+                {
+                  "id": "reassess-ecg-confirms-coronary",
+                  "label": "Use the ST change to hand over a confirmed coronary cause and set aside the aortic question.",
+                  "appropriate": false,
+                  "feedback": "The supplied ECG is nonspecific. Treating it as confirmation would overstate this report and erase a competing concern without addressing its evidence.",
+                  "requires": []
+                }
+              ]
+            }
+          ]
+        },
+        "handoff": {
+          "receiver": {
+            "prompt": "Who should explicitly receive responsibility for the current concern?",
+            "choices": [
+              {
+                "id": "ed-senior",
+                "label": "The ED senior clinician coordinating the acute chest-discomfort assessment.",
+                "appropriate": true,
+                "feedback": "This names a current clinical receiver without waiting to prove a particular cause.",
+                "requires": []
+              },
+              {
+                "id": "routine-referral-queue",
+                "label": "A routine chest-pain referral queue, without a named receiving clinician.",
+                "appropriate": false,
+                "feedback": "A queued referral does not establish who has accepted the current concern or who will review it next.",
+                "requires": []
+              }
+            ]
+          },
+          "situation": {
+            "prompt": "Which statement can you support from the opening handoff or a finding you actually reviewed?",
+            "choices": [
+              {
+                "id": "opening-chest-concern",
+                "label": "A 61-year-old arrived with sudden severe chest discomfort; the initial handoff was incomplete.",
+                "appropriate": true,
+                "feedback": "These are opening facts. They are enough to communicate a concern without claiming an unreviewed examination or scan.",
+                "requires": []
+              },
+              {
+                "id": "reviewed-pain-timeline",
+                "label": "The reviewed history describes pain maximal at onset and radiating to the back.",
+                "appropriate": true,
+                "feedback": "This adds only the history you reviewed; it is a concerning pattern, not proof of one cause.",
+                "requires": [
+                  "symptom-timeline"
+                ]
+              },
+              {
+                "id": "reviewed-pressure-gap",
+                "label": "The reviewed examination records different pressures in the two arms.",
+                "appropriate": true,
+                "feedback": "This examination finding belongs in the handoff once reviewed. Its significance remains part of the clinical assessment.",
+                "requires": [
+                  "focused-examination"
+                ]
+              },
+              {
+                "id": "reviewed-cta-finding",
+                "label": "The reviewed CTA report describes an ascending-aortic intimal flap extending into the arch.",
+                "appropriate": true,
+                "feedback": "This is a report-specific statement. It is available only after that report has been reviewed.",
+                "requires": [
+                  "aortic-cta"
+                ]
+              },
+              {
+                "id": "symptom-confirms-cause",
+                "label": "The opening chest discomfort establishes a coronary cause.",
+                "appropriate": false,
+                "feedback": "The opening symptom raises concern but does not establish that cause. Keep the observation separate from the working explanation.",
+                "requires": []
+              }
+            ]
+          },
+          "uncertainty": {
+            "prompt": "Which qualification keeps the handoff within the evidence you have?",
+            "choices": [
+              {
+                "id": "opening-not-diagnosis",
+                "label": "Chest discomfort in the opening handoff does not establish a cause; any stronger claim must cite a reviewed finding.",
+                "appropriate": true,
+                "feedback": "This remains true whether you hand over early or later add a report. It does not pretend that all findings are still unknown.",
+                "requires": []
+              },
+              {
+                "id": "ecg-limited",
+                "label": "The reviewed small, nonspecific ECG change does not settle the cause of the presentation.",
+                "appropriate": true,
+                "feedback": "This limits the ECG observation to what the supplied report supports.",
+                "requires": [
+                  "ecg"
+                ]
+              },
+              {
+                "id": "cta-scope",
+                "label": "The reviewed CTA supports the aortic finding in this story; it does not settle every later care decision.",
+                "appropriate": true,
+                "feedback": "A decisive report can strengthen the conclusion while leaving clinical responsibility and subsequent decisions explicit.",
+                "requires": [
+                  "aortic-cta"
+                ]
+              },
+              {
+                "id": "uncertainty-prevents-handoff",
+                "label": "The handoff must wait until a single cause has been confirmed.",
+                "appropriate": false,
+                "feedback": "Uncertainty is information to communicate. It is not a reason to leave the concern without an identified receiver.",
+                "requires": []
+              }
+            ]
+          },
+          "nextOwner": {
+            "prompt": "How should the next review and any further concern be owned?",
+            "choices": [
+              {
+                "id": "named-ed-review",
+                "label": "Ask the ED senior to own the next review of the chest-discomfort concern and confirm how new findings or symptom changes will reach them.",
+                "appropriate": true,
+                "feedback": "This assigns a next review and an update route without predicting a change or selecting treatment.",
+                "requires": []
+              },
+              {
+                "id": "reviewed-cta-transfer",
+                "label": "Ask the ED senior which specialist receives the reviewed CTA concern and who remains responsible until the transfer is acknowledged.",
+                "appropriate": true,
+                "feedback": "The report supports a focused transfer, but responsibility should not disappear between sender and receiver.",
+                "requires": [
+                  "aortic-cta"
+                ]
+              },
+              {
+                "id": "request-means-transfer",
+                "label": "Assume responsibility has transferred as soon as the diagnostic requests are sent.",
+                "appropriate": false,
+                "feedback": "Sending a request does not show that another clinician has accepted the concern or its follow-up.",
+                "requires": []
+              }
+            ]
+          }
+        },
+        "readback": {
+          "prompt": "Which receiver reply gives you something specific to verify before closing the communication loop?",
+          "choices": [
+            {
+              "id": "specific-ed-readback",
+              "label": "“I heard the sudden chest-discomfort concern. I accept the next clinical review; tell me which findings you reviewed and which need follow-up.”",
+              "appropriate": true,
+              "feedback": "Verify that the repeated concern, reviewed information and named owner match your message, and correct any mismatch. The reply does not confirm the diagnosis or finish pending tasks.",
+              "requires": []
+            },
+            {
+              "id": "generic-ed-acknowledgment",
+              "label": "“Noted in the worklist; someone will pick up the next result.”",
+              "appropriate": false,
+              "feedback": "This acknowledges a message without repeating the concern or identifying who accepted the next review. Clarify those points with the receiver.",
+              "requires": []
+            }
+          ]
+        },
+        "sources": [
+          {
+            "title": "WHO Emergency Care Toolkit: Interagency Integrated Triage Tool",
+            "url": "https://www.who.int/teams/integrated-health-services/clinical-services-and-systems/emergency-and-critical-care/emergency-care-toolkit",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Prioritizing clinical concern separately from establishing a diagnosis. These role-specific exercises do not implement or validate a triage scale."
+          },
+          {
+            "title": "NICE CG50: recognising and responding to deterioration",
+            "url": "https://www.nice.org.uk/guidance/CG50/chapter/recommendations",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Clinical concern, response ownership and reassessment. No physiological thresholds, observation intervals or treatment instructions are introduced."
+          },
+          {
+            "title": "AHRQ TeamSTEPPS: Handoff",
+            "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/handoff.html",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Communicating known information, uncertainty, responsibility and contingencies, with acknowledgment by the receiver. The scripted handoffs are fictional examples."
+          },
+          {
+            "title": "AHRQ TeamSTEPPS: Check-Back (or Repeat-Back)",
+            "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/checkback.html",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Receiver repetition followed by sender verification, including family communication. An acknowledgment does not establish a diagnosis or complete pending tasks."
+          }
+        ],
+        "reviewProvenance": {
+          "status": "unreviewed",
+          "ownerReportedPriorClinicianReview": true,
+          "priorReviewScope": "unverified",
+          "priorReviewVersion": "unverified",
+          "text": "The owner reports clinician review of earlier Medical Mysteries material. The reviewed scope, artifact and version have not been verified for this addition. These newly authored workflow profiles have not received separate clinician review."
+        }
+      },
+      "title": "The Night Shift",
+      "subtitle": "A bounded, synthetic evidence-discovery episode",
+      "opening": "A 61-year-old arrives with sudden severe chest discomfort. The team is already arranging urgent assessment. The initial handoff is incomplete.",
+      "disclaimer": "Educational game only. All measurements and events in this investigation are authored fictional content pending human review, not clinical advice or source facts.",
+      "hypotheses": [
+        {
+          "id": "acute-aortic-syndrome",
+          "label": "Acute aortic syndrome"
+        },
+        {
+          "id": "acute-coronary-syndrome",
+          "label": "Acute coronary syndrome"
+        },
+        {
+          "id": "pulmonary-embolism",
+          "label": "Pulmonary embolism"
+        }
+      ],
+      "sources": [
+        {
+          "title": "2022 ACC/AHA Guideline for the Diagnosis and Management of Aortic Disease",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10784847/"
+        }
+      ],
+      "actions": [
+        {
+          "id": "symptom-timeline",
+          "label": "Build the symptom timeline",
+          "category": "history",
+          "minutes": 4,
+          "requires": [],
+          "finding": "Authored fictional history: abrupt chest pain was maximal at onset and moved through to the back.",
+          "interpretation": "The onset and radiation are high-risk features, but they do not identify one diagnosis by themselves.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "focused-examination",
+          "label": "Perform a focused examination",
+          "category": "examination",
+          "minutes": 6,
+          "requires": [],
+          "finding": "Authored fictional measurement: arm pressures are 178/105 on the right and 142/88 on the left; the difference is reproducible.",
+          "interpretation": "The fictional inter-arm difference increases concern for an aortic process and keeps premature coronary anchoring unsafe.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "ecg",
+          "label": "Review the ECG",
+          "category": "cardiac",
+          "minutes": 5,
+          "requires": [],
+          "finding": "Authored fictional tracing: a small, nonspecific ST change is present in aVL without a complete diagnostic pattern.",
+          "interpretation": "This finding keeps acute coronary syndrome in the differential but is not decisive and cannot erase the aortic warning signs.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "chest-radiograph",
+          "label": "Review the chest radiograph",
+          "category": "imaging",
+          "minutes": 5,
+          "requires": [],
+          "finding": "Authored fictional radiograph: the mediastinal contour is described as subtly widened, with no single definitive answer.",
+          "interpretation": "A plain chest radiograph cannot exclude acute aortic syndrome; this fictional image is an ambiguity-preserving clue, not a diagnosis.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "aortic-cta",
+          "label": "Obtain CT angiography of the aorta",
+          "category": "imaging",
+          "minutes": 12,
+          "requires": [],
+          "finding": "Authored fictional CTA report: an intimal flap is seen in the ascending aorta and extends into the arch.",
+          "interpretation": "In this fictional episode, the CTA is the decisive clue favoring acute aortic syndrome over the competing hypotheses.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "specialist-handoff",
+          "label": "Make a specialist handoff",
+          "category": "coordination",
+          "minutes": 8,
+          "requires": [
+            "aortic-cta"
+          ],
+          "finding": "The fictional handoff carries the symptom report and CTA finding; it does not imply that other observations were performed.",
+          "interpretation": "A structured handoff preserves uncertainty and the decisive clue for human review; it does not model treatment or outcome.",
+          "sourceIds": [
+            0
+          ]
+        }
+      ],
+      "reasoning": {
+        "openingFacts": [
+          {
+            "id": "opening:chest-discomfort",
+            "label": "Sudden severe chest discomfort in the opening handoff",
+            "strength": "concern",
+            "supports": [
+              "acute-aortic-syndrome",
+              "acute-coronary-syndrome",
+              "pulmonary-embolism"
+            ]
+          }
+        ],
+        "supportRules": {
+          "symptom-timeline": {
+            "strength": "suggestive",
+            "supports": [
+              "acute-aortic-syndrome"
+            ]
+          },
+          "focused-examination": {
+            "strength": "suggestive",
+            "supports": [
+              "acute-aortic-syndrome"
+            ]
+          },
+          "ecg": {
+            "strength": "limited",
+            "supports": [
+              "acute-coronary-syndrome"
+            ]
+          },
+          "chest-radiograph": {
+            "strength": "suggestive",
+            "supports": [
+              "acute-aortic-syndrome"
+            ]
+          },
+          "aortic-cta": {
+            "strength": "decisive",
+            "supports": [
+              "acute-aortic-syndrome"
+            ]
+          },
+          "specialist-handoff": {
+            "strength": "coordination",
+            "supports": []
+          }
+        },
+        "uncertaintyOptions": [
+          {
+            "id": "symptoms-not-confirmation",
+            "label": "The opening symptom does not identify one cause.",
+            "requires": [],
+            "scope": "provisional"
+          },
+          {
+            "id": "limited-ecg",
+            "label": "The nonspecific ECG finding does not settle the cause.",
+            "requires": [
+              "ecg"
+            ],
+            "scope": "any"
+          },
+          {
+            "id": "report-scope",
+            "label": "The CTA supports an aortic finding; it does not settle every aspect of care.",
+            "requires": [
+              "aortic-cta"
+            ],
+            "scope": "supported"
+          },
+          {
+            "id": "all-excluded",
+            "label": "Every competing explanation has now been excluded.",
+            "requires": [],
+            "scope": "unsupported"
+          }
+        ]
+      }
+    },
+    "transfer": {
+      "id": "aortic-image-quality-contrast",
+      "version": 1,
+      "prompt": "A different fictional patient has sudden severe chest pain. The CTA report says motion obscures the ascending aorta and calls that segment nondiagnostic. No definite flap is reported. Which conclusion best respects this evidence?",
+      "choices": [
+        {
+          "id": "excluded",
+          "label": "The absence of a reported flap excludes an aortic process.",
+          "feedback": "A nondiagnostic segment is not a reliable negative finding. The report explicitly limits what can be concluded."
+        },
+        {
+          "id": "unresolved",
+          "label": "The aortic question remains unresolved; the team needs to clarify the inadequate study.",
+          "feedback": "The limitation matters. Image acquisition and motion affect diagnostic confidence, so an inadequate segment cannot carry an exclusion claim."
+        },
+        {
+          "id": "confirmed",
+          "label": "The symptom pattern alone confirms dissection despite the report.",
+          "feedback": "The symptoms justify concern, not certainty. The fictional report has not established the diagnosis."
+        }
+      ],
+      "answerId": "unresolved",
+      "source": {
+        "title": "2022 ACC/AHA Aortic Disease Guideline: CT image quality",
+        "url": "https://www.ahajournals.org/doi/10.1161/CIR.0000000000001106"
+      },
+      "synthetic": true,
+      "reviewStatus": "pending_human_review",
+      "sourceCheckedDate": "2026-09-11"
+    }
+  },
+  {
+    "episode": {
+      "id": "pub-003-missed-turn-investigation",
+      "version": 3,
+      "title": "The Missed Turn",
+      "subtitle": "A sudden interruption. An incomplete picture.",
+      "opening": "At dinner, a 68-year-old suddenly cannot finish a sentence and has trouble holding a fork. Emergency help is already on the way. Follow the fictional team record as it arrives.",
+      "disclaimer": "Educational game only. All measurements, reports and events are authored fiction pending human review, not clinical advice or source facts.",
+      "reviewStatus": "pending_human_review",
+      "presentation": {
+        "audience": "public",
+        "playMinutes": "4-7",
+        "image": "./assets/episodes/pub-001-stroke-escalation-720.webp",
+        "imageAlt": "Generated illustration of a dinner interrupted by an emergency response. Not diagnostic evidence."
+      },
+      "sources": [
+        {
+          "title": "NICE NG128: stroke recognition and initial assessment, recommendations 1.1.1-1.1.3",
+          "url": "https://www.nice.org.uk/guidance/ng128/chapter/recommendations",
+          "checkedUtc": "2026-10-16T04:29:45Z",
+          "scope": "Sudden focal symptoms and checking hypoglycaemia as a competing explanation. The fictional normal glucose weakens that rival without establishing stroke; no treatment content is used."
+        },
+        {
+          "title": "NINDS: Assess and Treat, CT and MRI sections",
+          "url": "https://www.ninds.nih.gov/health-information/stroke/assess-and-treat",
+          "checkedUtc": "2026-10-16T04:29:45Z",
+          "scope": "CT detects bleeding; diffusion MRI can show ischemia before a non-contrast CT. Supports limits of the authored reports, not a required scan sequence or patient-specific advice."
+        }
+      ],
+      "hypotheses": [
+        {
+          "id": "ischemic-stroke",
+          "label": "Ischemic stroke (interrupted blood flow)"
+        },
+        {
+          "id": "hypoglycemia",
+          "label": "Low blood glucose"
+        },
+        {
+          "id": "migraine-aura",
+          "label": "Migraine with neurological symptoms"
+        }
+      ],
+      "actions": [
+        {
+          "id": "witness-account",
+          "label": "Ask what changed at dinner",
+          "category": "history",
+          "minutes": 3,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional witness account: speech was normal a moment earlier. Word-finding difficulty and right-hand weakness began together and persist.",
+          "interpretation": "Sudden speech and one-sided movement changes call for urgent assessment, not a wait-and-see conclusion."
+        },
+        {
+          "id": "team-examination",
+          "label": "Read the team examination",
+          "category": "examination",
+          "minutes": 4,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional examination: the clinician records difficulty naming familiar objects and right-arm drift. The patient remains awake.",
+          "interpretation": "The observed pattern strengthens concern but does not establish its cause alone."
+        },
+        {
+          "id": "glucose-result",
+          "label": "Read the blood glucose result",
+          "category": "laboratory",
+          "minutes": 2,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional measurement during the symptoms: blood glucose is 106 mg/dL (5.9 mmol/L).",
+          "interpretation": "This result does not support low glucose as the current explanation; it does not itself prove stroke."
+        },
+        {
+          "id": "initial-ct",
+          "label": "Read the first scan report",
+          "category": "imaging",
+          "minutes": 6,
+          "requires": [],
+          "sourceIds": [
+            1
+          ],
+          "finding": "Fictional non-contrast head CT report: no hemorrhage is seen; no definite early infarct is visible.",
+          "interpretation": "An early CT without a visible infarct does not rule out ischemic stroke."
+        },
+        {
+          "id": "team-mri-summary",
+          "label": "Read the later imaging review",
+          "category": "imaging",
+          "minutes": 8,
+          "requires": [],
+          "sourceIds": [
+            1
+          ],
+          "finding": "Fictional team review: diffusion MRI shows a small acute left frontal infarct corresponding to the speech and right-arm changes.",
+          "interpretation": "The matching imaging finding supports ischemic stroke in this authored story; it is not a rule that every suspected stroke needs MRI before action."
+        },
+        {
+          "id": "witness-handoff",
+          "label": "Pass on the witness account",
+          "category": "coordination",
+          "minutes": 2,
+          "requires": [
+            "witness-account"
+          ],
+          "sourceIds": [
+            0
+          ],
+          "finding": "The fictional handoff preserves the witnessed onset and persisting changes. It makes no claim about examinations or scans you did not read.",
+          "interpretation": "A useful handoff separates what was witnessed from what remains unknown."
+        }
+      ],
+      "reasoning": {
+        "supportLabel": "Evidence supporting your explanation",
+        "limitationLabel": "Compare explanations or identify a limit",
+        "prompt": "Explain how a finding you read supports your concern, how the alternatives compare, and what the record still cannot establish.",
+        "caseLearningText": "Weakening one explanation does not prove another. Connect each collected finding to the concern it supports or weakens, and keep a working hypothesis provisional when decisive evidence is absent.",
+        "insufficientCitationFeedback": "Your route includes the matching fictional imaging finding. Cite that finding to support the conclusion rather than an earlier concern or a result that only weakens a rival.",
+        "openingFacts": [
+          {
+            "id": "opening:speech-hand-change",
+            "label": "Sudden speech and hand-use changes in the opening handoff",
+            "strength": "concern",
+            "supports": [
+              "ischemic-stroke",
+              "hypoglycemia",
+              "migraine-aura"
+            ]
+          }
+        ],
+        "supportRules": {
+          "witness-account": {
+            "strength": "suggestive",
+            "supports": [
+              "ischemic-stroke"
+            ]
+          },
+          "team-examination": {
+            "strength": "suggestive",
+            "supports": [
+              "ischemic-stroke"
+            ]
+          },
+          "glucose-result": {
+            "strength": "limited",
+            "supports": [],
+            "conflictsWith": [
+              "hypoglycemia"
+            ],
+            "conflictFeedback": "The glucose result you read during the symptoms does not support low glucose as the current explanation. It weakens that rival without proving ischemic stroke."
+          },
+          "initial-ct": {
+            "strength": "limited",
+            "supports": []
+          },
+          "team-mri-summary": {
+            "strength": "decisive",
+            "supports": [
+              "ischemic-stroke"
+            ]
+          },
+          "witness-handoff": {
+            "strength": "coordination",
+            "supports": []
+          }
+        },
+        "uncertaintyOptions": [
+          {
+            "id": "symptoms-not-confirmation",
+            "label": "The opening symptoms raise concern but do not establish a cause.",
+            "requires": [],
+            "scope": "provisional"
+          },
+          {
+            "id": "glucose-discriminator",
+            "label": "The glucose result weakens the low-glucose explanation; it is not a positive stroke test.",
+            "requires": [
+              "glucose-result"
+            ],
+            "forHypotheses": [
+              "ischemic-stroke",
+              "migraine-aura"
+            ],
+            "scope": "any"
+          },
+          {
+            "id": "ct-limit",
+            "label": "The first CT report does not exclude an early ischemic stroke.",
+            "requires": [
+              "initial-ct"
+            ],
+            "scope": "any"
+          },
+          {
+            "id": "mri-scope",
+            "label": "The matching MRI finding supports ischemic stroke here; it does not determine every cause or later care decision.",
+            "requires": [
+              "team-mri-summary"
+            ],
+            "forHypotheses": [
+              "ischemic-stroke"
+            ],
+            "scope": "supported"
+          },
+          {
+            "id": "all-excluded",
+            "label": "Every competing cause has now been ruled out.",
+            "requires": [],
+            "scope": "unsupported"
+          }
+        ]
+      },
+      "resolution": {
+        "hypothesisId": "ischemic-stroke",
+        "evidenceActionIds": [
+          "team-mri-summary"
+        ],
+        "supportedSummary": "Your conclusion fits the matching acute infarct described in the fictional imaging review. This is support from that recorded finding, beyond the opening symptoms alone.",
+        "mismatchSummary": "The chosen explanation does not account for the matching acute infarct described in the fictional imaging review.",
+        "provisionalSummary": "Your route ended before the later imaging review. The conclusion remains provisional; a working hypothesis is not confirmation.",
+        "decisiveClue": "The later fictional MRI report describes an acute left frontal infarct matching the symptoms.",
+        "missingClue": "The later imaging review was not collected. No decisive imaging clue was reached on this route.",
+        "nextLearning": "Distinguish a test that finds no bleeding from evidence that excludes interrupted blood flow. Keep uncertainty visible.",
+        "limitations": [
+          "Synthetic preview pending human medical review. This is a reasoning exercise, not a validated diagnostic assessment.",
+          "Reports are fictional text, not scans. Scene art is reused illustration, not a patient record or diagnostic evidence.",
+          "Timing is authored, non-real-time and non-prognostic. Reading order does not prescribe a clinical workup. Emergency assessment continues independently of your choices.",
+          "No treatment, dose, eligibility decision or patient outcome is modeled. A game conclusion is not evidence of clinical competence."
+        ]
+      },
+      "careWorkflow": {
+        "episodeId": "pub-003-missed-turn-investigation",
+        "version": 1,
+        "role": {
+          "label": "Family witness communicating with the ED team",
+          "boundary": "Report observed changes and ask who receives updates. Clinical assessment, test requests and care decisions belong to the ED team; reading supplied hospital records in this game does not confer those responsibilities."
+        },
+        "timingNote": "Update rounds are fictional report-release events, not clinical minutes or recommended waiting periods. Tasks may progress together; report availability does not prescribe an investigation order.",
+        "priority": {
+          "prompt": "Emergency help is already on the way after sudden difficulty speaking and holding a fork. What is your priority as the witness?",
+          "choices": [
+            {
+              "id": "report-witness-account",
+              "label": "Give the receiving ED team the sudden speech and hand-use changes now, including what you do and do not know.",
+              "appropriate": true,
+              "feedback": "The witnessed change is useful before its cause is confirmed. Your role is to communicate the observation, not assign a diagnosis or triage category.",
+              "requires": []
+            },
+            {
+              "id": "wait-for-explanation",
+              "label": "Hold back the witness account until the clinical team has a test result explaining the cause.",
+              "appropriate": false,
+              "feedback": "Waiting for an explanation withholds the observation that the team needs to assess. Share the witnessed changes while clinicians investigate.",
+              "requires": []
+            }
+          ]
+        },
+        "tasks": {
+          "witness-account": {
+            "owner": "Receiving ED nurse",
+            "label": "Receive the family witness account and confirm its recorded content",
+            "rounds": 1
+          },
+          "team-examination": {
+            "owner": "ED examining clinician",
+            "label": "Ask to review the supplied examination record",
+            "rounds": 1
+          },
+          "glucose-result": {
+            "owner": "ED examining clinician",
+            "label": "Ask to review the supplied glucose result",
+            "rounds": 1
+          },
+          "initial-ct": {
+            "owner": "ED senior clinician",
+            "label": "Follow up the supplied first scan report with radiology",
+            "rounds": 2
+          },
+          "team-mri-summary": {
+            "owner": "ED senior clinician",
+            "label": "Follow up the supplied later imaging summary with the reporting clinician",
+            "rounds": 2
+          },
+          "witness-handoff": {
+            "owner": "Receiving ED nurse",
+            "label": "Confirm receipt of the family witness handoff",
+            "rounds": 1
+          }
+        },
+        "reassessment": {
+          "minimumReviewed": 1,
+          "update": "Fictional team update: the opening account described sudden difficulty finishing a sentence and holding a fork at dinner. The ED team asks for the witness account and for reviewed reports to be kept separate from assumptions about the cause.",
+          "prompt": "After reading a finding and receiving this update, what should you check with the ED receiver?",
+          "choices": [
+            {
+              "id": "confirm-witness-and-update-route",
+              "label": "Confirm that the speech and hand-use changes were heard, say which supplied finding you read, and ask whom to tell if you notice another change.",
+              "appropriate": true,
+              "feedback": "This checks the message and the next communication route. It does not require you to interpret a new symptom or take over clinical reassessment.",
+              "requires": []
+            },
+            {
+              "id": "record-means-understood",
+              "label": "Assume that because a report is in the record, the witness account and any later family updates have already reached the right clinician.",
+              "appropriate": false,
+              "feedback": "A recorded result does not confirm receipt of the witness history or identify who receives further concerns. Ask the ED team to clarify.",
+              "requires": []
+            }
+          ],
+          "variants": [
+            {
+              "id": "early-ct-limit",
+              "requires": [
+                "initial-ct"
+              ],
+              "prompt": "The first CT report you reviewed describes no hemorrhage and no definite early infarct visible. Which statement should you check with the ED receiver?",
+              "choices": [
+                {
+                  "id": "reassess-ct-does-not-exclude",
+                  "label": "Describe what this CT report says, while retaining its limit: no visible early infarct on this scan does not exclude early ischemia. Keep any later reviewed findings separate.",
+                  "appropriate": true,
+                  "feedback": "This is a limit of the particular CT report, not a claim that all imaging is inconclusive. As a witness, you can check that the team heard the report accurately while clinicians own its interpretation and care decisions.",
+                  "requires": []
+                },
+                {
+                  "id": "reassess-ct-rules-out",
+                  "label": "Tell the receiver that the CT has ruled out stroke because it shows neither hemorrhage nor a visible early infarct.",
+                  "appropriate": false,
+                  "feedback": "That conclusion goes beyond the supplied report. An early ischemic change may not be visible on the first CT, so the report must not be relabeled as excluding stroke.",
+                  "requires": []
+                }
+              ]
+            }
+          ]
+        },
+        "handoff": {
+          "receiver": {
+            "prompt": "Who should receive your witness account during this emergency assessment?",
+            "choices": [
+              {
+                "id": "receiving-ed-team",
+                "label": "The ED nurse or clinician receiving the speech and hand-use concern.",
+                "appropriate": true,
+                "feedback": "This places the account with the team handling the current assessment.",
+                "requires": []
+              },
+              {
+                "id": "later-routine-message",
+                "label": "A routine primary-care message to be read after the emergency visit.",
+                "appropriate": false,
+                "feedback": "That may be a later communication channel, but it does not confirm that the current ED receiver heard the witnessed change.",
+                "requires": []
+              }
+            ]
+          },
+          "situation": {
+            "prompt": "Which statement reports an opening observation or an actual reviewed record?",
+            "choices": [
+              {
+                "id": "opening-dinner-change",
+                "label": "At dinner, the 68-year-old suddenly could not finish a sentence and had trouble holding a fork; emergency help was already on the way.",
+                "appropriate": true,
+                "feedback": "This carries the opening account without inventing an examination, glucose reading or scan.",
+                "requires": []
+              },
+              {
+                "id": "reviewed-witness-timing",
+                "label": "The reviewed witness account says speech was normal a moment earlier; word-finding difficulty and right-hand weakness began together and persisted.",
+                "appropriate": true,
+                "feedback": "This adds the recorded witness history after you have reviewed it, without inventing an exact clock time.",
+                "requires": [
+                  "witness-account"
+                ]
+              },
+              {
+                "id": "reviewed-glucose",
+                "label": "The team glucose result I reviewed records 106 mg/dL during the symptoms.",
+                "appropriate": true,
+                "feedback": "This attributes a known result to the team record rather than presenting a witness as performing the test.",
+                "requires": [
+                  "glucose-result"
+                ]
+              },
+              {
+                "id": "reviewed-ct",
+                "label": "The CT report I reviewed describes no hemorrhage and no definite early infarct visible on that scan.",
+                "appropriate": true,
+                "feedback": "This reports the wording of a reviewed scan rather than claiming that all causes have been excluded.",
+                "requires": [
+                  "initial-ct"
+                ]
+              },
+              {
+                "id": "reviewed-mri",
+                "label": "The later imaging review I read describes a matching acute left frontal infarct.",
+                "appropriate": true,
+                "feedback": "This is available only after that supplied review has been read. An early witness handoff does not require it.",
+                "requires": [
+                  "team-mri-summary"
+                ]
+              },
+              {
+                "id": "hand-slip-only",
+                "label": "The fork difficulty was an ordinary hand slip, so the speech change need not be part of the handoff.",
+                "appropriate": false,
+                "feedback": "That explains away an observation rather than reporting it. The receiver needs the speech and hand-use changes together.",
+                "requires": []
+              }
+            ]
+          },
+          "uncertainty": {
+            "prompt": "Which qualification preserves the difference between witnessing an event and establishing its cause?",
+            "choices": [
+              {
+                "id": "witness-scope",
+                "label": "The witness account describes sudden changes; by itself it does not establish the cause or predict recovery.",
+                "appropriate": true,
+                "feedback": "This limits the witness claim without suggesting that a later reviewed report must be ignored.",
+                "requires": []
+              },
+              {
+                "id": "glucose-scope",
+                "label": "The reviewed glucose result does not support low glucose at that time, but it is not by itself a positive stroke test.",
+                "appropriate": true,
+                "feedback": "This distinguishes a result that weakens one explanation from proof of another.",
+                "requires": [
+                  "glucose-result"
+                ]
+              },
+              {
+                "id": "ct-scope",
+                "label": "No early infarct visible on the reviewed CT does not exclude an early ischemic stroke.",
+                "appropriate": true,
+                "feedback": "This preserves a limit of the supplied CT report; it does not ask the witness to determine clinical management.",
+                "requires": [
+                  "initial-ct"
+                ]
+              },
+              {
+                "id": "help-means-history-unneeded",
+                "label": "Because help is already on the way, the ED team no longer needs the initial symptom description.",
+                "appropriate": false,
+                "feedback": "An emergency response does not replace the witness information. Make sure the receiving team has heard it.",
+                "requires": []
+              }
+            ]
+          },
+          "nextOwner": {
+            "prompt": "What should you confirm about the next review and further family concerns?",
+            "choices": [
+              {
+                "id": "ed-owns-reassessment",
+                "label": "Ask the ED nurse or clinician who owns reassessment and whom the family should tell if speech or hand use changes again.",
+                "appropriate": true,
+                "feedback": "The ED team owns clinical reassessment. You can ask for a clear route to report another observation without predicting that one will occur.",
+                "requires": []
+              },
+              {
+                "id": "next-result-owns-review",
+                "label": "Leave reassessment to whoever happens to see the next result, without identifying a receiver for family updates.",
+                "appropriate": false,
+                "feedback": "An unnamed future reader is not a confirmed contact. Ask the current team who will receive the next concern.",
+                "requires": []
+              }
+            ]
+          }
+        },
+        "readback": {
+          "prompt": "Which ED reply lets you verify that your account and the route for further concerns were understood?",
+          "choices": [
+            {
+              "id": "specific-witness-readback",
+              "label": "“We heard the sudden speech and hand-use changes. The ED team owns reassessment; tell the receiving nurse or clinician about any further observed change.”",
+              "appropriate": true,
+              "feedback": "Check that the repeated account is accurate and that you know the named route for further concerns. Correct any mismatch; the reply is not a promise about diagnosis or recovery.",
+              "requires": []
+            },
+            {
+              "id": "generic-witness-acknowledgment",
+              "label": "“The record is open; the next person looking at it can deal with any further concerns.”",
+              "appropriate": false,
+              "feedback": "This does not repeat what happened or confirm who receives the next concern. Ask the current ED receiver to make that explicit.",
+              "requires": []
+            }
+          ]
+        },
+        "sources": [
+          {
+            "title": "WHO Emergency Care Toolkit: Interagency Integrated Triage Tool",
+            "url": "https://www.who.int/teams/integrated-health-services/clinical-services-and-systems/emergency-and-critical-care/emergency-care-toolkit",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Prioritizing clinical concern separately from establishing a diagnosis. These role-specific exercises do not implement or validate a triage scale."
+          },
+          {
+            "title": "NICE CG50: recognising and responding to deterioration",
+            "url": "https://www.nice.org.uk/guidance/CG50/chapter/recommendations",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Clinical concern, response ownership and reassessment. No physiological thresholds, observation intervals or treatment instructions are introduced."
+          },
+          {
+            "title": "AHRQ TeamSTEPPS: Handoff",
+            "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/handoff.html",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Communicating known information, uncertainty, responsibility and contingencies, with acknowledgment by the receiver. The scripted handoffs are fictional examples."
+          },
+          {
+            "title": "AHRQ TeamSTEPPS: Check-Back (or Repeat-Back)",
+            "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/checkback.html",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Receiver repetition followed by sender verification, including family communication. An acknowledgment does not establish a diagnosis or complete pending tasks."
+          }
+        ],
+        "reviewProvenance": {
+          "status": "unreviewed",
+          "ownerReportedPriorClinicianReview": true,
+          "priorReviewScope": "unverified",
+          "priorReviewVersion": "unverified",
+          "text": "The owner reports clinician review of earlier Medical Mysteries material. The reviewed scope, artifact and version have not been verified for this addition. These newly authored workflow profiles have not received separate clinician review."
+        }
+      }
+    },
+    "transfer": {
+      "id": "resolved-symptoms-contrast",
+      "version": 1,
+      "prompt": "In another fictional story, sudden trouble speaking and one-sided weakness disappear after ten minutes. Emergency help has already been called. What changes about the concern?",
+      "choices": [
+        {
+          "id": "resolved-safe",
+          "label": "Because the symptoms stopped, urgent assessment is no longer needed.",
+          "feedback": "Improvement does not remove the concern. Brief neurological symptoms can still represent an important warning event."
+        },
+        {
+          "id": "confirmed-stroke",
+          "label": "The duration proves that a completed stroke occurred.",
+          "feedback": "Duration alone cannot establish the cause. The team still needs to assess what happened."
+        },
+        {
+          "id": "still-urgent",
+          "label": "The cause remains uncertain, and urgent professional assessment still matters.",
+          "feedback": "The uncertainty and urgency coexist. NICE calls for immediate referral for suspected TIA, with specialist assessment within 24 hours of onset."
+        }
+      ],
+      "answerId": "still-urgent",
+      "source": {
+        "title": "NICE NG128: suspected TIA, recommendation 1.1.5",
+        "url": "https://www.nice.org.uk/guidance/ng128/chapter/recommendations"
+      },
+      "synthetic": true,
+      "reviewStatus": "pending_human_review",
+      "sourceCheckedDate": "2026-09-11"
+    }
+  },
+  {
+    "episode": {
+      "id": "stu-003-after-weekend-investigation",
+      "version": 3,
+      "title": "After the Weekend",
+      "subtitle": "A familiar complaint. Three pieces that must fit.",
+      "opening": "A 26-year-old arrives after a weekend away with vomiting, fatigue and abdominal discomfort. The team is already assessing the patient. The first handoff suggests a stomach illness, but the record is incomplete.",
+      "disclaimer": "Educational game only. All measurements, reports and events are authored fiction pending human review, not clinical advice or source facts.",
+      "reviewStatus": "pending_human_review",
+      "presentation": {
+        "audience": "student",
+        "playMinutes": "5-8",
+        "image": "./assets/episodes/stu-001-dka-escalation-720.webp",
+        "imageAlt": "Generated illustration of a young adult under observation with a hospital team. Not diagnostic evidence."
+      },
+      "sources": [
+        {
+          "title": "ADA/EASD and partner societies: Hyperglycemic Crises in Adults With Diabetes, 2024 consensus report",
+          "url": "https://doi.org/10.2337/dci24-0032",
+          "checkedUtc": "2026-10-16T04:29:45Z",
+          "scope": "Diagnosis requires the combined glucose/diabetes, ketone and metabolic-acidosis criteria. HHS involves hyperosmolality without significant ketosis or acidosis; no treatment recommendations are used. Fictional values are not source patient data."
+        },
+        {
+          "title": "2024 consensus report: open full text, diagnostic criteria section",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11272983/",
+          "checkedUtc": "2026-10-16T04:29:45Z",
+          "scope": "Primary consensus text for the three-part DKA argument and the competing HHS pattern. Used only to check authored evidence relations, not care decisions."
+        }
+      ],
+      "hypotheses": [
+        {
+          "id": "diabetic-ketoacidosis",
+          "label": "Diabetic ketoacidosis"
+        },
+        {
+          "id": "hyperosmolar-state",
+          "label": "Hyperglycemic hyperosmolar state (HHS) alone"
+        },
+        {
+          "id": "gastroenteritis",
+          "label": "Gastroenteritis with dehydration"
+        }
+      ],
+      "actions": [
+        {
+          "id": "recent-history",
+          "label": "Clarify the recent history",
+          "category": "history",
+          "minutes": 3,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional history: thirst and frequent urination started before the vomiting. There is no established diabetes diagnosis in the record.",
+          "interpretation": "The chronology weakens a stomach-only explanation but cannot settle the metabolic diagnosis."
+        },
+        {
+          "id": "bedside-observations",
+          "label": "Read the bedside observations",
+          "category": "examination",
+          "minutes": 3,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional observations: the patient is tired but conversant, with deep breathing, dry mouth and diffuse abdominal discomfort.",
+          "interpretation": "These observations require explanation; they are not specific enough to label the illness."
+        },
+        {
+          "id": "plasma-glucose",
+          "label": "Review the plasma glucose",
+          "category": "laboratory",
+          "minutes": 2,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional laboratory result: plasma glucose is 286 mg/dL.",
+          "interpretation": "Elevated glucose alone is not sufficient to establish ketoacidosis."
+        },
+        {
+          "id": "blood-ketones",
+          "label": "Review the blood ketones",
+          "category": "laboratory",
+          "minutes": 3,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional laboratory result: beta-hydroxybutyrate is 4.8 mmol/L.",
+          "interpretation": "The ketone result adds a second piece. Acid-base evidence is still distinct."
+        },
+        {
+          "id": "acid-base",
+          "label": "Review the acid-base results",
+          "category": "laboratory",
+          "minutes": 4,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional laboratory results: venous pH is 7.22 and bicarbonate is 13 mmol/L.",
+          "interpretation": "Acidosis together with elevated glucose and ketones supports the ketoacidosis explanation in this case."
+        },
+        {
+          "id": "serum-osmolality",
+          "label": "Review serum osmolality",
+          "category": "laboratory",
+          "minutes": 4,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional laboratory result: measured total serum osmolality is 297 mOsm/kg.",
+          "interpretation": "This fictional result does not support a markedly hyperosmolar explanation. It does not replace the three-part ketoacidosis assessment."
+        }
+      ],
+      "reasoning": {
+        "supportLabel": "Evidence supporting your explanation",
+        "limitationLabel": "Compare explanations or identify a limit",
+        "prompt": "Choose a relevant fact or the combined glucose, ketone and acid-base argument. Explain what it supports, how the alternatives compare, and what remains uncertain.",
+        "caseLearningText": "Keep glucose, ketones and acid-base evidence distinct until you can connect them. Compare the metabolic explanation with its rivals; one abnormal result is not the whole argument. These alternatives are simplified; real presentations can overlap.",
+        "insufficientCitationFeedback": "The three-part argument needs the glucose, ketone and acid-base findings together. Select their combined argument to justify this conclusion; citing one component does not demonstrate that connection.",
+        "openingFacts": [
+          {
+            "id": "opening:vomiting-fatigue-discomfort",
+            "label": "Vomiting, fatigue and abdominal discomfort in the opening handoff",
+            "strength": "concern",
+            "supports": [
+              "diabetic-ketoacidosis",
+              "hyperosmolar-state",
+              "gastroenteritis"
+            ]
+          }
+        ],
+        "supportRules": {
+          "recent-history": {
+            "strength": "suggestive",
+            "supports": [
+              "diabetic-ketoacidosis",
+              "hyperosmolar-state"
+            ]
+          },
+          "bedside-observations": {
+            "strength": "concern",
+            "supports": [
+              "diabetic-ketoacidosis",
+              "hyperosmolar-state",
+              "gastroenteritis"
+            ]
+          },
+          "plasma-glucose": {
+            "strength": "component",
+            "supports": [
+              "diabetic-ketoacidosis"
+            ],
+            "conflictsWith": [
+              "hyperosmolar-state"
+            ],
+            "conflictFeedback": "The glucose value you read does not fit HHS alone in this fictional case. It does not establish DKA without the remaining findings; real presentations can overlap."
+          },
+          "blood-ketones": {
+            "strength": "component",
+            "supports": [
+              "diabetic-ketoacidosis"
+            ],
+            "conflictsWith": [
+              "hyperosmolar-state"
+            ],
+            "conflictFeedback": "The ketone elevation you read does not fit HHS alone in this fictional case. It does not establish DKA without the remaining findings; real presentations can overlap."
+          },
+          "acid-base": {
+            "strength": "component",
+            "supports": [
+              "diabetic-ketoacidosis"
+            ],
+            "conflictsWith": [
+              "hyperosmolar-state"
+            ],
+            "conflictFeedback": "The acidosis you read does not fit HHS alone in this fictional case. It does not establish DKA without the remaining findings; real presentations can overlap."
+          },
+          "serum-osmolality": {
+            "strength": "limited",
+            "supports": [],
+            "conflictsWith": [
+              "hyperosmolar-state"
+            ],
+            "conflictFeedback": "The osmolality result you read does not support HHS alone in this fictional case. It does not establish DKA without the remaining findings; real presentations can overlap."
+          }
+        },
+        "supportGroups": [
+          {
+            "id": "pattern:metabolic-triad",
+            "label": "Glucose, blood ketones and acid-base results together",
+            "requires": [
+              "plasma-glucose",
+              "blood-ketones",
+              "acid-base"
+            ],
+            "strength": "decisive",
+            "supports": [
+              "diabetic-ketoacidosis"
+            ]
+          }
+        ],
+        "uncertaintyOptions": [
+          {
+            "id": "symptoms-not-confirmation",
+            "label": "Vomiting and discomfort alone do not establish a metabolic diagnosis.",
+            "requires": [],
+            "scope": "provisional"
+          },
+          {
+            "id": "history-limits",
+            "label": "Thirst and frequent urination before vomiting weaken a stomach-only explanation; the metabolic cause is still unresolved.",
+            "requires": [
+              "recent-history"
+            ],
+            "missingAny": [
+              "plasma-glucose",
+              "blood-ketones",
+              "acid-base"
+            ],
+            "scope": "provisional"
+          },
+          {
+            "id": "glucose-with-missing-components",
+            "label": "Glucose is raised, but a ketone or acid-base report is still missing from my route.",
+            "requires": [
+              "plasma-glucose"
+            ],
+            "missingAny": [
+              "blood-ketones",
+              "acid-base"
+            ],
+            "forHypotheses": [
+              "diabetic-ketoacidosis"
+            ],
+            "scope": "provisional"
+          },
+          {
+            "id": "ketones-with-missing-components",
+            "label": "Ketones are raised, but a glucose or acid-base report is still missing from my route.",
+            "requires": [
+              "blood-ketones"
+            ],
+            "missingAny": [
+              "plasma-glucose",
+              "acid-base"
+            ],
+            "forHypotheses": [
+              "diabetic-ketoacidosis"
+            ],
+            "scope": "provisional"
+          },
+          {
+            "id": "acidosis-with-missing-components",
+            "label": "A glucose or ketone report is still missing, so this acidosis has not been linked to the full pattern.",
+            "requires": [
+              "acid-base"
+            ],
+            "missingAny": [
+              "plasma-glucose",
+              "blood-ketones"
+            ],
+            "forHypotheses": [
+              "diabetic-ketoacidosis"
+            ],
+            "scope": "provisional"
+          },
+          {
+            "id": "triad-scope",
+            "label": "The laboratory pattern supports ketoacidosis here; it does not determine why it developed or settle every care decision.",
+            "requires": [
+              "plasma-glucose",
+              "blood-ketones",
+              "acid-base"
+            ],
+            "forHypotheses": [
+              "diabetic-ketoacidosis"
+            ],
+            "scope": "supported"
+          },
+          {
+            "id": "osmolality-discriminator",
+            "label": "This osmolality result weakens a markedly hyperosmolar explanation; it cannot establish ketoacidosis on its own.",
+            "requires": [
+              "serum-osmolality"
+            ],
+            "forHypotheses": [
+              "diabetic-ketoacidosis",
+              "gastroenteritis"
+            ],
+            "scope": "any"
+          },
+          {
+            "id": "all-excluded",
+            "label": "Every other cause of vomiting has now been ruled out.",
+            "requires": [],
+            "scope": "unsupported"
+          }
+        ]
+      },
+      "resolution": {
+        "hypothesisId": "diabetic-ketoacidosis",
+        "evidenceActionIds": [
+          "plasma-glucose",
+          "blood-ketones",
+          "acid-base"
+        ],
+        "supportedSummary": "The collected three-part pattern supports ketoacidosis in this fictional case: elevated glucose, ketones and acidosis. The opening complaint alone was not enough.",
+        "mismatchSummary": "The collected glucose, ketone and acid-base findings fit ketoacidosis more closely than the selected explanation in this fictional case.",
+        "provisionalSummary": "Your conclusion remains provisional because the glucose, ketone and acid-base results were not all collected. A partial pattern is not the complete evidence set.",
+        "decisiveClue": "The fictional combination is glucose 286 mg/dL, beta-hydroxybutyrate 4.8 mmol/L, pH 7.22 and bicarbonate 13 mmol/L.",
+        "missingClue": "At least one component of the three-part laboratory pattern is missing from your route.",
+        "nextLearning": "Ask whether the required pieces fit together, rather than letting one abnormal number carry the whole conclusion.",
+        "limitations": [
+          "Synthetic preview pending human medical review. This is a reasoning exercise, not a validated diagnostic assessment.",
+          "Reports are fictional text, not scans. Scene art is reused illustration, not a patient record or diagnostic evidence.",
+          "Timing is authored, non-real-time and non-prognostic. Reading order does not prescribe a clinical workup. Emergency assessment continues independently of your choices.",
+          "No treatment, dose, eligibility decision or patient outcome is modeled. A game conclusion is not evidence of clinical competence."
+        ]
+      },
+      "careWorkflow": {
+        "episodeId": "stu-003-after-weekend-investigation",
+        "version": 1,
+        "role": {
+          "label": "Student reporting to a supervising clinician",
+          "boundary": "Propose a synthesis, review supplied findings and bring concerns to the supervising clinician. The supervisor authorizes clinical decisions and remains responsible for reassessment; the student does not finalize a diagnosis or treatment plan independently."
+        },
+        "timingNote": "Update rounds are fictional report-release events, not clinical minutes or recommended waiting periods. Tasks may progress together; report availability does not prescribe an investigation order.",
+        "priority": {
+          "prompt": "The handoff reports vomiting, fatigue and abdominal discomfort, but the record is incomplete. What should you do before a complete laboratory explanation is available?",
+          "choices": [
+            {
+              "id": "bring-concern-to-supervisor",
+              "label": "Bring the presenting concern to the supervising clinician now and propose focused review while the cause remains under assessment.",
+              "appropriate": true,
+              "feedback": "A student can raise the concern and identify missing information without claiming a confirmed cause or taking over the supervisor’s responsibilities.",
+              "requires": []
+            },
+            {
+              "id": "complete-pattern-before-contact",
+              "label": "Complete the laboratory pattern before contacting the supervisor, so no incomplete concern is handed over.",
+              "appropriate": false,
+              "feedback": "The supervisor needs to know the presenting concern and what is pending. Completing a pattern is not a substitute for early shared awareness and ownership.",
+              "requires": []
+            }
+          ]
+        },
+        "tasks": {
+          "recent-history": {
+            "owner": "Supervising clinician",
+            "label": "Follow up the recorded recent history with the history-taking team member",
+            "rounds": 1
+          },
+          "bedside-observations": {
+            "owner": "Supervising clinician",
+            "label": "Follow up the recorded bedside observations with the bedside team",
+            "rounds": 1
+          },
+          "plasma-glucose": {
+            "owner": "Supervising clinician",
+            "label": "Follow up the authored plasma glucose report from the laboratory",
+            "rounds": 1
+          },
+          "blood-ketones": {
+            "owner": "Supervising clinician",
+            "label": "Follow up the authored blood ketone report from the laboratory",
+            "rounds": 2
+          },
+          "acid-base": {
+            "owner": "Supervising clinician",
+            "label": "Follow up the authored acid-base report from the laboratory",
+            "rounds": 2
+          },
+          "serum-osmolality": {
+            "owner": "Supervising clinician",
+            "label": "Follow up the authored osmolality report from the laboratory",
+            "rounds": 2
+          }
+        },
+        "reassessment": {
+          "minimumReviewed": 1,
+          "update": "Fictional team update: the opening handoff described vomiting, fatigue and abdominal discomfort. The supervising clinician asks which information you have actually reviewed and who will follow up the rest. No new laboratory value or patient change is supplied in this update.",
+          "prompt": "What should your next message to the supervisor clarify after a reviewed finding and this update?",
+          "choices": [
+            {
+              "id": "synthesize-and-confirm-review",
+              "label": "Separate the presenting symptoms, reviewed results and remaining questions, then confirm the supervisor who will review the next update.",
+              "appropriate": true,
+              "feedback": "This is a student synthesis and an ownership check. It does not turn one reviewed result into a complete diagnosis or an independent care decision.",
+              "requires": []
+            },
+            {
+              "id": "first-result-closes-loop",
+              "label": "Treat the first available result as completion of the assessment and leave further review to the laboratory worklist.",
+              "appropriate": false,
+              "feedback": "A result arriving is not the same as clinical reassessment. The supervisor still needs to know the information reviewed and what needs follow-up.",
+              "requires": []
+            }
+          ],
+          "variants": [
+            {
+              "id": "glucose-component-limit",
+              "requires": [
+                "plasma-glucose"
+              ],
+              "prompt": "You reviewed a plasma glucose of 286 mg/dL. What can you carry into the supervised reassessment from this report?",
+              "choices": [
+                {
+                  "id": "reassess-glucose-component",
+                  "label": "Raised glucose is one component. Bring the ketone and acid-base findings into the synthesis separately; this glucose value alone is not the complete ketoacidosis argument.",
+                  "appropriate": true,
+                  "feedback": "Keep the laboratory components distinct and then connect the reports you actually reviewed. This remains true if you have already read the complete pattern: the diagnosis is supported by their combination, not by glucose alone.",
+                  "requires": []
+                },
+                {
+                  "id": "reassess-glucose-completes-pattern",
+                  "label": "Report that the glucose value by itself establishes the complete ketoacidosis pattern, so ketone and acid-base information would not change the synthesis.",
+                  "appropriate": false,
+                  "feedback": "The glucose result does not establish the full pattern by itself. Ketone and metabolic-acidosis evidence answer separate questions, even when all reports are already available.",
+                  "requires": []
+                }
+              ]
+            }
+          ]
+        },
+        "handoff": {
+          "receiver": {
+            "prompt": "Who should accept your synthesis and the next clinical review?",
+            "choices": [
+              {
+                "id": "supervising-clinician",
+                "label": "The supervising clinician responsible for this assessment.",
+                "appropriate": true,
+                "feedback": "This names a receiver with clinical responsibility while preserving the student’s role.",
+                "requires": []
+              },
+              {
+                "id": "results-inbox-only",
+                "label": "The laboratory results inbox, without directly notifying the supervisor.",
+                "appropriate": false,
+                "feedback": "A results inbox is not a clinician accepting the concern or responsibility for the next review.",
+                "requires": []
+              }
+            ]
+          },
+          "situation": {
+            "prompt": "Which statement uses only opening facts or findings you actually reviewed?",
+            "choices": [
+              {
+                "id": "opening-vomiting-concern",
+                "label": "A 26-year-old arrived with vomiting, fatigue and abdominal discomfort; the initial stomach-illness account was incomplete.",
+                "appropriate": true,
+                "feedback": "This is enough for an early supervisor handoff. It does not claim a laboratory pattern you have not reviewed.",
+                "requires": []
+              },
+              {
+                "id": "reviewed-history",
+                "label": "The reviewed history places thirst and frequent urination before vomiting, with no established diabetes diagnosis in the record.",
+                "appropriate": true,
+                "feedback": "This adds the recorded chronology rather than assuming that the opening complaint settled the cause.",
+                "requires": [
+                  "recent-history"
+                ]
+              },
+              {
+                "id": "reviewed-glucose",
+                "label": "The glucose report I reviewed records 286 mg/dL; that number alone is not the entire metabolic pattern.",
+                "appropriate": true,
+                "feedback": "This gives a reviewed result and limits the inference from it.",
+                "requires": [
+                  "plasma-glucose"
+                ]
+              },
+              {
+                "id": "reviewed-triad",
+                "label": "I reviewed glucose 286 mg/dL, blood ketones 4.8 mmol/L, and acid-base values of pH 7.22 and bicarbonate 13 mmol/L together.",
+                "appropriate": true,
+                "feedback": "This statement becomes available only when all three reports were reviewed. It is not required for an early handoff.",
+                "requires": [
+                  "plasma-glucose",
+                  "blood-ketones",
+                  "acid-base"
+                ]
+              },
+              {
+                "id": "opening-confirms-stomach-illness",
+                "label": "The vomiting establishes a stomach illness as the cause of the whole presentation.",
+                "appropriate": false,
+                "feedback": "The opening complaint does not establish that explanation. Communicate the symptoms and what is known separately from the working hypothesis.",
+                "requires": []
+              }
+            ]
+          },
+          "uncertainty": {
+            "prompt": "Which qualification fits a supervised synthesis without overstating the known evidence?",
+            "choices": [
+              {
+                "id": "opening-scope",
+                "label": "Vomiting and discomfort alone do not confirm a gastrointestinal or metabolic cause; any stronger claim must cite reviewed evidence.",
+                "appropriate": true,
+                "feedback": "This remains a true limit of the opening account even after later findings become available.",
+                "requires": []
+              },
+              {
+                "id": "glucose-component-scope",
+                "label": "The reviewed glucose value is one component; ketone and acid-base information must be considered separately.",
+                "appropriate": true,
+                "feedback": "This does not falsely say that the other reports are still missing if you have also reviewed them.",
+                "requires": [
+                  "plasma-glucose"
+                ]
+              },
+              {
+                "id": "reviewed-pattern-scope",
+                "label": "The combined reviewed pattern supports ketoacidosis in this case; its precipitant and care decisions still require the supervisor’s assessment.",
+                "appropriate": true,
+                "feedback": "A complete recorded pattern can strengthen the synthesis without transferring independent clinical authority to the student.",
+                "requires": [
+                  "plasma-glucose",
+                  "blood-ketones",
+                  "acid-base"
+                ]
+              },
+              {
+                "id": "opening-removes-uncertainty",
+                "label": "The initial stomach-illness description is enough to leave competing explanations out of the handoff.",
+                "appropriate": false,
+                "feedback": "That would turn the opening suggestion into a confirmed account. The supervisor needs the distinction between symptoms, findings and inference.",
+                "requires": []
+              }
+            ]
+          },
+          "nextOwner": {
+            "prompt": "How should follow-up of the concern and later information be assigned?",
+            "choices": [
+              {
+                "id": "supervisor-owns-review",
+                "label": "Confirm that the supervising clinician owns reassessment of the presenting concern; bring new reports or symptom changes back through the agreed route.",
+                "appropriate": true,
+                "feedback": "The student tracks and communicates information while the supervisor accepts clinical review. A future change is a contingency, not an event the game has simulated.",
+                "requires": []
+              },
+              {
+                "id": "worklist-before-supervisor",
+                "label": "Treat the laboratory worklist as the owner of the next review and wait for every report before updating the supervisor.",
+                "appropriate": false,
+                "feedback": "Task completion does not assign clinical responsibility. The supervisor should know what has been reviewed and what still needs attention.",
+                "requires": []
+              }
+            ]
+          }
+        },
+        "readback": {
+          "prompt": "Which supervisor reply lets you verify the concern and responsibility before ending this handoff?",
+          "choices": [
+            {
+              "id": "specific-supervisor-readback",
+              "label": "“I heard the vomiting, fatigue and abdominal discomfort concern. I own the next review; distinguish the findings you reviewed from those still pending and bring updates back to me.”",
+              "appropriate": true,
+              "feedback": "Verify the repeated concern and next review owner, and correct any mismatch. This confirms communication, not a finalized diagnosis or treatment plan.",
+              "requires": []
+            },
+            {
+              "id": "generic-supervisor-acknowledgment",
+              "label": "“The laboratory worklist is visible; whoever sees the final result can complete the assessment.”",
+              "appropriate": false,
+              "feedback": "The concern and next clinical owner have not been repeated or accepted. Clarify them with the supervising clinician.",
+              "requires": []
+            }
+          ]
+        },
+        "sources": [
+          {
+            "title": "WHO Emergency Care Toolkit: Interagency Integrated Triage Tool",
+            "url": "https://www.who.int/teams/integrated-health-services/clinical-services-and-systems/emergency-and-critical-care/emergency-care-toolkit",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Prioritizing clinical concern separately from establishing a diagnosis. These role-specific exercises do not implement or validate a triage scale."
+          },
+          {
+            "title": "NICE CG50: recognising and responding to deterioration",
+            "url": "https://www.nice.org.uk/guidance/CG50/chapter/recommendations",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Clinical concern, response ownership and reassessment. No physiological thresholds, observation intervals or treatment instructions are introduced."
+          },
+          {
+            "title": "AHRQ TeamSTEPPS: Handoff",
+            "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/handoff.html",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Communicating known information, uncertainty, responsibility and contingencies, with acknowledgment by the receiver. The scripted handoffs are fictional examples."
+          },
+          {
+            "title": "AHRQ TeamSTEPPS: Check-Back (or Repeat-Back)",
+            "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/checkback.html",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Receiver repetition followed by sender verification, including family communication. An acknowledgment does not establish a diagnosis or complete pending tasks."
+          }
+        ],
+        "reviewProvenance": {
+          "status": "unreviewed",
+          "ownerReportedPriorClinicianReview": true,
+          "priorReviewScope": "unverified",
+          "priorReviewVersion": "unverified",
+          "text": "The owner reports clinician review of earlier Medical Mysteries material. The reviewed scope, artifact and version have not been verified for this addition. These newly authored workflow profiles have not received separate clinician review."
+        }
+      }
+    },
+    "transfer": {
+      "id": "hyperosmolar-pattern-contrast",
+      "version": 1,
+      "prompt": "A different fictional patient has dehydration, glucose 720 mg/dL, measured total osmolality 334 mOsm/kg, beta-hydroxybutyrate 0.8 mmol/L, venous pH 7.36 and bicarbonate 23 mmol/L. Which explanation fits this laboratory pattern better?",
+      "choices": [
+        {
+          "id": "dka",
+          "label": "Ketoacidosis, because any very high glucose is sufficient.",
+          "feedback": "High glucose alone does not establish ketoacidosis. The marked ketosis and acidosis from the earlier case are absent here."
+        },
+        {
+          "id": "hhs",
+          "label": "A hyperosmolar hyperglycemic state rather than the earlier ketoacidotic pattern.",
+          "feedback": "This authored pattern combines severe hyperglycemia and hyperosmolality without significant ketosis or acidosis. It contrasts with the three-part ketoacidosis pattern."
+        },
+        {
+          "id": "normal",
+          "label": "No major metabolic problem, because the pH is not low.",
+          "feedback": "A near-normal pH does not make severe hyperglycemia and hyperosmolality harmless. The full pattern matters."
+        }
+      ],
+      "answerId": "hhs",
+      "source": {
+        "title": "Hyperglycemic Crises in Adults With Diabetes: 2024 consensus report",
+        "url": "https://doi.org/10.2337/dci24-0032"
+      },
+      "synthetic": true,
+      "reviewStatus": "pending_human_review",
+      "sourceCheckedDate": "2026-09-11"
+    }
+  }
+]);
+
+export function getLegacyInvestigationEpisode(episodeId, version) {
+  return [...LEGACY_INVESTIGATION_CONTENT, ...V2_INVESTIGATION_CONTENT, ...V3_INVESTIGATION_CONTENT].find(({ episode }) => episode.id === episodeId && episode.version === version)?.episode ?? null;
+}
+
+export function getLegacyTransferQuestion(episodeId, version) {
+  return [...LEGACY_INVESTIGATION_CONTENT, ...V2_INVESTIGATION_CONTENT, ...V3_INVESTIGATION_CONTENT].find(({ episode }) => episode.id === episodeId && episode.version === version)?.transfer ?? null;
+}
+
+// Exact identity preserves the original immutable definition without accepting altered stored copies.
+export function matchesBundledContent(text, definition) {
+  return definition !== null && typeof text === 'string' && text === JSON.stringify(definition);
+}
