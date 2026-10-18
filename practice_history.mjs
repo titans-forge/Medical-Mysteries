@@ -1,3 +1,4 @@
+import { getGameStorage } from './game_storage.mjs';
 import {
   TRANSFER_PRACTICE_SCHEMA_VERSION,
   TRANSFER_PRACTICE_PACKS,
@@ -15,7 +16,7 @@ const MAX_HISTORY_BYTES = 64 * 1024;
 
 const hasOwn = (value, key) => Object.prototype.hasOwnProperty.call(value, key);
 const isRecord = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
-const storageOrDefault = (storage) => storage === undefined ? globalThis.localStorage : storage;
+const storageOrDefault = (storage) => storage === undefined ? getGameStorage() : storage;
 
 function canonicalJson(value) {
   if (Array.isArray(value)) return `[${value.map(canonicalJson).join(',')}]`;

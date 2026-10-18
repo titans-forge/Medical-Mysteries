@@ -1,3 +1,5 @@
+import { REVIEW_STATEMENT, releaseLimitation } from './product_release.mjs';
+import { exportJSON } from './export_file.mjs';
 import {
   INVESTIGATION_EPISODE,
   INVESTIGATION_EPISODES,
@@ -229,7 +231,7 @@ export function mountInvestigation({ onOpen, onClose, isAvailable }) {
     titleGroup.append(element(
       'div',
       'eyebrow',
-      `${presentation.audience || 'ALL AUDIENCES'} · ${presentation.playMinutes || '5–8'} MIN · SYNTHETIC PREVIEW`,
+      `${presentation.audience || 'ALL AUDIENCES'} · ${presentation.playMinutes || '5–8'} MIN · INVESTIGATION`,
     ));
     const title = element('h1', '', item.title);
     title.id = 'investigationTitle';
@@ -397,8 +399,8 @@ export function mountInvestigation({ onOpen, onClose, isAvailable }) {
         notebook.append(command('Export current investigation', exportCurrent));
       }
       const review = element('details', 'investigation-sources');
-      review.append(element('summary', '', 'Workflow sources and review scope'));
-      review.append(element('p', '', care.profile.reviewProvenance.text), element('p', '', care.profile.timingNote));
+      review.append(element('summary', '', 'Workflow sources'));
+      review.append(element('p', '', REVIEW_STATEMENT), element('p', '', care.profile.timingNote));
       for (const source of care.profile.sources) {
         const link = element('a', '', source.title);
         link.href = source.url; link.target = '_blank'; link.rel = 'noreferrer';
@@ -506,7 +508,7 @@ export function mountInvestigation({ onOpen, onClose, isAvailable }) {
       sources.append(link);
       if (source.scope) sources.append(element('p', 'source-scope', `Scope: ${source.scope}`));
     });
-    debrief.limitations.forEach((limitation) => sources.append(element('p', '', limitation)));
+    debrief.limitations.forEach((limitation) => sources.append(element('p', '', releaseLimitation(limitation))));
     result.append(sources);
     root.append(result);
   }
@@ -526,12 +528,7 @@ export function mountInvestigation({ onOpen, onClose, isAvailable }) {
         synthetic: true,
         clinicalUse: false,
       };
-      const url = URL.createObjectURL(new Blob([JSON.stringify(receipt, null, 2)], { type: 'application/json' }));
-      const link = element('a');
-      link.href = url;
-      link.download = item.id === INVESTIGATION_EPISODE.id ? 'night-shift-investigation.json' : `${item.id}-investigation.json`;
-      link.click();
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      void exportJSON(receipt, item.id === INVESTIGATION_EPISODE.id ? 'night-shift-investigation.json' : `${item.id}-investigation.json`);
   }
 
   refresh();

@@ -1,3 +1,4 @@
+import { getGameStorage } from './game_storage.mjs';
 import {
   INVESTIGATION_EPISODE,
   getInvestigationEpisode,
@@ -14,7 +15,7 @@ const hasExactKeys = (value, keys) => isRecord(value) && Object.keys(value).leng
 const keyFor = (episodeId) => `mmInvestigation:v2:${episodeId}`;
 
 function storageOrDefault(storage) {
-  return storage === undefined ? globalThis.localStorage : storage;
+  return storage === undefined ? getGameStorage() : storage;
 }
 
 function withinSize(text) {

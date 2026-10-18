@@ -1,3 +1,4 @@
+import { getGameStorage } from './game_storage.mjs';
 import original from './game-data.mjs';
 import current from './story_decisions.mjs';
 import previous from './story_content_v2.mjs';
@@ -9,7 +10,7 @@ export const STORY_PREFERENCES_KEY = 'mmStoryPreferences:v1';
 const bundles = new Map([[original.build_id, original], [previous.build_id, previous], [current.build_id, current]]);
 const clone = (value) => JSON.parse(JSON.stringify(value));
 const object = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
-const target = (storage) => { try { return storage === undefined ? globalThis.localStorage : storage; } catch { return undefined; } };
+const target = (storage) => { try { return storage === undefined ? getGameStorage() : storage; } catch { return undefined; } };
 const id = (value) => typeof value === 'string' && value.length > 0 && value.length < 256;
 const finite = (value) => Number.isFinite(value) && value >= 0;
 const keyFor = (build, session) => `${STORY_COMPLETION_PREFIX}${encodeURIComponent(build)}:${encodeURIComponent(session)}`;

@@ -6,3 +6,8 @@ release/
 __pycache__/
 *.local
 .env*
+
+ios/Game/
+ios/build/
+*.xcuserstate
+xcuserdata/

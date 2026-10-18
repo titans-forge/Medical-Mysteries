@@ -1,3 +1,4 @@
+import { getGameStorage } from './game_storage.mjs';
 import { getInvestigationEpisode, restoreInvestigation } from './investigation.mjs';
 import { getTransferQuestion } from './investigation_transfer.mjs';
 import { matchesBundledContent } from './investigation_content_versions.mjs';
@@ -26,7 +27,7 @@ function hasExactKeys(value, keys) {
 }
 
 function storageOrDefault(storage) {
-  return storage === undefined ? globalThis.localStorage : storage;
+  return storage === undefined ? getGameStorage() : storage;
 }
 
 function withinSize(text, maxBytes = MAX_BYTES) {

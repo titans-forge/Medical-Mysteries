@@ -1,3 +1,5 @@
+import { getGameStorage, isNativeStorage } from './game_storage.mjs';
+import { exportJSON } from './export_file.mjs';
 import { loadStoryProfile, exportStoryProgress } from './story_progress.mjs';
 
 function node(tag, className = '', text = '') {
@@ -14,18 +16,16 @@ function button(label, action) {
 }
 
 function download(value) {
-  const url = URL.createObjectURL(new Blob([JSON.stringify(value, null, 2)], { type: 'application/json' }));
-  const link = node('a'); link.href = url; link.download = 'medical-mysteries-story-history.json'; link.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  void exportJSON(value, 'medical-mysteries-story-history.json');
 }
 
 function rawStoryStorage() {
   const records = [];
   try {
-    for (let index = 0; index < localStorage.length; index += 1) {
-      const key = localStorage.key(index);
+    for (let index = 0; index < getGameStorage().length; index += 1) {
+      const key = getGameStorage().key(index);
       if (key === 'mmBetaSessions:v1' || key === 'mmReviewQueue' || key?.startsWith('mmStorySession:v2:')
-        || key?.startsWith('mmStoryFeedback:')) records.push({ key, raw: localStorage.getItem(key) });
+        || key?.startsWith('mmStoryFeedback:')) records.push({ key, raw: getGameStorage().getItem(key) });
     }
     return { status: 'ok', records };
   } catch { return { status: 'unavailable', records }; }
@@ -56,7 +56,7 @@ export async function openStoryHistory({ api, onResume }) {
       item.append(node('h3', '', run.title), node('p', 'control-help', `${run.edition_label || `Story version ${run.content_version}`} · ${run.finished ? 'Completed' : 'In progress'}`));
       if (Number.isFinite(run.started)) item.append(node('p', 'control-help', `Started ${new Date(run.started * 1000).toLocaleString()}`));
       if (run.score) item.append(node('p', '', `First-answer match ${Math.round(run.score.accuracy * 100)}% · ${run.score.earned}/${run.score.possible} answer points`));
-      if (run.persistence_status !== 'saved') item.append(node('p', 'control-help', `Not saved — this tab only for now. ${run.persistence_note || 'This route may be unavailable after reload.'} Export includes its summary, not a recoverable action log.`));
+      if (run.persistence_status !== 'saved') item.append(node('p', 'control-help', `Not saved — this tab only for now. ${run.persistence_note || 'This route may be unavailable after reload.'} ${isNativeStorage() ? 'The app backup includes committed records only; this unsaved route is not included.' : 'Export includes its summary, not a recoverable action log.'}`));
       item.append(button(run.finished ? 'Open saved result' : 'Resume saved route', () => { dialog.close(); void onResume(run.session_id); }));
       list.append(item);
     }
@@ -70,12 +70,12 @@ export async function openStoryHistory({ api, onResume }) {
       dialog.append(prior);
     }
     if (profile.unreadable_count || ['invalid', 'unavailable'].includes(profile.legacy_status)) dialog.append(node('p', 'control-help', 'Some local profile records could not be read. They have not been replaced; export includes the bytes available to this browser.'));
-    dialog.append(button('Export story history', () => download({
+    dialog.append(button('Export story history', () => download(() => ({
       schema: 1, exported_utc: new Date().toISOString(), listed_routes: runs,
       progress: exportStoryProgress(), saved_storage: rawStoryStorage(), clinical_use: false,
-    })));
+    }))));
   } catch (error) {
     status.textContent = `Story history could not be read: ${error.message}. Existing saved data has not been replaced.`;
-    dialog.append(button('Export available history', () => download({ schema: 1, progress: exportStoryProgress(), saved_storage: rawStoryStorage(), clinical_use: false })));
+    dialog.append(button('Export available history', () => download(() => ({ schema: 1, progress: exportStoryProgress(), saved_storage: rawStoryStorage(), clinical_use: false }))));
   }
 }

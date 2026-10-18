@@ -1,0 +1,30 @@
+// !$*UTF8*$!
+{
+ archiveVersion = 1; classes = {}; objectVersion = 56;
+ objects = {
+  A00000000000000000000001 = {isa = PBXProject; buildConfigurationList = A00000000000000000000002; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; knownRegions = (en, Base); mainGroup = A00000000000000000000003; productRefGroup = A00000000000000000000004; projectDirPath = ""; projectRoot = ""; targets = (A00000000000000000000005); };
+  A00000000000000000000002 = {isa = XCConfigurationList; buildConfigurations = (A00000000000000000000006, A00000000000000000000007); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+  A00000000000000000000003 = {isa = PBXGroup; children = (A00000000000000000000008, A00000000000000000000009, A0000000000000000000000A, A0000000000000000000000B, A00000000000000000000017, A00000000000000000000004); sourceTree = "<group>"; };
+  A00000000000000000000004 = {isa = PBXGroup; children = (A0000000000000000000000C); name = Products; sourceTree = "<group>"; };
+  A00000000000000000000005 = {isa = PBXNativeTarget; buildConfigurationList = A0000000000000000000000D; buildPhases = (A0000000000000000000000E, A0000000000000000000000F, A00000000000000000000010); buildRules = (); dependencies = (); name = MedicalMysteries; productName = MedicalMysteries; productReference = A0000000000000000000000C; productType = "com.apple.product-type.application"; };
+  A00000000000000000000006 = {isa = XCBuildConfiguration; buildSettings = {SDKROOT = iphoneos; IPHONEOS_DEPLOYMENT_TARGET = 16.0; SWIFT_VERSION = 5.0; CLANG_ENABLE_MODULES = YES;}; name = Debug; };
+  A00000000000000000000007 = {isa = XCBuildConfiguration; buildSettings = {SDKROOT = iphoneos; IPHONEOS_DEPLOYMENT_TARGET = 16.0; SWIFT_VERSION = 5.0; CLANG_ENABLE_MODULES = YES;}; name = Release; };
+  A00000000000000000000008 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedicalMysteries/App.swift; sourceTree = "<group>"; };
+  A00000000000000000000009 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedicalMysteries/NativeStore.swift; sourceTree = "<group>"; };
+  A0000000000000000000000A = {isa = PBXFileReference; lastKnownFileType = folder; path = Game; sourceTree = "<group>"; };
+  A0000000000000000000000B = {isa = PBXFileReference; lastKnownFileType = text.xml; path = MedicalMysteries/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+  A0000000000000000000000C = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MedicalMysteries.app; sourceTree = BUILT_PRODUCTS_DIR; };
+  A0000000000000000000000D = {isa = XCConfigurationList; buildConfigurations = (A00000000000000000000011, A00000000000000000000012); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+  A0000000000000000000000E = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A00000000000000000000013, A00000000000000000000014); runOnlyForDeploymentPostprocessing = 0; };
+  A0000000000000000000000F = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+  A00000000000000000000010 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (A00000000000000000000015, A00000000000000000000016, A00000000000000000000018); runOnlyForDeploymentPostprocessing = 0; };
+  A00000000000000000000011 = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; PRODUCT_BUNDLE_IDENTIFIER = com.titansforge.medicalmysteries; PRODUCT_NAME = "$(TARGET_NAME)"; INFOPLIST_FILE = MedicalMysteries/Info.plist; GENERATE_INFOPLIST_FILE = NO; TARGETED_DEVICE_FAMILY = 1; MARKETING_VERSION = 1.0.0; CURRENT_PROJECT_VERSION = 1; CODE_SIGN_STYLE = Automatic; SWIFT_OPTIMIZATION_LEVEL = "-Onone";}; name = Debug; };
+  A00000000000000000000012 = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; PRODUCT_BUNDLE_IDENTIFIER = com.titansforge.medicalmysteries; PRODUCT_NAME = "$(TARGET_NAME)"; INFOPLIST_FILE = MedicalMysteries/Info.plist; GENERATE_INFOPLIST_FILE = NO; TARGETED_DEVICE_FAMILY = 1; MARKETING_VERSION = 1.0.0; CURRENT_PROJECT_VERSION = 1; CODE_SIGN_STYLE = Automatic; SWIFT_OPTIMIZATION_LEVEL = "-O";}; name = Release; };
+  A00000000000000000000013 = {isa = PBXBuildFile; fileRef = A00000000000000000000008; };
+  A00000000000000000000014 = {isa = PBXBuildFile; fileRef = A00000000000000000000009; };
+  A00000000000000000000015 = {isa = PBXBuildFile; fileRef = A0000000000000000000000A; };
+  A00000000000000000000016 = {isa = PBXBuildFile; fileRef = A0000000000000000000000B; };
+  A00000000000000000000017 = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = MedicalMysteries/Assets.xcassets; sourceTree = "<group>"; };
+  A00000000000000000000018 = {isa = PBXBuildFile; fileRef = A00000000000000000000017; };
+ }; rootObject = A00000000000000000000001;
+}

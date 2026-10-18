@@ -1,3 +1,5 @@
+import { getGameStorage, isNativeStorage } from './game_storage.mjs';
+import { REVIEW_STATEMENT } from './product_release.mjs';
 import { renderEducationalExhibit } from './educational_exhibits.mjs';
 import { offlineRequest } from './offline_api.mjs';
 async function loadModule(path) {
@@ -43,10 +45,10 @@ const ACTIVE_SESSION_KEY = 'mmActiveSession';
 const DRAFT_PREFIX = 'mmDraft:';
 
 function readStorage(key) {
-  try { return JSON.parse(localStorage.getItem(key)); } catch { return null; }
+  try { return JSON.parse(getGameStorage()?.getItem(key)); } catch { return null; }
 }
 function writeStorage(key, value) {
-  try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* storage is optional */ }
+  try { getGameStorage()?.setItem(key, JSON.stringify(value)); } catch { showStoryStorage('Progress could not be saved. Keep this session open and export your history before closing.'); }
 }
 function activeSessionReference() {
   const ref = readStorage(ACTIVE_SESSION_KEY);
@@ -229,7 +231,7 @@ function renderList(data) {
       const empty = document.createElement('div');
       empty.className = 'tier-empty';
       empty.dataset.tier = tier;
-      text(empty, data.release_mode ? `${labels[tier]} · no reviewed cases available` : `${labels[tier]} · no cases available`);
+      text(empty, `${labels[tier]} · no cases available`);
       $('tierGrid').appendChild(empty);
       continue;
     }
@@ -258,7 +260,7 @@ function renderList(data) {
       const review = document.createElement('div'); review.className = 'case-review'; text(review, nextReviewLabel(entry.case_id, play));
       const open = document.createElement('button'); open.className = 'case-open'; open.type = 'button'; open.setAttribute('aria-label', entry.title); text(open, play ? 'Open case' : 'Start case'); open.addEventListener('click', () => start(tier, entry.case_id, true));
       button.append(cover, name, detail, edition, count, review, open);
-      if (supportsPractice(entry.case_id) && !data.release_mode) {
+      if (supportsPractice(entry.case_id) && data.features.practice) {
         const practice = document.createElement('button'); practice.type = 'button'; practice.className = 'quiet-button case-practice';
         text(practice, 'Practice'); practice.setAttribute('aria-label', `Practice ${entry.title}`);
         practice.addEventListener('click', () => openPractice(entry.case_id)); button.appendChild(practice);
@@ -266,12 +268,12 @@ function renderList(data) {
       $('tierGrid').appendChild(button);
     }
   }
-  text($('tierInfo'), data.release_mode ? 'Release mode · reviewed cases only' : 'Educational beta · Fictional cases · See clinical review notes below');
+  text($('tierInfo'), 'Six stories · Nine investigations · Fictional learning cases');
   tierListing = data;
   const investigations = investigationUI.refresh();
-  text($('rankChip'), `${Object.values(data.tiers).flat().length} stories${investigations.totalCount ? ` · ${investigations.totalCount} investigations` : ''}`);
-  $('flagshipEntry').classList.toggle('hidden', data.release_mode || !investigations.matchingCount);
-  $('openPracticeLibrary').classList.toggle('hidden', data.release_mode);
+  text($('rankChip'), `${Object.values(data.tiers).flat().length} stories${investigations.totalCount ? ` · ${investigations.totalCount} investigation families` : ''}`);
+  $('flagshipEntry').classList.toggle('hidden', !data.features.investigations || !investigations.matchingCount);
+  $('openPracticeLibrary').classList.toggle('hidden', !data.features.practice);
   $('caseFilterStatus').classList.toggle('hidden', Boolean($('tierGrid').querySelector('.case-card')) || investigations.matchingCount > 0);
   text($('caseFilterStatus'), 'No matching stories. Try another title or audience.');
   updateBoardActions();
@@ -442,12 +444,6 @@ function renderArray(id, values, kind) {
     }
     box.appendChild(node);
   }
-}
-
-function svgNode(tag, attributes = {}) {
-  const node = document.createElementNS('http://www.w3.org/2000/svg', tag);
-  for (const [key, value] of Object.entries(attributes)) node.setAttribute(key, String(value));
-  return node;
 }
 
 function activeSessionFromStage(stage) {
@@ -695,34 +691,20 @@ function renderSceneHotspots(stage, activeMedia = stage.active_media || stage.me
 function renderMarkers(tray, stage, activeMedia = stage.active_media || stage.media) {
   if (!activeMedia || activeMedia.asset !== stage.media?.asset) return;
   if (!tray.getAttribute('aria-label')) tray.setAttribute('aria-label', 'Scene observation markers');
-  const overlay = svgNode('svg', {
-    viewBox: '0 0 100 100',
-    preserveAspectRatio: 'none',
-    class: 'scene-marker-layer',
-  });
   for (const hotspot of stage.hotspots || []) {
-    if (!hotspot.id) continue;
+    if (!hotspot.id || !Number.isFinite(Number(hotspot.x)) || !Number.isFinite(Number(hotspot.y))) continue;
     const examined = (stage.examined_hotspots || []).includes(hotspot.id);
-    // Use SVG geometry rather than an inline CSS left/top declaration. The
-    // server's CSP intentionally disallows inline styles, while SVG attributes
-    // keep the validated percentage coordinates responsive and undisplayed.
-    const frame = svgNode('foreignObject', {
-      x: Number(hotspot.x) - 7,
-      y: Number(hotspot.y) - 7,
-      width: 14,
-      height: 14,
-    });
     const button = document.createElement('button');
     button.type = 'button';
     button.className = `scene-marker ${examined ? 'examined' : ''}`;
+    button.style.setProperty('--marker-x', `${Math.max(0, Math.min(100, Number(hotspot.x)))}%`);
+    button.style.setProperty('--marker-y', `${Math.max(0, Math.min(100, Number(hotspot.y)))}%`);
     button.setAttribute('aria-label', `${examined ? 'Examined' : 'Examine'} ${hotspot.label}`);
     text(button, examined ? '✓' : '?');
     button.disabled = examined;
     button.addEventListener('click', () => examine(hotspot.id));
-    frame.appendChild(button);
-    overlay.appendChild(frame);
+    tray.appendChild(button);
   }
-  tray.appendChild(overlay);
 }
 
 async function examine(hotspotId) {
@@ -870,7 +852,7 @@ function finish(result, restored = false) {
     $('resultMediaOpen').onclick = () => openMediaViewer($('resultMedia'));
     resultMediaWrap.classList.remove('hidden');
   } else clearMedia($('resultMedia'), { caption: $('resultMediaCaption'), wrapper: resultMediaWrap });
-  text($('reviewStatus'), 'Fictional learning case · Clinical review history is described on the case board.');
+  text($('reviewStatus'), REVIEW_STATEMENT);
   clear($('sources'));
   for (const source of result.sources || []) {
     const link = document.createElement('a');
@@ -911,7 +893,7 @@ function renderTransferPractice() {
   const section = $('transferPractice');
   const trigger = $('transferPracticeStart');
   if (!section || !trigger) return;
-  const supported = Boolean(tierListing && !tierListing.release_mode) && (standalonePractice || !session?.sandbox) && supportsPractice(practiceCaseId);
+  const supported = Boolean(tierListing?.features.practice) && (standalonePractice || !session?.sandbox) && supportsPractice(practiceCaseId);
   section.classList.toggle('standalone-practice', standalonePractice);
   section.classList.toggle('hidden', !supported);
   trigger.classList.toggle('hidden', !supported || Boolean(transferPracticeState?.started));
@@ -994,7 +976,7 @@ function renderPracticeLibrary() {
 }
 
 function openPractice(caseId = null) {
-  if (!tierListing || tierListing.release_mode) return;
+  if (!tierListing?.features.practice) return;
   stopCodeTimer();
   for (const id of ['menu', 'game', 'result', 'investigation', 'coldOpen', 'error']) $(id).classList.add('hidden');
   $('practiceLibrary').classList.remove('hidden');
@@ -1283,7 +1265,7 @@ $('clearPracticeHistory').addEventListener('click', () => {
 $('evidencePanel').before(document.querySelector('.decision-card'));
 document.querySelector('.board-header').after(document.querySelector('.board-filters'));
 const investigationUI = mountInvestigation({
-  isAvailable: () => Boolean(tierListing && !tierListing.release_mode),
+  isAvailable: () => Boolean(tierListing?.features.investigations),
   onOpen: () => {
     stopCodeTimer();
     closeExtraViews();
@@ -1392,3 +1374,17 @@ document.addEventListener('keydown', (event) => {
 setupPressureToggle();
 $('openStoryHistory').addEventListener('click', () => openStoryHistory({ api, onResume: resumeActiveSession }));
 loadTiers();
+
+window.addEventListener('mm-storage-error', () => showStoryStorage('Progress could not be saved on this device. Keep the app open and export your history before closing.'));
+if (isNativeStorage()) {
+  $('saveLocation').textContent = 'Progress is saved in this app on your device. Export your story history or learning journal through the share sheet for a complete backup of committed app saves. Deleting the app removes its local saves.';
+}
+
+window.addEventListener('mm-export-error', () => {
+  const message = 'The export could not be opened. Saved history has not changed. Please try again.';
+  const dialog = document.querySelector('dialog[open]');
+  if (!dialog) { showStoryStorage(message); return; }
+  let status = dialog.querySelector('.export-status');
+  if (!status) { status = document.createElement('p'); status.className = 'export-status control-help'; status.setAttribute('role', 'alert'); status.tabIndex = -1; dialog.appendChild(status); }
+  status.textContent = message; status.focus();
+});

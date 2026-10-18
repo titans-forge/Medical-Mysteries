@@ -1,21 +1,21 @@
 {
   "schema": "medical_mysteries_upgrade_manifest_v1",
   "game": "Medical Mysteries",
-  "version": "0.9.0",
-  "status": "local_unpublished_candidate",
+  "version": "1.0.0",
+  "status": "release_artifact",
   "published": false,
-  "human_review_claimed": false,
-  "clinical_review_status": "prior_review_owner_reported_new_additions_not_separately_reviewed",
+  "human_review_claimed": true,
+  "clinical_review_status": "completed_creator_confirmed",
   "clinical_review_provenance": {
-    "owner_reported_prior_clinician_review": true,
-    "prior_review_scope": "not_recorded",
-    "prior_review_artifact_and_version": "not_recorded",
-    "new_workflow_additions": "not_separately_clinician_reviewed",
-    "new_arrival_content": "not_separately_clinician_reviewed",
-    "human_review_claimed_scope": "No separate clinician review is claimed for this exact candidate, its new arrival content or its workflow additions."
+    "attestation_source": "creator_direct_confirmation",
+    "confirmation_date": "2026-10-18",
+    "reviewer_name": null,
+    "review_date": null,
+    "reviewed_artifact": null,
+    "statement": "Clinician review completed, as confirmed by the creator."
   },
   "clinical_use": false,
-  "generated_utc": "2026-10-18T00:16:42.432Z",
+  "generated_utc": "2026-10-18T05:57:57.128Z",
   "baseline": {
     "source_commit": "1c16a334772732ee4360d1d63d2b3ae62a69a55e",
     "frozen_source_directory": "baselines/published-beta-v2",
@@ -29,6 +29,7 @@
     "authoring_workspace_recovered": false
   },
   "changed_runtime_files": [
+    "CREDITS.txt",
     "app.js",
     "index.html",
     "investigation.mjs",
@@ -40,6 +41,7 @@
     "investigation_view.mjs",
     "offline_api.mjs",
     "offline_engine.mjs",
+    "practice_history.mjs",
     "review_queue.mjs",
     "styles.css"
   ],
@@ -52,6 +54,8 @@
     "care_workflow_view.mjs",
     "confidence_assessment.mjs",
     "educational_exhibits.mjs",
+    "export_file.mjs",
+    "game_storage.mjs",
     "investigation_arrivals.mjs",
     "investigation_content_v4.mjs",
     "investigation_content_v5.mjs",
@@ -61,6 +65,7 @@
     "investigation_reasoning.mjs",
     "investigation_variants.mjs",
     "investigation_visuals.mjs",
+    "product_release.mjs",
     "story_content_v2.mjs",
     "story_decisions.mjs",
     "story_history_view.mjs",
@@ -69,16 +74,16 @@
   ],
   "runtime_files": {
     "CREDITS.txt": {
-      "bytes": 594,
-      "sha256": "74c5ff9cfb21ec55dc7612cacd4de5e39b8c003fd2e540d92a170610bd003e03"
+      "bytes": 707,
+      "sha256": "8c2526186da27a1cbaa444ec212c5b1ae91fd865970e288f6b4afac0ea619df7"
     },
     "FORGE-LICENSING.html": {
       "bytes": 15596,
       "sha256": "d368492517c398a02ab9f3d87e82c8a33b9434e7b116df09c2e9d630fa20cd2e"
     },
     "app.js": {
-      "bytes": 68852,
-      "sha256": "33ea789ee1d2bfb501709d1ff4bab9848ab3946a5f8ed4e495dd37b1cb51bb2e"
+      "bytes": 69345,
+      "sha256": "797b3f3fab50faaec95658d080d7fe59b7d9706849b1acfc4863556a257eba02"
     },
     "assets/covers/doc-001-melanoma-480.webp": {
       "bytes": 14844,
@@ -408,21 +413,29 @@
       "bytes": 19462,
       "sha256": "f404f233882dd4f1f849a7b2abbab922cddbfa2750d684e722f694e91cc5eabb"
     },
+    "export_file.mjs": {
+      "bytes": 1330,
+      "sha256": "62c208d58cef4415dec5a660300bda52c75f9a571d1ce114b7e01c6c249cbc6e"
+    },
     "game-data.mjs": {
       "bytes": 181084,
       "sha256": "a039e00d7993c2842f0722a46c5c15df6dfc0666ff281e21797c110151adf764"
     },
+    "game_storage.mjs": {
+      "bytes": 1455,
+      "sha256": "9d2e7ea76679868092d931747ecd09c60f9422d9da7ceb4525972c3be8054edf"
+    },
     "index.html": {
-      "bytes": 14576,
-      "sha256": "6d4f417b60d91f7ee6401a898ac57b203f7b6211940b1b2552581b39fa39aa3f"
+      "bytes": 14600,
+      "sha256": "dbc18a926eb68889a0aa01d94b5ce94d940b2ade5b7f2a33b675671570a1be08"
     },
     "investigation.mjs": {
       "bytes": 17490,
       "sha256": "833fa6080a5efe127686d9dcbb2961eea7ca3a6b89f75046ab9b7a011cdd0287"
     },
     "investigation_arrivals.mjs": {
-      "bytes": 2111,
-      "sha256": "fe2bd22cca029966897ff1216d33dadc0c08239660fe563d04a59bf5beb71781"
+      "bytes": 2157,
+      "sha256": "fa796a8c84d43eb91bef64621bc6950471d35e821ccd04ae742ee512da79ae17"
     },
     "investigation_cases.mjs": {
       "bytes": 18773,
@@ -449,16 +462,16 @@
       "sha256": "3a846148ad52c0c6e2bbdb160379a977541d70a66c893165fc95475227db9e8e"
     },
     "investigation_history.mjs": {
-      "bytes": 7883,
-      "sha256": "136a8d3bd2d66aa5f6b643b274995d064de72c0f354d6d0ac6dc11103d65b534"
+      "bytes": 7929,
+      "sha256": "5fb5a5357d4abc3906cfb242e54725d487657de3ef06feba42a12c732a86d4cc"
     },
     "investigation_journal.mjs": {
-      "bytes": 19526,
-      "sha256": "fa23b693cc46f9e6b36ba5b5ab9d4549345eda1094729ea86368643c59f7eaa2"
+      "bytes": 19572,
+      "sha256": "9b6abac385a7a434c4ef8ff7bfe11ef124d5b04d7f6b4716fcc889f185ed4137"
     },
     "investigation_learning_view.mjs": {
-      "bytes": 18355,
-      "sha256": "04692f0c62aac94e863e53fc8cb380a94d5c5121ff4eee2e27ea8b8f03a79ebe"
+      "bytes": 18168,
+      "sha256": "50b6bd70c7a50462b5616b0029b821902429921260696207e40a5d61335dec83"
     },
     "investigation_reasoning.mjs": {
       "bytes": 6367,
@@ -473,24 +486,28 @@
       "sha256": "a57a739371761ddee41019c881173e031f01fa8f216f937f939745378a60d63a"
     },
     "investigation_view.mjs": {
-      "bytes": 28157,
-      "sha256": "0c8696a1c01e3e00fd1345e1b5603ef638f964ddb52231c2b35549fd1f5dd1af"
+      "bytes": 28025,
+      "sha256": "b0df58ef4277d7a6afd921be70bd047540d2594a9090012670c25705a628dcbc"
     },
     "investigation_visuals.mjs": {
       "bytes": 3678,
       "sha256": "b67abf3bf38f1545ae4bc67f018cf573f36a77a48acc413da26864fb6b1fcf25"
     },
     "offline_api.mjs": {
-      "bytes": 381,
-      "sha256": "f97dfbd9da8b1ef3841d59cc283e35371b5a7b200567b60aea2214c0e1bdd74d"
+      "bytes": 431,
+      "sha256": "7c3605ce2449735f7c56eb89da9ff947fbf0066d029a63c807351279e0f676b7"
     },
     "offline_engine.mjs": {
-      "bytes": 34064,
-      "sha256": "4dab4d8486b8a8ef3f4c30d3cf82710d257cef1fb6a5f022ea474547e828d667"
+      "bytes": 34108,
+      "sha256": "cd0bbcb294e1fc98a159fcb5acc54b746607ea5d659011d1b24d7990c7aa4bca"
     },
     "practice_history.mjs": {
-      "bytes": 7186,
-      "sha256": "4003e09556ab6352293d600a78635d1e6862790f45dd357e368296130efabbc5"
+      "bytes": 7232,
+      "sha256": "127b339f47f39256b89998514d56b4b6504efb408028fcbab24c6e023e15bd57"
+    },
+    "product_release.mjs": {
+      "bytes": 872,
+      "sha256": "5d32d65be88ac3402ab5e6c3e0be489d59a87edb0846ef3d2a7a1a8869939ae6"
     },
     "review_queue.mjs": {
       "bytes": 6135,
@@ -505,20 +522,20 @@
       "sha256": "28bb68e25836fbf25ddc83548f70836858a832bf5a53c11384fe289bfbc88edb"
     },
     "story_history_view.mjs": {
-      "bytes": 5492,
-      "sha256": "2b01cb2dc2f1d62eaa05d09440582990d8b58d2a4a621ca346c5a50bb6f2a529"
+      "bytes": 5543,
+      "sha256": "b9b01f74abadffe81fb1fc65c251839c486262a87cb59282fd7c5269d0894a67"
     },
     "story_progress.mjs": {
-      "bytes": 14205,
-      "sha256": "a9790c3bb1a550ca8bed274cba6fe72f21bb08ed9325e7ed137b14f8b89549f9"
+      "bytes": 14251,
+      "sha256": "a00c792ceb5ece45a46e9a77dd5283dfbddd1ee4db2690c31d6a629e68041f13"
     },
     "story_reviews.mjs": {
-      "bytes": 1426,
-      "sha256": "c46832341b540d5197b0aac9004b365ca034f987c25461dfba2bbade1853a978"
+      "bytes": 1465,
+      "sha256": "330004e188d2528975c20d4241acb1fbefc5990f7351287a2a2f1770dd60f330"
     },
     "styles.css": {
-      "bytes": 50725,
-      "sha256": "79eec52afcdff94ce93968a8e0ac155e92557e9e9218867019c8541ebe777322"
+      "bytes": 52575,
+      "sha256": "87ea1cde2d086c37267d8847e1ab0df9b9db7965b5045161dcdb15bb50e14ea1"
     },
     "transfer_practice.mjs": {
       "bytes": 10014,
@@ -555,8 +572,8 @@
       "sha256": "ae82c8f976fecb87d8132b07011df290841136d05c78276b37b282c62bbca61e"
     },
     "README.md": {
-      "bytes": 16805,
-      "sha256": "6b44ef076fa6261fe2348552817ffc3fce1a34803ccdf9321e82a50be8424c40"
+      "bytes": 17240,
+      "sha256": "5f6691197e7883e4f0fca060aa6e2db2afead4de4127598b57f865f5cd6cf1e4"
     },
     "RELEASE-0.7.0.md": {
       "bytes": 3319,
@@ -566,6 +583,10 @@
       "bytes": 5227,
       "sha256": "29adbc6e43dd53e11fe44487151fa54b559133f942c044b6ba665c8f2a9804bb"
     },
+    "RELEASE-1.0.0.md": {
+      "bytes": 1685,
+      "sha256": "37d049b767d7941a18f2420998a4c772efdd8f840211abfe3e2eaf2bf31b447a"
+    },
     "SOURCE_SNAPSHOT.json": {
       "bytes": 16991,
       "sha256": "3190d5fbfa3d238d8136c01af6f5fc1b47e2ab83bcfe1e978f1b2520957c66cd"
@@ -573,6 +594,10 @@
     "baselines/published-beta-v2/BASELINE.json": {
       "bytes": 2850,
       "sha256": "3f8f4eae05b66d9887c85fe9cb399e0834a55421f950de38afdfe3763dc371a5"
+    },
+    "baselines/published-beta-v2/CREDITS.txt": {
+      "bytes": 594,
+      "sha256": "74c5ff9cfb21ec55dc7612cacd4de5e39b8c003fd2e540d92a170610bd003e03"
     },
     "baselines/published-beta-v2/FORGE-LICENSING.html": {
       "bytes": 15596,
@@ -642,6 +667,10 @@
       "bytes": 10014,
       "sha256": "20780d21c8711f1144ea29b67c6115428fc2d7a854c2feff84b74f93f3c16b9c"
     },
+    "docs/IPHONE.md": {
+      "bytes": 3833,
+      "sha256": "2e77e677c8d01bf7495e6065b37815af422c2a6d23b71a63f0e17df70ad05f63"
+    },
     "docs/MEDIA_PROVENANCE_PUBLIC.json": {
       "bytes": 13998,
       "sha256": "e2d39d42ff6afaff2e4d73522b101a18b6536dc42216df8f44019b2e1f14886f"
@@ -670,9 +699,53 @@
       "bytes": 32157,
       "sha256": "e61f73efeff83f23aae3978f10463307f75b948cf4cc12006cc281c56212494a"
     },
+    "ios/MakeIcon.swift": {
+      "bytes": 1822,
+      "sha256": "2deb3659561bcbd5bcdea2aa1705024cafcffe5ce4173435f0be4381f4c1637b"
+    },
+    "ios/MedicalMysteries.xcodeproj/project.pbxproj": {
+      "bytes": 4915,
+      "sha256": "39633b509a85e323a7b373092ae73ad07b1c75bbfcc9c46a1599624a8fc39060"
+    },
+    "ios/MedicalMysteries.xcodeproj/xcshareddata/xcschemes/MedicalMysteries.xcscheme": {
+      "bytes": 1317,
+      "sha256": "a7fe59bb42f56afb42d4339c409d3830b697fff6ce464d342b48d9a4cf3c2149"
+    },
+    "ios/MedicalMysteries/App.swift": {
+      "bytes": 11713,
+      "sha256": "bd22be955e55381caf6562fd66a6ef919932779be94817f912faf5f79675ebad"
+    },
+    "ios/MedicalMysteries/Assets.xcassets/AppIcon.appiconset/AppIcon.png": {
+      "bytes": 636514,
+      "sha256": "8084699cf26b2e99ee4c9de03c3973ae9b87ec1d2c492493bcd9e7a32084c521"
+    },
+    "ios/MedicalMysteries/Assets.xcassets/AppIcon.appiconset/Contents.json": {
+      "bytes": 203,
+      "sha256": "852920cb36e95beb53771138a4b8195a16fcce1cc31250632f246081cc638f9a"
+    },
+    "ios/MedicalMysteries/Assets.xcassets/Contents.json": {
+      "bytes": 60,
+      "sha256": "f5fb0e1f3a8142892ed092efb5955c1c2cc537003a89ad7bbdb9dade7fe8985f"
+    },
+    "ios/MedicalMysteries/Info.plist": {
+      "bytes": 1510,
+      "sha256": "0cb47bb4516d08cb5167c5eca0c83e8929223365f3907b4f558b68c8aa03eb7c"
+    },
+    "ios/MedicalMysteries/NativeStore.swift": {
+      "bytes": 7915,
+      "sha256": "bf214cc89a4c1fdb0bf929ea4c3e1d9b0b73ca17c08a6adf64f11bc29136829f"
+    },
+    "ios/MedicalMysteries/PrivacyInfo.xcprivacy": {
+      "bytes": 373,
+      "sha256": "74b0cd72fc23c1ef302f22ee2753f61817cdc5af0ff7a7f2d0632b524fb8acea"
+    },
+    "ios/Tests/main.swift": {
+      "bytes": 4189,
+      "sha256": "5e3d0329d553f8994b808d27b3519d47090aa8f28f092878d05a6c79543d8f55"
+    },
     "package.json": {
-      "bytes": 949,
-      "sha256": "5daf428f7a1cd6d7c25c3e45df04f945763e7f68ce3e699e40388b13dfea1cdf"
+      "bytes": 1081,
+      "sha256": "c8064b245ea50b6fbbca1b6e4349e9ed2ac07645eb7d056590c10ae3ce021a8d"
     },
     "release-manifest.json": {
       "bytes": 32157,
@@ -683,8 +756,8 @@
       "sha256": "5b2c5b2fe4e3996124d2913d2c3271d708f6761f6b76ee68430aa66302927c64"
     },
     "scripts/check-upgrade.py": {
-      "bytes": 12429,
-      "sha256": "be3f741d952f3db7c82541344a9b09915b02816f3ce516e7a40b98278aec38e8"
+      "bytes": 12599,
+      "sha256": "89fa7c7173a66375da4b1a755cdfecac486b4b41e78888d50614bae52779e88d"
     },
     "scripts/fixtures/investigation-journal-v1.json": {
       "bytes": 10124,
@@ -721,6 +794,14 @@
     "scripts/fixtures/story-sessions-legacy-v1.json": {
       "bytes": 263865,
       "sha256": "44aac34f4fde5371aec42e3fb76c2bcc0158f2e31b2898f7ad6b6e1e93b21c08"
+    },
+    "scripts/ios-build.sh": {
+      "bytes": 568,
+      "sha256": "bee84da7e22508aa2649a5dce0968eb2993d66344f27c572be071d40ab7a314a"
+    },
+    "scripts/ios-sync.py": {
+      "bytes": 1324,
+      "sha256": "dfe9517417f621a1d990417e03aa5587bbbecfb48e54e532139450fdf5e37480"
     },
     "scripts/test-additional-case-content.mjs": {
       "bytes": 15744,
@@ -773,6 +854,10 @@
     "scripts/test-local-http-session.mjs": {
       "bytes": 1937,
       "sha256": "0e07d7525e403862cbaf066d78f63a3292f15bca088339a83a2c3b71af52a538"
+    },
+    "scripts/test-release-storage.mjs": {
+      "bytes": 4729,
+      "sha256": "449c652538420a9ec3bab4d25cfea450ce46359f925160c15ded4627c1af6adf"
     },
     "scripts/test-review-retention.mjs": {
       "bytes": 7926,

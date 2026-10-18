@@ -1,4 +1,8 @@
 :root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
   --ink: #f1f0e8;
   --muted: #a5aaa4;
   --bg: #141719;
@@ -20,6 +24,7 @@
 
 * { box-sizing: border-box; letter-spacing: 0 !important; }
 body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 15px; line-height: 1.5; }
+html { -webkit-text-size-adjust: 100%; }
 button, img { max-width: 100%; }
 button { font: inherit; }
 .image-button { display: block; width: 100%; padding: 0; border: 0; background: transparent; color: inherit; cursor: zoom-in; text-align: inherit; }
@@ -80,7 +85,7 @@ h1 em { color: var(--blue); font-style: normal; }
 .scene-label { position: absolute; right: 0; bottom: 0; left: 0; padding: 7px 9px; background: rgba(5, 10, 17, .82); color: var(--gold); font-size: 9px; letter-spacing: .08em; }
 .scene-hotspots { position: absolute; inset: 0; pointer-events: none; }
 .scene-marker-layer { display: block; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
-.scene-marker { display: block; width: 100%; height: 100%; padding: 0; border: 2px solid var(--gold); border-radius: 8px; background: rgba(11,17,28,.9); color: var(--gold); font-weight: 800; cursor: pointer; pointer-events: auto; }
+.scene-marker { position: absolute; left: clamp(22px, var(--marker-x), calc(100% - 22px)); top: clamp(22px, var(--marker-y), calc(100% - 22px)); transform: translate(-50%, -50%); display: block; width: 44px; height: 44px; min-height: 44px; padding: 0; font-size: 18px; line-height: 1; border: 2px solid var(--gold); border-radius: 8px; background: rgba(11,17,28,.9); color: var(--gold); font-weight: 800; cursor: pointer; pointer-events: auto; }
 .scene-marker.examined { border-color: var(--mint); color: var(--mint); }
 .interaction-prompt { margin: 12px 0; padding: 10px; border-left: 3px solid var(--gold); color: var(--gold); }
 .path-debrief { margin: 18px 0; padding: 14px; border: 1px solid var(--line); border-radius: 8px; }
@@ -246,7 +251,7 @@ footer { padding: 30px; color: #536476; font-size: 10px; letter-spacing: .16em; 
 .cold-open { position:fixed; inset:0; background:rgba(8,11,16,.92); display:flex;
   align-items:center; justify-content:center; z-index:60; padding:24px; }
 .cold-open-card { max-width:640px; background:var(--panel); border:1px solid var(--edge);
-  border-radius:8px; padding:28px; box-shadow:0 18px 60px rgba(0,0,0,.5); }
+  border-radius:8px; padding:28px; box-shadow:0 18px 60px rgba(0,0,0,.5); max-height:100%; overflow:auto; }
 .cold-open-card p { margin:14px 0 20px; font-size:1.08rem; line-height:1.6; }
 .consequence-beat { border-left:3px solid var(--gold); background:rgba(224,180,90,.07);
   padding:10px 14px; margin:0 0 10px; border-radius:0 8px 8px 0; font-style:italic; }
@@ -591,7 +596,7 @@ input[type="checkbox"], input[type="radio"] { min-height: auto; }
   .investigation-card { display: block; }
   .investigation-card > img { width: 100%; height: auto; min-height: 0; aspect-ratio: 3 / 2; }
   .investigation-card-subtitle { min-height: 0; }
-  .investigation-mobile-nav { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 4px; padding: 6px 0; background: var(--bg); }
+  .investigation-mobile-nav { position: sticky; top: var(--safe-top); z-index: 5; display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 4px; padding: 6px 0; background: var(--bg); }
   .investigation-mobile-nav .quiet-button { margin: 0; padding: 7px 8px; font-size: 12px; }
 }
 
@@ -616,3 +621,16 @@ input[type="checkbox"], input[type="radio"] { min-height: auto; }
 @media (max-width: 600px) { .care-readback-check { padding: 14px 12px; } .care-receiver-message { padding: 10px 12px; } }
 
 .care-reassessment-context { padding: 12px 14px; border: 1px solid var(--line); border-radius: 6px; line-height: 1.65; }
+
+/* Apply safe areas once, including full-screen overlays and landscape cutouts. */
+.topbar { height: auto; min-height: calc(64px + var(--safe-top)); padding-top: var(--safe-top); padding-left: max(16px, var(--safe-left)); padding-right: max(16px, var(--safe-right)); }
+.shell { padding-left: max(16px, var(--safe-left)); padding-right: max(16px, var(--safe-right)); }
+footer { padding-left: max(24px, var(--safe-left)); padding-right: max(24px, var(--safe-right)); }
+footer:last-of-type { padding-bottom: calc(24px + var(--safe-bottom)); margin: 0; max-width: none; }
+.cold-open { padding-top: max(20px, var(--safe-top)); padding-right: max(16px, var(--safe-right)); padding-bottom: max(20px, var(--safe-bottom)); padding-left: max(16px, var(--safe-left)); }
+.learning-journal, .reference-dialog, .media-viewer { max-width: calc(100vw - max(16px, var(--safe-left)) - max(16px, var(--safe-right))); max-height: calc(100dvh - max(16px, var(--safe-top)) - max(16px, var(--safe-bottom))); }
+.skip-link:focus { top: calc(12px + var(--safe-top)); left: max(12px, var(--safe-left)); }
+@media (max-width: 800px) {
+  button, select, input[type="search"], .case-open { min-height: 44px; }
+  .board-filters input, .board-filters select, .care-handoff-field select, .investigation-reflection select, .ranking-row select, select, input, textarea { font-size: 16px; }
+}

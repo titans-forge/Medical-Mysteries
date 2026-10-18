@@ -1,7 +1,8 @@
+import { getGameStorage } from './game_storage.mjs';
 // Selection preferences never identify a saved clinical-learning route.
 // Checkpoints and journal records continue to use exact episodeId + version.
 const PREFIX = 'mmInvestigationArrival:v1:';
-const getStore = (storage) => storage === undefined ? globalThis.localStorage : storage;
+const getStore = (storage) => storage === undefined ? getGameStorage() : storage;
 
 export function investigationFamilies(episodes) {
   const groups = new Map();

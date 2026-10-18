@@ -1,3 +1,4 @@
+import { exportJSON } from './export_file.mjs';
 import { reasoningChoices, assessInvestigationReasoning } from './investigation_reasoning.mjs';
 import { getInvestigationEpisode, restoreInvestigation, investigationOutcome, getCareWorkflow } from './investigation.mjs';
 import { careSummary } from './care_workflow_view.mjs';
@@ -223,13 +224,7 @@ export function transferQuestion(state, reflection) {
 }
 
 function downloadJournal(records) {
-  const receipt = exportJournal();
-  const url = URL.createObjectURL(new Blob([JSON.stringify(receipt, null, 2)], { type: 'application/json' }));
-  const link = node('a');
-  link.href = url;
-  link.download = 'medical-mysteries-learning-journal.json';
-  link.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  void exportJSON(() => exportJournal(), 'medical-mysteries-learning-journal.json');
 }
 
 export function openLearningJournal() {

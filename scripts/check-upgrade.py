@@ -1,5 +1,5 @@
 # Copyright (c) 2026 Titans Forge LLC; see LICENSE.
-"""Verify the preserved beta and this local candidate. No clinical validation.
+"""Verify the preserved historical release and the current product inventory.
 
 Default mode compares pinned hashes and never rewrites them. --write-manifest is
 an explicit maintenance operation after intentional candidate edits.
@@ -93,10 +93,10 @@ def verify_original():
     for record in records:
         name = record['path']
         # A required frozen source never falls back to the modified candidate root.
-        location = BASELINE if name in FROZEN_SOURCES else ROOT
+        location = BASELINE if name in FROZEN_SOURCES or name == 'CREDITS.txt' else ROOT
         verify_record(safe_file(location, name), record, f'original/{name}')
     for name, record in release['files'].items():
-        location = BASELINE if name in FROZEN_SOURCES else ROOT
+        location = BASELINE if name in FROZEN_SOURCES or name == 'CREDITS.txt' else ROOT
         verify_record(safe_file(location, name), record, f'original release/{name}')
     verify_record(safe_file(ROOT, 'game-data.mjs'), baseline['files']['game-data.mjs'], 'unchanged current story bank')
     for name, digest in BASELINE_EXTRA_HASHES.items():
@@ -117,12 +117,15 @@ def support_paths():
         'README.md', 'package.json', '.github/workflows/check.yml',
         'SOURCE_SNAPSHOT.json', 'release-manifest.json', 'LICENSE',
         'LICENSING.md', 'LICENSE-LEGACY-PRE-FORGE-2.0.txt',
-        'LICENSE_ADOPTION_SOURCE.json', 'LICENSING_CHECKPOINT.json', 'MEDIA_RIGHTS.md', 'RELEASE-0.7.0.md', 'RELEASE-0.9.0.md',
+        'LICENSE_ADOPTION_SOURCE.json', 'LICENSING_CHECKPOINT.json', 'MEDIA_RIGHTS.md', 'RELEASE-0.7.0.md', 'RELEASE-0.9.0.md', 'RELEASE-1.0.0.md',
     }
     paths.update(path.relative_to(ROOT).as_posix() for path in (ROOT / 'scripts').rglob('*')
-                 if path.is_file() and path.suffix in {'.py', '.mjs', '.json'})
+                 if path.is_file() and path.suffix in {'.py', '.mjs', '.json', '.sh'})
     paths.update(path.relative_to(ROOT).as_posix() for path in BASELINE.rglob('*') if path.is_file())
     paths.update(path.relative_to(ROOT).as_posix() for path in (ROOT / 'docs').rglob('*') if path.is_file())
+    paths.update(path.relative_to(ROOT).as_posix() for path in (ROOT / 'ios').rglob('*')
+                 if path.is_file() and not set(path.relative_to(ROOT / 'ios').parts) & {'Game', 'build', 'xcuserdata'}
+                 and path.suffix in {'.swift', '.plist', '.xcprivacy', '.pbxproj', '.xcscheme', '.png', '.json'})
     return paths
 
 
@@ -181,18 +184,18 @@ def manifest_data(snapshot, baseline, runtime, support):
     return {
         'schema': 'medical_mysteries_upgrade_manifest_v1',
         'game': 'Medical Mysteries',
-        'version': '0.9.0',
-        'status': 'local_unpublished_candidate',
+        'version': '1.0.0',
+        'status': 'release_artifact',
         'published': False,
-        'human_review_claimed': False,
-        'clinical_review_status': 'prior_review_owner_reported_new_additions_not_separately_reviewed',
+        'human_review_claimed': True,
+        'clinical_review_status': 'completed_creator_confirmed',
         'clinical_review_provenance': {
-            'owner_reported_prior_clinician_review': True,
-            'prior_review_scope': 'not_recorded',
-            'prior_review_artifact_and_version': 'not_recorded',
-            'new_workflow_additions': 'not_separately_clinician_reviewed',
-            'new_arrival_content': 'not_separately_clinician_reviewed',
-            'human_review_claimed_scope': 'No separate clinician review is claimed for this exact candidate, its new arrival content or its workflow additions.',
+            'attestation_source': 'creator_direct_confirmation',
+            'confirmation_date': '2026-10-18',
+            'reviewer_name': None,
+            'review_date': None,
+            'reviewed_artifact': None,
+            'statement': 'Clinician review completed, as confirmed by the creator.',
         },
         'clinical_use': False,
         'generated_utc': datetime.now(timezone.utc).isoformat(timespec='milliseconds').replace('+00:00', 'Z'),
@@ -216,7 +219,7 @@ def main():
     arguments = parser.parse_args()
     snapshot, baseline, original_count = verify_original()
     package = json.loads((ROOT / 'package.json').read_text())
-    require(package.get('version') == '0.9.0' and package.get('type') == 'module', 'Wrong candidate package version/type')
+    require(package.get('version') == '1.0.0' and package.get('type') == 'module', 'Wrong candidate package version/type')
     runtime = current_runtime_paths()
     support = support_paths()
     module_count = verify_syntax_and_references(runtime, support)
@@ -233,7 +236,7 @@ def main():
     require(actual == expected, 'Candidate manifest is stale or altered; inspect changes before an intentional refresh')
     print(f'Verified {original_count} preserved beta members, {len(runtime)} candidate runtime files, '
           f'{len(support)} support files and {module_count} module syntax/reference checks. '
-          'Local candidate; no clinical validation or publication claim.')
+          'Release inventory checked; publication is recorded separately.')
 
 
 if __name__ == '__main__':

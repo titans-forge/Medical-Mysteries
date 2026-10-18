@@ -1,3 +1,4 @@
+import { REVIEW_STATEMENT, PRODUCT_RELEASE } from './product_release.mjs';
 // Browser runtime for bundled authored stories. This module owns learner
 // interaction, scoring and versioned replay; stored records never define cases.
 const clone = (value) => JSON.parse(JSON.stringify(value));
@@ -60,7 +61,7 @@ export class OfflineSession {
     delete view.pinned_hypothesis;
     view.options = this.order[this.index].map((id) => clone(stage.view.options.find((o) => o.id === id)));
     view.preview_status = this.content?.content_version > 1
-      ? 'SYNTHETIC EDUCATIONAL PREVIEW · PENDING HUMAN REVIEW' : 'EDUCATIONAL BETA · AI-AUDITED';
+      ? 'FICTIONAL LEARNING CASE' : 'EDUCATIONAL BETA · AI-AUDITED';
     view.case_context.preview_status = view.preview_status;
     Object.assign(view, this.identity());
     if (this.content) Object.assign(view.case_context, { build_id: this.content.build_id,
@@ -192,7 +193,7 @@ export class OfflineSession {
         return { stage_number: s.stage_number, expert_choice: s.expert_choice, first_try_choice: first?.option_label ?? null,
           matched: Boolean(first?.correct), ...(first && !first.correct ? this.error(choiceFor(first)) : {}) }; }) };
     Object.assign(result, { ...this.identity(), finished: true, score: this.score(), review_status: this.content?.content_version > 1
-      ? 'Synthetic educational preview; pending human review' : 'AI-audited educational beta; community review invited',
+      ? REVIEW_STATEMENT : 'AI-audited educational beta; community review invited',
       stage_autopsy: stages, clinical_autopsy: clinical, reasoning_autopsy: { stages, ...clinical }, review_queue: queue, path_debrief: path,
       visual_autopsy: { score: this.score(), timeline: stages.map((s) => {
         const first = this.transcript.find((t) => t.stage_id === s.stage_id);
@@ -484,7 +485,7 @@ export function createOfflineAPI(bundle, { storage, clock = () => Date.now() / 1
         tiers: Object.fromEntries(['public', 'student', 'doctor'].map((tier) => [tier,
           bundle.cases.filter((item) => item.tier === tier).map((item) => ({ ...current.content, case_id: item.case_id,
             tier, title: item.title, attainable_xp: item.stages.length * points[tier], cover: item.stages[0].view.media }))])),
-        editions: [...registry.values()].map((edition) => edition.content), release_mode: false, review_status: 'Synthetic educational preview; pending human review' };
+        editions: [...registry.values()].map((edition) => edition.content), release_mode: true, product: PRODUCT_RELEASE, features: { investigations: true, practice: true }, review_status: REVIEW_STATEMENT };
       else if (url.pathname === '/api/history') data = history();
       else if (url.pathname === '/api/start' || url.pathname === '/api/restart') {
         const tier = body.tier || url.searchParams.get('tier') || 'public';
@@ -539,7 +540,7 @@ export function createOfflineAPI(bundle, { storage, clock = () => Date.now() / 1
           fields = saveFeedback(session, body.rating);
         }
         data = { ...session.identity(), accepted: true, local_only: true, ...fields };
-      } else throw new Error('This feature is not available in the browser beta');
+      } else throw new Error('This feature is not available in this edition');
       return { ok: true, status: 200, json: async () => clone(data) };
     } catch (error) { return { ok: false, status: 400, json: async () => ({ error: error.message }) }; }
   };
