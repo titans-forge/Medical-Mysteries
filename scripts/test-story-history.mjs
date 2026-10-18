@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import originalBundle from '../game-data.mjs';
-import currentBundle from '../story_decisions.mjs';
+import currentBundle from '../story_content_v2.mjs';
 import { createOfflineAPI } from '../offline_engine.mjs';
 import { createOfflineAPI as createOriginalAPI } from '../baselines/published-beta-v2/offline_engine.mjs';
 

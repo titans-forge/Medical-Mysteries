@@ -8,11 +8,27 @@ const selectionKeys = ['receiverId', 'situationId', 'uncertaintyId', 'nextOwnerI
 const available = (choice, reviewed) => choice && (choice.requires ?? []).every((id) => reviewed.includes(id));
 const pick = (section, id, reviewed) => section?.choices?.find((choice) => choice.id === id && available(choice, reviewed));
 const reassessmentFor = (profile, reviewed) => profile.reassessment.variants?.find((variant) => available(variant, reviewed)) ?? profile.reassessment;
-export const createCareWorkflow = () => ({ version: 1, events: [] });
+// Version 5 selectors consume only information present at the event boundary.
+// The ordered scenario tables are bundled immutable episode content, never storage content.
+const scenarioFor = (scenarios, snapshot) => scenarios?.find((scenario) => {
+  const matches = (key, known) => (scenario[key] ?? []).every((id) => known.includes(id));
+  const excludes = (key, known) => (scenario[key] ?? []).every((id) => !known.includes(id));
+  const reviewed = snapshot.reviewedActionIds;
+  const updates = snapshot.patientUpdates.map((update) => update.id);
+  const pending = snapshot.pendingTaskIds;
+  return matches('requiresReviewed', reviewed) && matches('requiresPatientUpdates', updates)
+    && matches('requiresPending', pending) && matches('requiresAvailable', snapshot.availableTaskIds)
+    && excludes('excludesReviewed', reviewed) && excludes('excludesPatientUpdates', updates)
+    && excludes('excludesPending', pending) && excludes('excludesAvailable', snapshot.availableTaskIds)
+    && Object.entries(scenario.requiresSelections ?? {}).every(([key, id]) => snapshot.selections?.[key] === id);
+}) ?? null;
+const questionFor = (scenario, episode) => scenario ? { ...copy(scenario), contextId: `${episode.id}:${scenario.id}` } : null;
+export const createCareWorkflow = (episode) => ({ version: episode?.version >= 5 ? 2 : 1, events: [] });
 
 export function replayCareWorkflow(raw, episode) {
   const profile = episode?.careWorkflow;
-  if (!profile || !exact(raw, ['version', 'events']) || raw.version !== 1
+  const contextual = episode?.version >= 5;
+  if (!profile || !exact(raw, ['version', 'events']) || raw.version !== (contextual ? 2 : 1)
     || !Array.isArray(raw.events) || raw.events.length > MAX_EVENTS) return null;
   const actions = new Map(episode.actions.map((action) => [action.id, action]));
   const hypotheses = new Set(episode.hypotheses.map((hypothesis) => hypothesis.id));
@@ -35,6 +51,15 @@ export function replayCareWorkflow(raw, episode) {
   let knowledgeRevision = 0;
   let coordinationRevision = 0;
   let firstUpdate = null;
+  const currentSnapshot = () => ({
+    reviewedActionIds: [...reviewed],
+    pendingTaskIds: [...requested.values()].filter((task) => task.readyRound > round).map((task) => task.actionId),
+    availableTaskIds: [...requested.values()].filter((task) => task.readyRound <= round && !reviewed.includes(task.actionId)).map((task) => task.actionId),
+    patientUpdates: [...patientUpdates.values()].map((update) => ({ id: update.id, text: update.text })),
+  });
+  const currentReassessmentQuestion = () => contextual
+    ? questionFor(scenarioFor(episode.coordination?.reassessmentScenarios, currentSnapshot()), episode)
+    : reassessmentFor(profile, reviewed);
   const futurePatientUpdate = () => patientDefinitions.some((value) => !patientUpdates.has(value.id)
     && value.afterRound > round && value.requiresReviewed.every((id) => reviewed.includes(id)));
   const releasePatientUpdates = (eventIndex) => {
@@ -69,6 +94,7 @@ export function replayCareWorkflow(raw, episode) {
       requested.set(input.actionId, { actionId: input.actionId, label: task.label || action.label,
         owner: task.owner, requestedRound: round, readyRound: round + task.rounds });
       coordinationRevision++;
+      if (contextual) knowledgeRevision++;
       event = { type: 'request', actionId: input.actionId };
     } else if (input.type === 'update') {
       if (!exact(input, ['type']) || (!futurePatientUpdate() && ![...requested.values()].some((task) => !reviewed.includes(task.actionId) && task.readyRound > round))) return null;
@@ -95,15 +121,17 @@ export function replayCareWorkflow(raw, episode) {
       coordinationRevision++;
       event = { type: 'hypothesis', hypothesisId };
     } else if (input.type === 'reassess') {
-      if (!exact(input, ['type', 'choiceId']) || reviewed.length < (profile.reassessment.minimumReviewed ?? 1)) return null;
+      if (!exact(input, contextual ? ['type', 'questionId', 'choiceId'] : ['type', 'choiceId']) || reviewed.length < (profile.reassessment.minimumReviewed ?? 1)) return null;
       const previous = reassessments.at(-1);
       if (previous?.knowledgeRevision === knowledgeRevision && previous.choiceId === input.choiceId) return null;
-      const question = reassessmentFor(profile, reviewed);
+      const question = currentReassessmentQuestion();
+      if (!question || (contextual && input.questionId !== question.id)) return null;
       const choice = pick(question, input.choiceId, reviewed);
       if (!choice) return null;
       reassessments.push({ ...choice, choiceId: choice.id, questionId: question.id ?? 'base', prompt: question.prompt, eventIndex: index, hypothesisId,
-        reviewedActionIds: [...reviewed], updateRound: round, knowledgeRevision });
-      event = { type: 'reassess', choiceId: input.choiceId };
+        reviewedActionIds: [...reviewed], updateRound: round, knowledgeRevision,
+        ...(contextual ? { contextId: question.contextId, context: currentSnapshot() } : {}) });
+      event = { type: 'reassess', ...(contextual ? { questionId: question.id } : {}), choiceId: input.choiceId };
     } else if (input.type === 'patient-response') {
       if (!exact(input, ['type', 'updateId', 'choiceId'])) return null;
       const update = patientUpdates.get(input.updateId);
@@ -137,17 +165,26 @@ export function replayCareWorkflow(raw, episode) {
         ...(patientDefinitions.length ? { patientUpdates: [...patientUpdates.values()].map((value) => ({ id: value.id, text: value.text,
           releasedAtEvent: value.releasedAtEvent, releasedAtRound: value.releasedAtRound, response: value.response ? copy(value.response) : null })) } : {}),
         readback: null, readbackAttempts: [] });
+      if (contextual) {
+        const sent = handoffs.at(-1);
+        sent.readbackQuestion = questionFor(scenarioFor(episode.coordination?.readbackScenarios, {
+          ...sent, patientUpdates: sent.patientUpdates ?? [],
+        }), episode);
+        if (!sent.readbackQuestion) return null;
+      }
       event = { type: 'handoff', selections: { ...input.selections } };
     } else if (input.type === 'readback') {
-      if (!exact(input, ['type', 'handoffId', 'choiceId'])) return null;
+      if (!exact(input, contextual ? ['type', 'handoffId', 'questionId', 'choiceId'] : ['type', 'handoffId', 'choiceId'])) return null;
       const handoff = handoffs.at(-1);
       if (!handoff || handoff.id !== input.handoffId || handoff.readback?.choiceId === input.choiceId
         || handoff.coordinationRevision !== coordinationRevision) return null;
-      const choice = pick(profile.readback, input.choiceId, handoff.reviewedActionIds);
+      const question = contextual ? handoff.readbackQuestion : profile.readback;
+      if (!question || (contextual && input.questionId !== question.id)) return null;
+      const choice = pick(question, input.choiceId, handoff.reviewedActionIds);
       if (!choice) return null;
       handoff.readback = { ...choice, choiceId: choice.id, eventIndex: index };
       handoff.readbackAttempts.push(handoff.readback);
-      event = { type: 'readback', handoffId: input.handoffId, choiceId: input.choiceId };
+      event = { type: 'readback', handoffId: input.handoffId, ...(contextual ? { questionId: question.id } : {}), choiceId: input.choiceId };
     } else return null;
     events.push(event);
     releasePatientUpdates(index);
@@ -163,7 +200,7 @@ export function replayCareWorkflow(raw, episode) {
       ...(status === 'reviewed' ? { finding: action.finding, interpretation: action.interpretation } : {}) };
   });
   const priority = priorityAttempts.at(-1) ?? null;
-  const reassessmentQuestion = reassessmentFor(profile, reviewed);
+  const reassessmentQuestion = currentReassessmentQuestion();
   const latestReassessment = reassessments.at(-1) ?? null;
   const reassessmentCurrent = !!latestReassessment && latestReassessment.knowledgeRevision === knowledgeRevision;
   const handoff = handoffs.at(-1) ?? null;
@@ -205,24 +242,24 @@ export function replayCareWorkflow(raw, episode) {
     missing, issues, historyNotes,
     caveat: 'Fictional coordination rounds are not clinical minutes, treatment, prognosis or a measure of clinical competence.',
   };
-  return { profile, workflow: { version: 1, events }, canAppend: events.length < MAX_EVENTS, round, knowledgeRevision, coordinationRevision,
+  return { profile, workflow: { version: raw.version, events }, canAppend: events.length < MAX_EVENTS, round, knowledgeRevision, coordinationRevision,
     reviewedActionIds: reviewed, hypothesisId, hypothesisHistory, tasks, priority, priorityAttempts,
     firstUpdate, reassessmentQuestion, reassessments, latestReassessment, reassessmentCurrent,
-    handoffs, handoff, assessment, canUpdate: tasks.some((task) => task.status === 'pending') || futurePatientUpdate(),
+    handoffs, handoff, ...(contextual ? { readbackQuestion: handoff?.readbackQuestion ?? null } : {}), assessment, canUpdate: tasks.some((task) => task.status === 'pending') || futurePatientUpdate(),
     ...(patientDefinitions.length ? { patientUpdates: [...patientUpdates.values()],
       pendingPatientUpdate: [...patientUpdates.values()].find((value) => !value.response?.appropriate) ?? null } : {}),
-    canReassess: reviewed.length >= (profile.reassessment.minimumReviewed ?? 1),
+    canReassess: !!reassessmentQuestion && reviewed.length >= (profile.reassessment.minimumReviewed ?? 1),
     choices: { priority: profile.priority.choices.filter((choice) => available(choice, reviewed)),
-      reassessment: reassessmentQuestion.choices.filter((choice) => available(choice, reviewed)),
+      reassessment: (reassessmentQuestion?.choices ?? []).filter((choice) => available(choice, reviewed)),
       handoff: Object.fromEntries(fields.map((field) => [field, { ...profile.handoff[field],
         choices: profile.handoff[field].choices.filter((choice) => available(choice, reviewed)) }])),
-      readback: profile.readback.choices.filter((choice) => available(choice, handoff?.reviewedActionIds ?? [])) } };
+      readback: (contextual ? handoff?.readbackQuestion?.choices ?? [] : profile.readback.choices).filter((choice) => available(choice, handoff?.reviewedActionIds ?? [])) } };
 }
 
 export function appendCareEvent(workflow, event, episode) {
   const previous = replayCareWorkflow(workflow, episode);
   if (!previous || previous.workflow.events.length >= MAX_EVENTS) return null;
   try {
-    return replayCareWorkflow({ version: 1, events: [...previous.workflow.events, copy(event)] }, episode);
+    return replayCareWorkflow({ version: previous.workflow.version, events: [...previous.workflow.events, copy(event)] }, episode);
   } catch { return null; }
 }

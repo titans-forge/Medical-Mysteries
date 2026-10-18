@@ -1,10 +1,10 @@
-import { getLegacyInvestigationEpisode, V3_INVESTIGATION_CONTENT } from './investigation_content_versions.mjs';
-import { buildCurrentInvestigations } from './investigation_variants.mjs';
+import { getLegacyInvestigationEpisode, V5_INVESTIGATION_CONTENT } from './investigation_content_versions.mjs';
+import { buildInvestigationEditorialContent } from './investigation_editorial_content.mjs';
 import { createCareWorkflow, replayCareWorkflow, appendCareEvent } from './care_workflow.mjs';
 const AORTIC_HYPOTHESIS = 'acute-aortic-syndrome';
 const VALID_MODES = new Set(['guided', 'challenge']);
 
-export const INVESTIGATION_EPISODES = buildCurrentInvestigations(V3_INVESTIGATION_CONTENT.map(({ episode }) => episode));
+export const INVESTIGATION_EPISODES = buildInvestigationEditorialContent(V5_INVESTIGATION_CONTENT.map(({ episode }) => episode));
 export const INVESTIGATION_EPISODE = INVESTIGATION_EPISODES.find((episode) => episode.id === 'doc-002-tearing-back-investigation');
 const EPISODES = new Map(INVESTIGATION_EPISODES.map((episode) => [episode.id, episode]));
 const STATE_KEYS = ['version', 'episodeId', 'mode', 'actionIds', 'elapsedMinutes', 'hypothesisId', 'hypothesisHistory', 'conclusion', 'completed'];
@@ -53,7 +53,7 @@ function makeInitialState(mode, episode) {
     hypothesisHistory: [],
     conclusion: null,
     completed: false,
-    ...(episode.careWorkflow ? { workflow: createCareWorkflow() } : {}),
+    ...(episode.careWorkflow ? { workflow: createCareWorkflow(episode) } : {}),
   };
 }
 
@@ -331,8 +331,14 @@ export const chooseCarePriority = (state, choiceId) => applyCareEvent(state, { t
 export const requestCareTask = (state, actionId) => applyCareEvent(state, { type: 'request', actionId });
 export const advanceCareUpdate = (state) => applyCareEvent(state, { type: 'update' });
 export const reviewCareTask = (state, actionId) => applyCareEvent(state, { type: 'review', actionId });
-export const reassessCare = (state, choiceId) => applyCareEvent(state, { type: 'reassess', choiceId });
+export function reassessCare(state, choiceId) {
+  const question = state?.version >= 5 ? getCareWorkflow(state)?.reassessmentQuestion : null;
+  return applyCareEvent(state, { type: 'reassess', ...(state?.version >= 5 ? { questionId: question?.id } : {}), choiceId });
+}
 export const sendCareHandoff = (state, selections) => applyCareEvent(state, { type: 'handoff', selections });
-export const acknowledgeCareHandoff = (state, handoffId, choiceId) => applyCareEvent(state, { type: 'readback', handoffId, choiceId });
+export function acknowledgeCareHandoff(state, handoffId, choiceId) {
+  const question = state?.version >= 5 ? getCareWorkflow(state)?.handoff?.readbackQuestion : null;
+  return applyCareEvent(state, { type: 'readback', handoffId, ...(state?.version >= 5 ? { questionId: question?.id } : {}), choiceId });
+}
 
 export const respondCareUpdate = (state, updateId, choiceId) => applyCareEvent(state, { type: 'patient-response', updateId, choiceId });

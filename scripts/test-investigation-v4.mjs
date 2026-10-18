@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {
-  INVESTIGATION_EPISODES, createInvestigation, getInvestigationEpisode, restoreInvestigation,
+  createInvestigation, getInvestigationEpisode, restoreInvestigation,
   investigate, setHypothesis, concludeInvestigation, investigationOutcome, investigationDebrief,
   getCareWorkflow, requestCareTask, advanceCareUpdate, reviewCareTask, chooseCarePriority,
   reassessCare, sendCareHandoff, acknowledgeCareHandoff, respondCareUpdate,
 } from '../investigation.mjs';
-import { V3_INVESTIGATION_CONTENT, getLegacyTransferQuestion } from '../investigation_content_versions.mjs';
+import { V3_INVESTIGATION_CONTENT, V4_INVESTIGATION_CONTENT, getLegacyTransferQuestion } from '../investigation_content_versions.mjs';
 import { getTransferQuestion } from '../investigation_transfer.mjs';
 import { replayCareWorkflow } from '../care_workflow.mjs';
 import { reasoningChoices, assessInvestigationReasoning } from '../investigation_reasoning.mjs';
@@ -16,6 +16,8 @@ import {
   saveReflection, loadReflection, journalRecordIdentity,
 } from '../investigation_journal.mjs';
 
+// This suite verifies the immutable shipped 0.7 / content v4 edition.
+const INVESTIGATION_EPISODES = V4_INVESTIGATION_CONTENT.map(({ episode }) => episode);
 const tests = [];
 const test = (name, run) => tests.push([name, run]);
 const clone = (value) => JSON.parse(JSON.stringify(value));

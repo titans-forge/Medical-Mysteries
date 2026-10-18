@@ -123,8 +123,6 @@ h1 em { color: var(--blue); font-style: normal; }
 .exhibit-annotations { opacity: 0; transition: opacity .15s ease; pointer-events: none; }
 .synthetic-diagram.show-annotations .exhibit-annotations { opacity: 1; }
 .synthetic-diagram.compare-mode { border-color: var(--violet); box-shadow: inset 0 0 0 2px rgba(184,167,255,.18); }
-.synthetic-diagram.compare-mode .mri-panel:not(:first-child) { opacity: .34; }
-.synthetic-diagram.compare-mode .aorta-pressure { opacity: .76; transform: translateY(4px); transform-box: fill-box; transform-origin: center; }
 .decision-card { margin-top: 20px; padding: 20px 0 0; background: transparent; }
 .decision-tag { color: var(--blue); }
 .narrative { max-width: 800px; margin: 15px 0 24px; color: #d7e1ec; font-size: 18px; }
@@ -328,7 +326,7 @@ footer { color: var(--muted); }
 .investigation-shelf-heading p { margin: 0; color: var(--muted); }
 .investigation-shelf { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .investigation-card { min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); }
-.investigation-card > img { display: block; width: 100%; height: 150px; aspect-ratio: 16 / 9; object-fit: cover; }
+.investigation-card > img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; }
 .investigation-card-body { padding: 12px; }
 .investigation-card h2 { margin: 4px 0 6px; font-size: 19px; }
 .investigation-card-subtitle { min-height: 3.2em; margin: 0 0 8px; color: var(--muted); font-size: 12px; }
@@ -373,6 +371,61 @@ footer { color: var(--muted); }
 .investigation-action small { align-self: center; color: var(--muted); font-size: 11px; text-align: right; }
 .investigation-notebook { min-width: 0; padding-top: 2px; }
 .investigation-notebook > * + * { margin-top: 18px; }
+
+/* Reference artwork is separate from the fictional patient record. */
+.educational-exhibit { max-width: 100%; min-width: 0; }
+.educational-exhibit h3 { margin: 5px 0 14px; font-size: 21px; letter-spacing: -.3px; }
+.reference-figure { margin: 0; }
+.reference-illustration { display: block; width: 100%; height: auto; border: 1px solid #3b5857; border-radius: 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+.reference-illustration .guide-labels { fill: #e2dccc; font-size: 17px; font-weight: 500; }
+.reference-illustration .guide-labels path { fill: none; stroke: #b2c8bf; stroke-width: 1.5; }
+.reference-illustration .guide-labels .sub { fill: #a4bdb5; font-size: 13px; font-weight: 400; }
+.reference-illustration.hide-guide-labels .guide-labels { visibility: hidden; }
+.reference-label-toggle[aria-pressed="true"] { border-color: var(--mint); color: var(--mint); }
+.reference-figure figcaption { margin: 8px 0 0; }
+.reference-note { color: var(--muted); line-height: 1.6; max-width: 72ch; font-size: 13px; margin: 10px 0; }
+.reference-facts, .reference-sources { border-top: 1px solid var(--line); }
+.reference-facts summary, .reference-sources summary, .investigation-reference > summary { cursor: pointer; padding: 12px 0; min-height: 44px; font-size: 13px; color: var(--ink); }
+.reference-facts ul { padding-left: 20px; margin: 4px 0 16px; }
+.reference-facts li { line-height: 1.6; margin: 8px 0; overflow-wrap: anywhere; }
+.reference-fact-type { display: block; color: var(--mint); font-size: 11px; font-weight: 650; }
+.reference-sources a { color: var(--mint); text-decoration: underline; text-underline-offset: 3px; line-height: 1.6; }
+.investigation-reference { border-block: 1px solid var(--line); }
+.investigation-reference .educational-exhibit { padding-top: 8px; margin-top: 0; border-top: 0; }
+.investigation-reference .educational-exhibit h3 { font-size: 19px; }
+.investigation-scene-button { position: relative; border-radius: 8px; overflow: hidden; }
+.investigation-notebook .investigation-scene-button img { max-height: none; height: auto; aspect-ratio: 3 / 2; object-fit: contain; }
+.scene-enlarge-label { position: absolute; bottom: 9px; right: 9px; padding: 6px 9px; border: 1px solid #aabbb470; border-radius: 4px; background: #132424e8; color: #f5eee1; font-size: 11px; }
+.reference-dialog { width: min(1160px, calc(100vw - 32px)); max-width: none; max-height: calc(100dvh - 32px); padding: 20px; border: 1px solid #59716b; border-radius: 14px; background: var(--bg); color: var(--ink); overflow: auto; box-sizing: border-box; }
+.reference-dialog::backdrop { background: #071111dc; }
+.reference-dialog-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.reference-dialog h2 { margin: 0; font-size: 24px; }
+.reference-dialog-scope { margin: -2px 0 14px; font-size: 13px; line-height: 1.5; color: var(--muted); }
+.reference-dialog-content { margin: 0; min-width: 0; }
+.reference-detail-scroll { max-width: 100%; overflow: auto; border-radius: 12px; }
+.reference-detail-scroll .reference-illustration { min-width: 800px; }
+.reference-detail-scroll.fit-reference .reference-illustration { min-width: 0; }
+.reference-pan-help { margin: 0 0 9px; color: var(--muted); font-size: 13px; }
+.reference-dialog-content > button { margin-bottom: 12px; }
+.reference-detail-scroll:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+.reference-scene-detail { width: 100%; height: auto; display: block; border-radius: 9px; }
+.care-evidence-snapshot { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 14px 0 18px; }
+.snapshot-count { display: flex; align-items: baseline; flex-wrap: wrap; gap: 7px; padding: 10px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel); }
+.snapshot-count strong { font-size: 24px; line-height: 1.2; color: var(--ink); }
+.snapshot-count span { font-size: 12px; color: var(--muted); }
+.snapshot-available { border-color: #a38d54; }
+.snapshot-reviewed strong { color: var(--mint); }
+.care-evidence-snapshot > p { grid-column: 1 / -1; margin: 3px 0 0; }
+.arrival-earlier-saves { margin: 10px 0; border-top: 1px solid var(--line); }
+.arrival-earlier-saves > summary { min-height: 44px; padding: 12px 0; font-size: 12px; color: var(--muted); cursor: pointer; }
+@media (max-width: 600px) {
+  .reference-dialog { width: calc(100vw - 20px); max-height: calc(100dvh - 20px); padding: 14px; }
+  .reference-dialog h2 { font-size: 21px; }
+  .reference-dialog-header button { min-height: 44px; }
+  .snapshot-count { padding: 9px 7px; }
+  .snapshot-count strong { font-size: 22px; }
+  .snapshot-count span { font-size: 11px; }
+}
 .investigation-notebook h2 { margin: 0; font-size: 20px; }
 .investigation-hypotheses { display: grid; gap: 8px; min-width: 0; padding: 0; border: 0; margin: 0; }
 .investigation-hypotheses legend { padding: 0; color: var(--ink); font-size: 18px; font-weight: 750; }
@@ -514,8 +567,8 @@ input[type="checkbox"], input[type="radio"] { min-height: auto; }
   .topbar { height: 64px; padding: 0 16px; }
   .shell { padding: 16px; }
   .board-header { align-items: flex-start; }
-  .board-library-actions { flex-direction: column; align-items: flex-end; gap: 4px; max-width: 52%; }
-  .board-library-actions .rank-chip { text-align: right; }
+  .board-library-actions { flex-direction: row; align-items: center; flex-wrap: wrap; gap: 6px; max-width: none; width: 100%; }
+  .board-library-actions .rank-chip { flex-basis: 100%; text-align: left; }
   .board-library-actions button { font-size: 12px; padding: 7px 10px; }
   .learning-journal { padding: 16px; }
   .journal-header h2 { font-size: 20px; }
@@ -535,8 +588,8 @@ input[type="checkbox"], input[type="radio"] { min-height: auto; }
   .investigation-notebook { grid-area: notebook; }
   .investigation-actions { margin: 18px 0; }
   .investigation-shelf { grid-template-columns: 1fr; }
-  .investigation-card { display: grid; grid-template-columns: 112px minmax(0, 1fr); }
-  .investigation-card > img { width: 112px; height: 100%; min-height: 150px; aspect-ratio: auto; }
+  .investigation-card { display: block; }
+  .investigation-card > img { width: 100%; height: auto; min-height: 0; aspect-ratio: 3 / 2; }
   .investigation-card-subtitle { min-height: 0; }
   .investigation-mobile-nav { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 4px; padding: 6px 0; background: var(--bg); }
   .investigation-mobile-nav .quiet-button { margin: 0; padding: 7px 8px; font-size: 12px; }
@@ -553,3 +606,13 @@ input[type="checkbox"], input[type="radio"] { min-height: auto; }
 @media (min-width: 801px) and (max-width: 1199px) {
   .main-panel > #evidencePanel, .main-panel > .decision-card { grid-column: auto; grid-row: auto; }
 }
+
+/* A receiver message is an observation to check, separate from player feedback. */
+.care-readback-check { padding: 18px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); scroll-margin-top: 72px; }
+.care-readback-check h3 { margin-top: 0; }
+.care-receiver-message { margin: 12px 0 18px; padding: 12px 16px; border-left: 3px solid var(--mint); background: rgba(160, 210, 190, .05); line-height: 1.65; font-size: 16px; }
+.care-readback-check .care-section { margin-bottom: 18px; }
+.care-patient-update, #careReassessment { scroll-margin-top: 72px; }
+@media (max-width: 600px) { .care-readback-check { padding: 14px 12px; } .care-receiver-message { padding: 10px 12px; } }
+
+.care-reassessment-context { padding: 12px 14px; border: 1px solid var(--line); border-radius: 6px; line-height: 1.65; }

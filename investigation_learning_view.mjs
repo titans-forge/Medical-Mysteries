@@ -253,7 +253,7 @@ export function openLearningJournal() {
       invalid: 'This journal is incompatible or damaged. It has not been changed. Clear it only if you want to discard its saved entries.',
       unavailable: 'Browser storage is unavailable. The local journal cannot be read.',
       partial: `${journal.records.length} readable routes. ${journal.unreadableEntries?.length || 0} entries need recovery; their original bytes are retained and included in an export.`,
-      ok: `${journal.records.length} saved route${journal.records.length === 1 ? '' : 's'} · 20-entry capacity. Earlier routes are never removed to add a new one. Matching routes and reflections keep their first contrast answer.`,
+      ok: `${journal.records.length} saved route${journal.records.length === 1 ? '' : 's'} · within storage limits. Earlier routes are never removed to add a new one. Matching routes and reflections keep their first contrast answer.`,
     })[journal.status];
     dialog.append(notice);
     const list = node('div', 'journal-records');

@@ -5,8 +5,21 @@ const round = (value, places = 3) => Number(value.toFixed(places));
 const points = { public: 1, student: 2, doctor: 3 };
 const check = (condition, message) => { if (!condition) throw new Error(message); };
 
+// Safari exposes getRandomValues on local HTTP previews where randomUUID is
+// unavailable. Session IDs are local bookkeeping, and still use secure bytes.
+function newSessionId() {
+  const source = globalThis.crypto;
+  if (typeof source?.randomUUID === 'function') return `mm-${source.randomUUID()}`;
+  if (typeof source?.getRandomValues !== 'function') throw new Error('This browser cannot create a local session ID. Use an up-to-date browser.');
+  const bytes = source.getRandomValues(new Uint8Array(16));
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+  const hex = [...bytes].map((byte) => byte.toString(16).padStart(2, '0')).join('');
+  return `mm-${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
+}
+
 export class OfflineSession {
-  constructor(spec, { id = `mm-${crypto.randomUUID()}`, clock = () => Date.now() / 1000, order, content = null } = {}) {
+  constructor(spec, { id = newSessionId(), clock = () => Date.now() / 1000, order, content = null } = {}) {
     this.spec = spec;
     this.content = content;
     this.clock = clock;

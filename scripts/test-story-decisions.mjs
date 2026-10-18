@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import original from '../game-data.mjs';
-import revised, { STORY_DECISIONS_BUNDLE, STORY_CONTENT_VERSION, STORY_EDITION_LABEL } from '../story_decisions.mjs';
+import revised, { STORY_DECISIONS_BUNDLE, STORY_CONTENT_VERSION, STORY_EDITION_LABEL } from '../story_content_v2.mjs';
 import { OfflineSession } from '../offline_engine.mjs';
 
 const tests = [];

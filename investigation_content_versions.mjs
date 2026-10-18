@@ -1,3 +1,6 @@
+import { V4_INVESTIGATION_CONTENT } from './investigation_content_v4.mjs';
+import { V5_INVESTIGATION_CONTENT } from './investigation_content_v5.mjs';
+export { V4_INVESTIGATION_CONTENT, V5_INVESTIGATION_CONTENT };
 // These immutable definitions are shipped application content, never storage-authored.
 // Preserve every saved version here before revising an episode or its contrast question.
 function deepFreeze(value) {
@@ -3031,11 +3034,12 @@ export const V3_INVESTIGATION_CONTENT = deepFreeze([
 ]);
 
 export function getLegacyInvestigationEpisode(episodeId, version) {
-  return [...LEGACY_INVESTIGATION_CONTENT, ...V2_INVESTIGATION_CONTENT, ...V3_INVESTIGATION_CONTENT].find(({ episode }) => episode.id === episodeId && episode.version === version)?.episode ?? null;
+  return [...LEGACY_INVESTIGATION_CONTENT, ...V2_INVESTIGATION_CONTENT, ...V3_INVESTIGATION_CONTENT, ...V4_INVESTIGATION_CONTENT, ...V5_INVESTIGATION_CONTENT].find(({ episode }) => episode.id === episodeId && episode.version === version)?.episode ?? null;
 }
 
 export function getLegacyTransferQuestion(episodeId, version) {
-  return [...LEGACY_INVESTIGATION_CONTENT, ...V2_INVESTIGATION_CONTENT, ...V3_INVESTIGATION_CONTENT].find(({ episode }) => episode.id === episodeId && episode.version === version)?.transfer ?? null;
+  const record = [...LEGACY_INVESTIGATION_CONTENT, ...V2_INVESTIGATION_CONTENT, ...V3_INVESTIGATION_CONTENT, ...V4_INVESTIGATION_CONTENT, ...V5_INVESTIGATION_CONTENT].find(({ episode }) => episode.id === episodeId && episode.version === version);
+  return record?.episode.transferQuestion ?? record?.transfer ?? null;
 }
 
 // Exact identity preserves the original immutable definition without accepting altered stored copies.

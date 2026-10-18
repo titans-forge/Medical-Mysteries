@@ -17,6 +17,7 @@ import { loadReflection, saveReflection, recordCompleted } from './investigation
 import { reflectionControls, reflectionSummary, transferQuestion, openLearningJournal, journalRecord } from './investigation_learning_view.mjs';
 import { careWorkboard, careHandoff, careSummary } from './care_workflow_view.mjs';
 import { investigationFamilies, nextInvestigationArrival, rememberInvestigationArrival } from './investigation_arrivals.mjs';
+import { investigationVisual, investigationScene, investigationReference } from './investigation_visuals.mjs';
 
 function element(tag, className = '', value = '') {
   const node = document.createElement(tag);
@@ -46,7 +47,7 @@ export function mountInvestigation({ onOpen, onClose, isAvailable }) {
   const episodes = () => (Array.isArray(INVESTIGATION_EPISODES) && INVESTIGATION_EPISODES.length ? INVESTIGATION_EPISODES : [INVESTIGATION_EPISODE]);
   const families = () => investigationFamilies(episodes());
   const episodeFor = (id, version) => getInvestigationEpisode(id, version) || episodes().find((item) => item.id === id) || INVESTIGATION_EPISODE;
-  const presentationFor = (id, version) => getInvestigationPresentation(id, version) || {};
+  const presentationFor = (id, version) => investigationVisual(getInvestigationEpisode(id, version), getInvestigationPresentation(id, version) || {});
   const load = (id, version) => version === undefined ? loadInvestigation(id) : loadInvestigationVersion(id, version);
 
   function statusFor(id) {
@@ -83,6 +84,8 @@ export function mountInvestigation({ onOpen, onClose, isAvailable }) {
       const image = element('img');
       image.src = presentation.image || './assets/episodes/doc-002-aorta-escalation-720.webp';
       image.alt = presentation.imageAlt || `${item.title} illustrative scene art. Not diagnostic evidence.`;
+      image.loading = 'lazy';
+      image.decoding = 'async';
       const body = element('div', 'investigation-card-body');
       body.append(element('div', 'eyebrow', item.id === INVESTIGATION_EPISODE.id ? 'FEATURED INVESTIGATION' : 'NEW INVESTIGATION'));
       body.append(element('h2', '', family.title));
@@ -93,12 +96,15 @@ export function mountInvestigation({ onOpen, onClose, isAvailable }) {
       body.append(element('p', 'investigation-card-meta', `${presentation.audience || 'All audiences'} · ${presentation.playMinutes || '5–8'} min`));
       if (item.careWorkflow) body.append(element('p', 'care-shelf-label', `${family.records.length} arrivals · Evolving observations · Team care`));
       const actions = element('div', 'investigation-card-actions');
+      const earlierSaves = [];
       for (const record of family.records) {
         for (const checkpoint of listInvestigationSaves(record.id)) {
         const savedCase = { state: checkpoint, label: checkpoint.completed ? `Finished · ${investigationOutcome(checkpoint).label}` : 'In progress' };
         const row = element('div', 'arrival-save');
         const savedCare = getCareWorkflow(savedCase.state);
-        const label = savedCase.state.version === record.version ? record.recordLabel || 'Saved arrival' : `Earlier case v${savedCase.state.version}`;
+        const savedEpisode = episodeFor(record.id, checkpoint.version);
+        const label = checkpoint.version === record.version ? record.recordLabel || 'Saved arrival'
+          : savedEpisode.recordLabel ? `${savedEpisode.recordLabel} · earlier v${checkpoint.version}` : `Earlier case v${checkpoint.version}`;
         row.append(element('p', 'investigation-card-state has-save', `${label} · ${savedCase.label}${savedCare ? ` · ${savedCare.assessment.label}` : ''}`));
         const resume = command(`${savedCase.state.completed ? 'View' : 'Resume'} ${label}`, () => open(record.id, true, false, checkpoint.version), 'quiet-button');
         resume.dataset.investigationAction = 'resume';
@@ -107,8 +113,14 @@ export function mountInvestigation({ onOpen, onClose, isAvailable }) {
         resume.dataset.contentVersion = String(checkpoint.version);
         if (record.id === INVESTIGATION_EPISODE.id && checkpoint.version === record.version) resume.id = 'resumeInvestigation';
         row.append(resume);
-        body.append(row);
+        if (checkpoint.version === record.version) body.append(row);
+        else earlierSaves.push(row);
         }
+      }
+      if (earlierSaves.length) {
+        const earlier = element('details', 'arrival-earlier-saves');
+        earlier.append(element('summary', '', `Earlier saved editions · ${earlierSaves.length}`), ...earlierSaves);
+        body.append(earlier);
       }
       const next = nextInvestigationArrival(family);
       const fresh = command('New arrival', () => open(next.id, false), 'primary-button');
@@ -199,7 +211,11 @@ export function mountInvestigation({ onOpen, onClose, isAvailable }) {
     save();
     render();
     refresh();
-    if (focusId) document.getElementById(focusId)?.focus({ preventScroll: focusId !== 'latestFinding' && !focusId.startsWith('care-patient-') });
+    if (focusId) {
+      const target = document.getElementById(focusId);
+      if (['latestFinding', 'careReadback', 'careReassessment'].includes(focusId) || focusId.startsWith('care-patient-')) target?.scrollIntoView({ block: 'start' });
+      target?.focus({ preventScroll: true });
+    }
   }
 
   function render() {
@@ -330,12 +346,9 @@ export function mountInvestigation({ onOpen, onClose, isAvailable }) {
     if (care) main.append(careHandoff(state, apply));
     const notebook = element('aside', 'investigation-notebook');
     notebook.id = 'investigationNotebook';
-    const scene = element('figure', 'investigation-scene');
-    const image = element('img');
-    image.src = presentation.image || './assets/episodes/doc-002-aorta-escalation-720.webp';
-    image.alt = presentation.imageAlt || `${item.title} illustrative scene art. Not diagnostic evidence.`;
-    scene.append(image, element('figcaption', 'control-help', 'Generated scene art · not diagnostic evidence'));
-    notebook.append(scene);
+    notebook.append(investigationScene(presentation, item.title));
+    const reference = investigationReference(presentation);
+    if (reference) notebook.append(reference);
     const hypotheses = element('fieldset', 'investigation-hypotheses');
     hypotheses.append(element('legend', '', 'Working hypothesis'));
     item.hypotheses.forEach((hypothesis) => {

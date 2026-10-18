@@ -7,7 +7,13 @@ const JOURNAL_KEY = 'mmInvestigationJournal:v1';
 const SCHEMA = 2;
 const RECOVERY_PREFIX = 'mmInvestigationJournal:preserved:v1:';
 const MAX_RECORDS = 20;
+const V6_MAX_RECORDS = 30;
 const MAX_BYTES = 512 * 1024;
+// Only independently validated completed content-v5/v6 records receive room
+// for the larger authored definitions. Reflection limits and legacy-only stores
+// retain their existing bound. Valid v6 routes allow 30 entries without eviction.
+const V5_JOURNAL_MAX_BYTES = 1024 * 1024;
+const RECOVERY_MAX_BYTES = 4 * V5_JOURNAL_MAX_BYTES;
 const RECORD_KEYS = ['episodeContent', 'completedUtc', 'state', 'reflection', 'transfer'];
 const reflectionKey = (episodeId, version) => `mmInvestigationReflection:v2:${episodeId}:${version}`;
 const oldReflectionKey = (episodeId) => `mmInvestigationReflection:v1:${episodeId}`;
@@ -23,9 +29,16 @@ function storageOrDefault(storage) {
   return storage === undefined ? globalThis.localStorage : storage;
 }
 
-function withinSize(text) {
-  return typeof text === 'string' && text.length <= MAX_BYTES
-    && (typeof TextEncoder === 'undefined' || new TextEncoder().encode(text).length <= MAX_BYTES);
+function withinSize(text, maxBytes = MAX_BYTES) {
+  return typeof text === 'string' && text.length <= maxBytes
+    && (typeof TextEncoder === 'undefined' || new TextEncoder().encode(text).length <= maxBytes);
+}
+
+// Call only after record validation; a claimed or damaged row grants no room.
+function withinJournalSize(text, validRecords) {
+  const maxBytes = validRecords.some((record) => (record.state.version === 5 || record.state.version === 6))
+    ? V5_JOURNAL_MAX_BYTES : MAX_BYTES;
+  return withinSize(text, maxBytes);
 }
 
 function canonicalState(raw) {
@@ -220,8 +233,9 @@ export function readJournal(storage) {
 
 function inspectJournalText(rawText) {
   if (rawText === null) return { status: 'empty', records: [], unreadableEntries: [], rawText: null };
-  const invalid = (reason) => ({ status: 'invalid', reason, records: [], unreadableEntries: [], rawText });
-  if (!withinSize(rawText)) return invalid('oversize-store');
+  const legacyOversize = !withinSize(rawText);
+  const invalid = (reason) => ({ status: 'invalid', reason: legacyOversize ? 'oversize-store' : reason, records: [], unreadableEntries: [], rawText });
+  if (!withinSize(rawText, V5_JOURNAL_MAX_BYTES)) return invalid('oversize-store');
   let raw;
   try { raw = JSON.parse(rawText); } catch { return invalid('malformed-store'); }
   if (!hasExactKeys(raw, ['schema', 'records']) || ![1, SCHEMA].includes(raw.schema)
@@ -244,6 +258,7 @@ function inspectJournalText(rawText) {
     identities.add(identity);
     records.push(inspected.record);
   }
+  if (!withinJournalSize(rawText, records)) return invalid('oversize-store');
   return {
     status: unreadableEntries.length ? 'partial' : records.length ? 'ok' : 'empty',
     records,
@@ -259,6 +274,7 @@ function preserveUnreadable(journal, storage) {
   const existing = storage.getItem(journal.preservationKey);
   if (existing !== null) {
     // A collision or altered recovery slot must never replace the original bytes.
+    if (!withinSize(existing, RECOVERY_MAX_BYTES)) return false;
     const preserved = JSON.parse(existing);
     if (!hasExactKeys(preserved, ['schema', 'unreadableEntries', 'originalJournalText'])
       || preserved.schema !== 1 || typeof preserved.originalJournalText !== 'string'
@@ -267,11 +283,13 @@ function preserveUnreadable(journal, storage) {
     return original.status === 'partial'
       && JSON.stringify(original.unreadableEntries.map((entry) => entry.value)) === JSON.stringify(values);
   }
-  storage.setItem(journal.preservationKey, JSON.stringify({
+  const text = JSON.stringify({
     schema: 1,
     unreadableEntries: values,
     originalJournalText: journal.rawText,
-  }));
+  });
+  if (!withinSize(text, RECOVERY_MAX_BYTES)) return false;
+  storage.setItem(journal.preservationKey, text);
   return true;
 }
 
@@ -281,9 +299,9 @@ function writeJournal(records, journal, storage) {
   // At the bounded journal limit, leave the original intact and let the view
   // report that this new debrief could not be added; export remains available.
   const existingCount = journal.records.length + unreadable.length;
-  if (records.length + unreadable.length > Math.max(MAX_RECORDS, existingCount)) return false;
+  if (records.length + unreadable.length > Math.max(records.some((record) => record.state.version === 6) ? V6_MAX_RECORDS : MAX_RECORDS, existingCount)) return false;
   const text = JSON.stringify({ schema: SCHEMA, records: [...records, ...unreadable] });
-  if (!withinSize(text) || !preserveUnreadable(journal, storage)) return false;
+  if (!withinJournalSize(text, records) || !preserveUnreadable(journal, storage)) return false;
   if (storage.getItem(JOURNAL_KEY) !== journal.rawText) return false;
   storage.setItem(JOURNAL_KEY, text);
   return true;

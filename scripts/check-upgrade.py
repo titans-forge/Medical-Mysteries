@@ -1,5 +1,5 @@
 # Copyright (c) 2026 Titans Forge LLC; see LICENSE.
-"""Verify the preserved beta and this release artifact. No clinical validation.
+"""Verify the preserved beta and this local candidate. No clinical validation.
 
 Default mode compares pinned hashes and never rewrites them. --write-manifest is
 an explicit maintenance operation after intentional candidate edits.
@@ -117,10 +117,12 @@ def support_paths():
         'README.md', 'package.json', '.github/workflows/check.yml',
         'SOURCE_SNAPSHOT.json', 'release-manifest.json', 'LICENSE',
         'LICENSING.md', 'LICENSE-LEGACY-PRE-FORGE-2.0.txt',
+        'LICENSE_ADOPTION_SOURCE.json', 'LICENSING_CHECKPOINT.json', 'MEDIA_RIGHTS.md', 'RELEASE-0.7.0.md', 'RELEASE-0.9.0.md',
     }
     paths.update(path.relative_to(ROOT).as_posix() for path in (ROOT / 'scripts').rglob('*')
                  if path.is_file() and path.suffix in {'.py', '.mjs', '.json'})
     paths.update(path.relative_to(ROOT).as_posix() for path in BASELINE.rglob('*') if path.is_file())
+    paths.update(path.relative_to(ROOT).as_posix() for path in (ROOT / 'docs').rglob('*') if path.is_file())
     return paths
 
 
@@ -179,9 +181,9 @@ def manifest_data(snapshot, baseline, runtime, support):
     return {
         'schema': 'medical_mysteries_upgrade_manifest_v1',
         'game': 'Medical Mysteries',
-        'version': '0.7.0',
-        'status': 'release_artifact',
-        'release_edition': 'FG2-MEDICAL-MYSTERIES-0.7.0-20261017',
+        'version': '0.9.0',
+        'status': 'local_unpublished_candidate',
+        'published': False,
         'human_review_claimed': False,
         'clinical_review_status': 'prior_review_owner_reported_new_additions_not_separately_reviewed',
         'clinical_review_provenance': {
@@ -214,7 +216,7 @@ def main():
     arguments = parser.parse_args()
     snapshot, baseline, original_count = verify_original()
     package = json.loads((ROOT / 'package.json').read_text())
-    require(package.get('version') == '0.7.0' and package.get('type') == 'module', 'Wrong candidate package version/type')
+    require(package.get('version') == '0.9.0' and package.get('type') == 'module', 'Wrong candidate package version/type')
     runtime = current_runtime_paths()
     support = support_paths()
     module_count = verify_syntax_and_references(runtime, support)
@@ -231,7 +233,7 @@ def main():
     require(actual == expected, 'Candidate manifest is stale or altered; inspect changes before an intentional refresh')
     print(f'Verified {original_count} preserved beta members, {len(runtime)} candidate runtime files, '
           f'{len(support)} support files and {module_count} module syntax/reference checks. '
-          'Release artifact; no clinical validation claim.')
+          'Local candidate; no clinical validation or publication claim.')
 
 
 if __name__ == '__main__':

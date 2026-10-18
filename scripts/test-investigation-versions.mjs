@@ -145,7 +145,7 @@ test('unchanged bundled contrast questions resolve for all current v2 and frozen
     assert.ok(current);
     assert.equal(JSON.stringify(current), JSON.stringify(getLegacyTransferQuestion(episodeId, 1)));
     assert.equal(getTransferQuestion(episodeId), current);
-    for (const future of [0, 5, 999, '2', null]) assert.equal(getTransferQuestion(episodeId, future), null);
+    for (const future of [0, 7, 999, '2', null]) assert.equal(getTransferQuestion(episodeId, future), null);
   }
   assert.equal(getTransferQuestion('storage-authored', 2), null);
 });

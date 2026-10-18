@@ -1,3 +1,4 @@
+import { renderEducationalExhibit } from './educational_exhibits.mjs';
 import { offlineRequest } from './offline_api.mjs';
 async function loadModule(path) {
   try { return await import(path); }
@@ -196,8 +197,11 @@ function renderConsequenceMedia(media, stageNumber) {
 }
 
 function showError(error) {
-  text($('error'), `Connection problem: ${error.message}. Try restarting the case.`);
+  text($('error'), `Could not complete this step: ${error.message}. Your earlier saved routes are kept. Retry the step or return to the case board.`);
   $('error').classList.remove('hidden');
+  $('error').tabIndex = -1;
+  $('error').focus({ preventScroll: true });
+  $('error').scrollIntoView({ block: 'center' });
 }
 
 function renderList(data) {
@@ -250,7 +254,7 @@ function renderList(data) {
       text(count, play ? `Best first-try accuracy · ${Math.round((play.best_accuracy || 0) * 100)}% · Complete` : 'Not attempted · New');
       const edition = document.createElement('div'); edition.className = 'case-meta';
       const earlier = profile.legacy_plays?.[entry.case_id];
-      text(edition, `Story version ${entry.content_version || 2}${earlier ? ` · Earlier edition summary retained (${Math.round((earlier.best_accuracy ?? earlier.accuracy ?? 0) * 100)}%)` : ''}`);
+      text(edition, `Story version ${entry.content_version || 3}${earlier ? ` · Earlier edition summary retained (${Math.round((earlier.best_accuracy ?? earlier.accuracy ?? 0) * 100)}%)` : ''}`);
       const review = document.createElement('div'); review.className = 'case-review'; text(review, nextReviewLabel(entry.case_id, play));
       const open = document.createElement('button'); open.className = 'case-open'; open.type = 'button'; open.setAttribute('aria-label', entry.title); text(open, play ? 'Open case' : 'Start case'); open.addEventListener('click', () => start(tier, entry.case_id, true));
       button.append(cover, name, detail, edition, count, review, open);
@@ -444,204 +448,6 @@ function svgNode(tag, attributes = {}) {
   const node = document.createElementNS('http://www.w3.org/2000/svg', tag);
   for (const [key, value] of Object.entries(attributes)) node.setAttribute(key, String(value));
   return node;
-}
-
-function svgText(svg, value, x, y, attributes = {}) {
-  const label = svgNode('text', { x, y, ...attributes });
-  label.textContent = value;
-  svg.appendChild(label);
-}
-
-function exhibitContext(stage) {
-  // The server snapshot is the exhibit boundary. Never reach into a case or
-  // a later stage here: only facts already returned for this active stage may
-  // become diagram annotations.
-  const current = [...(stage.clues || []), ...(stage.vitals || []), ...(stage.observations || [])];
-  const describe = (item) => [item.label, item.value, item.unit, item.finding, item.detail]
-    .filter((value) => value !== undefined && value !== null && String(value).trim())
-    .join(' · ');
-  return {
-    values: current.map(describe).filter(Boolean),
-    vitals: (stage.vitals || []).map(describe).filter(Boolean),
-    clues: (stage.clues || []).map(describe).filter(Boolean),
-    observations: (stage.observations || []).map(describe).filter(Boolean),
-  };
-}
-
-function baseDiagram(spec, stage) {
-  const exhibitLabel = spec.label || 'SYNTHETIC GAME DIAGRAM';
-  const svg = svgNode('svg', { viewBox: '0 0 640 300', role: 'img', 'aria-label': exhibitLabel, preserveAspectRatio: 'xMidYMid meet' });
-  svg.classList.add('synthetic-diagram');
-  svg.dataset.kind = spec.kind;
-  svg.appendChild(svgNode('rect', { width: 640, height: 300, fill: '#0a1420' }));
-  const title = svgNode('title', { id: `exhibit-title-${String(spec.kind).replace(/[^a-z0-9]+/gi, '-')}` });
-  title.textContent = exhibitLabel;
-  svg.appendChild(title);
-  svg.setAttribute('aria-labelledby', title.id);
-  const content = svgNode('g', { class: 'exhibit-content' });
-  svg.appendChild(content);
-  const annotations = svgNode('g', { class: 'exhibit-annotations', 'aria-hidden': 'true' });
-  const context = exhibitContext(stage);
-  svgText(annotations, context.values.slice(0, 2).join(' · ') || 'No additional current-stage annotation', 40, 24, { fill: '#63e3bd', 'font-size': 11 });
-  svg.appendChild(annotations);
-  svgText(svg, 'SYNTHETIC GAME DIAGRAM · NOT A MEDICAL STUDY', 18, 282, { fill: '#f1c66f', 'font-size': 12, 'font-weight': 700 });
-  return { svg, content, context };
-}
-
-function drawStroke(spec, stage) {
-  const { svg, content } = baseDiagram(spec, stage);
-  content.appendChild(svgNode('rect', { x: 24, y: 32, width: 592, height: 194, rx: 16, fill: '#101a28', stroke: '#26384d', 'stroke-width': 2 }));
-  for (const [label, x, color] of [['LEFT', 182, '#72c6ff'], ['RIGHT', 458, '#72c6ff']]) {
-    content.appendChild(svgNode('ellipse', { cx: x, cy: 118, rx: 112, ry: 76, fill: '#14243a', stroke: color, 'stroke-width': 2 }));
-    svgText(content, label, x, 58, { fill: color, 'font-size': 11, 'font-weight': 700, 'text-anchor': 'middle' });
-  }
-  content.appendChild(svgNode('line', { x1: 320, y1: 42, x2: 320, y2: 202, stroke: '#b8a7ff', 'stroke-width': 3, 'stroke-dasharray': '7 6' }));
-  for (const [label, y, color] of [['FACE', 91, '#63e3bd'], ['ARM', 132, '#ff837e'], ['SPEECH', 173, '#f1c66f']]) {
-    content.appendChild(svgNode('circle', { cx: 320, cy: y, r: 13, fill: '#15293b', stroke: color, 'stroke-width': 4 }));
-    svgText(content, label, 346, y + 5, { fill: color, 'font-size': 12, 'font-weight': 700 });
-  }
-  svgText(content, 'FAST / LATERALITY MAP', 320, 218, { fill: '#e8eef7', 'font-size': 12, 'font-weight': 700, 'text-anchor': 'middle' });
-  return svg;
-}
-
-function drawDescending(spec, stage) {
-  const { svg, content, context } = baseDiagram(spec, stage);
-  content.appendChild(svgNode('path', { d: 'M320 38 C278 65 278 175 320 210 C362 175 362 65 320 38', fill: '#14243a', stroke: '#72c6ff', 'stroke-width': 3 }));
-  const labels = ['BULBAR', 'NECK', 'UPPER LIMB', 'TRUNK', 'RESPIRATORY RISK'];
-  labels.forEach((label, index) => {
-    const y = 56 + index * 36;
-    content.appendChild(svgNode('line', { x1: 320, y1: y - 10, x2: 320, y2: y + 10, stroke: index > 2 ? '#ff837e' : '#63e3bd', 'stroke-width': 7, 'stroke-linecap': 'round' }));
-    svgText(content, label, index % 2 ? 366 : 274, y + 5, { fill: '#e8eef7', 'font-size': 13, 'text-anchor': index % 2 ? 'start' : 'end' });
-  });
-  svgText(content, 'DESCENDING WEAKNESS · RESPIRATORY RISK MAP', 320, 238, { fill: '#f1c66f', 'font-size': 11, 'text-anchor': 'middle' });
-  svgText(content, context.values.slice(0, 1).join(' · ') || 'Current-stage vitals and clues only', 320, 257, { fill: '#8c9bad', 'font-size': 10, 'text-anchor': 'middle' });
-  return svg;
-}
-
-function drawMetabolic(spec, stage) {
-  const { svg, content, context } = baseDiagram(spec, stage);
-  content.appendChild(svgNode('rect', { x: 34, y: 34, width: 570, height: 190, rx: 10, fill: '#101a28', stroke: '#26384d' }));
-  const rows = [['GLUCOSE', '#ff837e'], ['KETONES', '#f1c66f'], ['pH', '#b8a7ff'], ['POTASSIUM', '#63e3bd']];
-  rows.forEach(([label, color], index) => {
-    const y = 62 + index * 38;
-    content.appendChild(svgNode('line', { x1: 72, y1: y, x2: 568, y2: y, stroke: '#26384d', 'stroke-width': 1 }));
-    svgText(content, label, 48, y + 5, { fill: color, 'font-size': 12, 'font-weight': 700 });
-    content.appendChild(svgNode('path', { d: `M120 ${y + 8} C210 ${y - 18} 270 ${y + 17} 350 ${y} S470 ${y - 14} 548 ${y + 2}`, fill: 'none', stroke: color, 'stroke-width': 3 }));
-  });
-  svgText(content, 'GLUCOSE · KETONES · pH · POTASSIUM', 48, 246, { fill: '#e8eef7', 'font-size': 11, 'font-weight': 700 });
-  svgText(content, `TREATMENT TIMELINE${context.values.length ? ` · ${context.values.slice(0, 1).join(' · ')}` : ''}`, 48, 264, { fill: '#8c9bad', 'font-size': 10 });
-  return svg;
-}
-
-function drawPelvic(spec, stage) {
-  const { svg, content, context } = baseDiagram(spec, stage);
-  content.appendChild(svgNode('path', { d: 'M320 74 C278 42 222 68 222 126 C222 180 280 204 320 224 C360 204 418 180 418 126 C418 68 362 42 320 74', fill: '#15293b', stroke: '#b8a7ff', 'stroke-width': 4 }));
-  content.appendChild(svgNode('ellipse', { cx: 320, cy: 112, rx: 36, ry: 48, fill: '#101a28', stroke: '#72c6ff', 'stroke-width': 3 }));
-  content.appendChild(svgNode('path', { d: 'M284 92 C246 78 224 92 204 110 M356 92 C394 78 416 92 436 110', fill: 'none', stroke: '#72c6ff', 'stroke-width': 3 }));
-  content.appendChild(svgNode('circle', { cx: 414, cy: 164, r: 22, fill: '#39252b', stroke: '#ff837e', 'stroke-width': 4 }));
-  content.appendChild(svgNode('path', { d: 'M216 180 C244 166 270 170 292 186 M424 180 C396 166 370 170 348 186', fill: 'none', stroke: '#ff837e', 'stroke-width': 5, 'stroke-linecap': 'round' }));
-  svgText(content, 'UTERUS', 320, 106, { fill: '#72c6ff', 'font-size': 10, 'font-weight': 700, 'text-anchor': 'middle' });
-  svgText(content, 'ADNEXA', 204, 126, { fill: '#72c6ff', 'font-size': 10, 'font-weight': 700, 'text-anchor': 'middle' });
-  svgText(content, 'FREE FLUID', 456, 178, { fill: '#ff837e', 'font-size': 10, 'font-weight': 700, 'text-anchor': 'middle' });
-  svgText(content, 'UTERUS · ADNEXA · FREE-FLUID SCHEMATIC', 320, 248, { fill: '#e8eef7', 'font-size': 12, 'font-weight': 700, 'text-anchor': 'middle' });
-  svgText(content, context.values.slice(0, 1).join(' · ') || 'Current-stage observations only', 320, 267, { fill: '#8c9bad', 'font-size': 10, 'text-anchor': 'middle' });
-  return svg;
-}
-
-function drawBrainMri(spec, stage) {
-  const { svg, content, context } = baseDiagram(spec, stage);
-  ['T1', 'FLAIR', 'SWI', 'POST-CONTRAST'].forEach((label, index) => {
-    const x = 34 + (index % 2) * 294;
-    const y = 34 + Math.floor(index / 2) * 96;
-    const panel = svgNode('g', { class: 'mri-panel' });
-    panel.appendChild(svgNode('rect', { x, y, width: 270, height: 78, rx: 8, fill: '#15293b', stroke: '#72c6ff', 'stroke-width': 2 }));
-    panel.appendChild(svgNode('ellipse', { cx: x + 135, cy: y + 40, rx: 70, ry: 28, fill: '#26384d', stroke: '#b8a7ff', 'stroke-width': 2 }));
-    panel.appendChild(svgNode('circle', { cx: x + 164, cy: y + 30, r: 9, fill: index === 2 ? '#ff837e' : '#f1c66f' }));
-    panel.appendChild(svgNode('circle', { cx: x + 106, cy: y + 48, r: 7, fill: '#ff837e' }));
-    svgText(panel, label, x + 14, y + 20, { fill: '#e8eef7', 'font-size': 12, 'font-weight': 700 });
-    content.appendChild(panel);
-  });
-  svgText(content, `SEQUENCE COMPARISON${context.values.length ? ` · ${context.values.slice(0, 1).join(' · ')}` : ''}`, 38, 244, { fill: '#8c9bad', 'font-size': 10 });
-  return svg;
-}
-
-function drawAorta(spec, stage) {
-  const { svg, content, context } = baseDiagram(spec, stage);
-  content.appendChild(svgNode('rect', { x: 32, y: 34, width: 576, height: 190, rx: 12, fill: '#101a28', stroke: '#26384d', 'stroke-width': 2 }));
-  content.appendChild(svgNode('path', { d: 'M170 190 C170 136 196 118 232 100 C260 86 272 64 304 66 C346 68 354 96 384 112 C420 132 450 136 470 190', fill: 'none', stroke: '#ff837e', 'stroke-width': 16, 'stroke-linecap': 'round' }));
-  content.appendChild(svgNode('path', { d: 'M302 66 C290 48 278 40 258 32 M348 94 C376 72 404 64 430 56', fill: 'none', stroke: '#72c6ff', 'stroke-width': 8, 'stroke-linecap': 'round' }));
-  content.appendChild(svgNode('path', { d: 'M306 68 C332 100 338 140 354 178', fill: 'none', stroke: '#f1c66f', 'stroke-width': 3, 'stroke-dasharray': '8 6' }));
-  const pressureLabels = context.vitals.slice(0, 2);
-  const pressureGroup = svgNode('g', { class: 'aorta-pressure' });
-  svgText(pressureGroup, pressureLabels[0] || 'RIGHT ARM · current-stage vital', 74, 80, { fill: '#ff837e', 'font-size': 10, 'font-weight': 700 });
-  svgText(pressureGroup, pressureLabels[1] || 'LEFT ARM · current-stage vital', 420, 80, { fill: '#72c6ff', 'font-size': 10, 'font-weight': 700 });
-  pressureGroup.appendChild(svgNode('line', { x1: 118, y1: 92, x2: 198, y2: 92, stroke: '#ff837e', 'stroke-width': 4, 'stroke-linecap': 'round' }));
-  pressureGroup.appendChild(svgNode('line', { x1: 420, y1: 92, x2: 500, y2: 92, stroke: '#72c6ff', 'stroke-width': 4, 'stroke-linecap': 'round' }));
-  content.appendChild(pressureGroup);
-  svgText(content, 'ARCH', 286, 54, { fill: '#ff837e', 'font-size': 10, 'font-weight': 700 });
-  svgText(content, 'LUMEN', 376, 136, { fill: '#f1c66f', 'font-size': 10, 'font-weight': 700 });
-  svgText(content, 'BRANCH VESSELS', 430, 48, { fill: '#72c6ff', 'font-size': 10, 'font-weight': 700 });
-  svgText(content, 'AORTIC ARCH · LUMEN · BRANCH VESSELS', 48, 246, { fill: '#e8eef7', 'font-size': 12, 'font-weight': 700 });
-  svgText(content, `ARM-PRESSURE COMPARISON${context.values.length ? ` · ${context.values.slice(0, 1).join(' · ')}` : ''}`, 48, 264, { fill: '#8c9bad', 'font-size': 10 });
-  return svg;
-}
-
-function syntheticDiagram(spec, stage) {
-  switch (spec.kind) {
-    case 'scene_observation':
-    case 'neuro_laterality': return drawStroke(spec, stage);
-    case 'descending_weakness': return drawDescending(spec, stage);
-    case 'metabolic_trends': return drawMetabolic(spec, stage);
-    case 'pelvic_ultrasound': return drawPelvic(spec, stage);
-    case 'brain_mri_grid': return drawBrainMri(spec, stage);
-    case 'aortic_cta': return drawAorta(spec, stage);
-    default: return baseDiagram(spec, stage).svg;
-  }
-}
-
-function makeExhibitToolbar(svg, spec) {
-  const toolbar = document.createElement('div');
-  toolbar.className = 'exhibit-toolbar';
-  toolbar.setAttribute('role', 'toolbar');
-  toolbar.setAttribute('aria-label', 'Evidence diagram controls');
-  const buttons = [
-    ['zoom-in', '＋', 'Zoom in'], ['zoom-out', '－', 'Zoom out'], ['reset', '↺', 'Reset view'],
-    ['annotations', '⌖', 'Toggle annotations'],
-  ];
-  if (['brain_mri_grid', 'aortic_cta'].includes(spec.kind)) buttons.push(['compare', '⇄', 'Compare views']);
-  let scale = 1;
-  let pan = 0;
-  const compareStatus = document.createElement('span');
-  compareStatus.className = 'exhibit-compare-status';
-  compareStatus.setAttribute('role', 'status');
-  compareStatus.setAttribute('aria-live', 'polite');
-  for (const [action, icon, label] of buttons) {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'exhibit-control';
-    button.dataset.exhibitAction = action;
-    button.setAttribute('aria-label', label);
-    button.title = label;
-    button.textContent = icon;
-    if (action === 'annotations' || action === 'compare') button.setAttribute('aria-pressed', 'false');
-    button.addEventListener('click', () => {
-      if (action === 'zoom-in') scale = Math.min(2.5, scale + .2);
-      if (action === 'zoom-out') scale = Math.max(.7, scale - .2);
-      if (action === 'reset') { scale = 1; pan = 0; }
-      if (action === 'annotations') button.setAttribute('aria-pressed', String(button.getAttribute('aria-pressed') !== 'true'));
-      if (action === 'compare') button.setAttribute('aria-pressed', String(button.getAttribute('aria-pressed') !== 'true'));
-      svg.querySelector('.exhibit-content')?.setAttribute('transform', `translate(${pan} 0) scale(${scale})`);
-      const annotationsOn = toolbar.querySelector('[data-exhibit-action="annotations"]')?.getAttribute('aria-pressed') === 'true';
-      svg.classList.toggle('show-annotations', annotationsOn);
-      svg.querySelector('.exhibit-annotations')?.setAttribute('aria-hidden', String(!annotationsOn));
-      svg.classList.toggle('compare-mode', toolbar.querySelector('[data-exhibit-action="compare"]')?.getAttribute('aria-pressed') === 'true');
-      svg.dataset.compare = svg.classList.contains('compare-mode') ? 'on' : 'off';
-      text(compareStatus, svg.dataset.compare === 'on' ? 'Compare view active' : '');
-    });
-    toolbar.appendChild(button);
-  }
-  toolbar.appendChild(compareStatus);
-  return toolbar;
 }
 
 function activeSessionFromStage(stage) {
@@ -859,15 +665,7 @@ function renderStage(stage) {
   const tray = $('evidencePanel');
   const previous = tray.querySelector('.synthetic-wrap');
   if (previous) previous.remove();
-  const wrap = document.createElement('div');
-  wrap.className = 'synthetic-wrap';
-  const caption = document.createElement('div');
-  caption.className = 'section-label';
-  text(caption, 'SYNTHETIC EVIDENCE · GAME DIAGRAM ONLY');
-  // Do not preview gated observations in the generated diagram. The scene
-  // image and its accessible markers remain the examination surface.
-  const diagram = syntheticDiagram(stage.visual_spec, stage);
-  wrap.append(caption, makeExhibitToolbar(diagram, stage.visual_spec), diagram);
+  const wrap = renderEducationalExhibit(stage.visual_spec, stage);
   tray.appendChild(wrap);
   clear($('options'));
   clear($('feedback'));

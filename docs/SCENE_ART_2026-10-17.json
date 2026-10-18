@@ -1,0 +1,33 @@
+{
+  "mode": "built-in image_gen",
+  "purpose": "Fictional atmosphere only. Not case evidence. No real patient data or reference photographs supplied.",
+  "encoding": "Full 1536x1024 output encoded to WebP without cropping or resizing. Original generated PNGs remain at the image tool destination.",
+  "prompts": {
+    "night-shift": "Use case: photorealistic-natural. Asset type: fictional educational medical game scene, wide landscape 1536x1024. Create a grounded documentary-quality scene in a contemporary hospital emergency assessment bay at night. A fully clothed 61-year-old man with ordinary short grey hair rests upright on a hospital trolley, awake, with a concerned but calm expression. A female emergency clinician and a male nurse listen and exchange a concise handoff nearby, one holding a blank tablet angled away. Realistic human anatomy and hands, comfortable clinical distance, plausible equipment in the background with no readable screens. Restrained teal scrubs, soft warm practical light and cooler corridor light, subtle film texture, natural proportions and authentic materials. Medium-wide eye-level framing; faces visible and readable even as a landscape card. The scene is neutral: no diagnosis, no surgery, no treatment demonstration, no graphic distress, no visible invasive lines. No printed text, no logos, no watermarks. It must feel candid and humane, not a stock-photo pose or cartoon.",
+    "missed-turn": "Use case: photorealistic-natural. Asset type: fictional educational medical game scene, wide landscape 1536x1024. A believable intimate scene at a family dinner in a modest contemporary home: an adult woman in her sixties sits upright, awake, while her adult daughter watches her face attentively and speaks on a phone held naturally to her ear. Another family member quietly moves a chair aside in the background. The emergency call is already underway; no physical examination or intervention is demonstrated. Table with ordinary dinner plates, warm natural lamplight, blue evening through a window. Natural human anatomy, hands, realistic clothing, gentle concerned expressions, no exaggerated grimacing or asymmetrical facial distortion. Frame the seated woman and caller together, eye-level, medium-wide, restrained documentary photography with tactile realistic detail. No medical diagnosis, no readable phone screen, no text, no logos, no watermarks, no cartoon styling, no glamour or staged stock-photo poses.",
+    "after-weekend": "Use case: photorealistic-natural. Asset type: fictional educational medical game scene, wide landscape 1536x1024. A contemporary hospital observation room with a fully clothed young adult man in his early twenties resting upright on a trolley, tired but awake, beside a calm senior nurse and a medical student listening to him. Senior nurse wears dark teal scrubs, student neutral blue scrubs and a plain blank badge. No one performs a procedure. A bedside table has a covered water cup; plausible equipment remains softly out of focus with no readable monitor values. Daylight through frosted glass, warm skin tones and quiet deep-teal environment, convincing hospital materials and realistic subtle expressions. Eye-level medium-wide composition with subjects readable as a landscape card, exceptionally natural anatomy and hands. No diagnostic imagery, no treatment instructions, no needles, no exposed body, no drama, no printed text, no logos, no watermarks, no cartoon styling."
+  },
+  "assets": [
+    {
+      "path": "assets/scene-refresh-2026-10/after-weekend-1536.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 167730,
+      "sha256": "5cda225c48fbd0a262a3b76115d3229b4a7e8e78aa9565ed3bfbfd3fbd6e91e7"
+    },
+    {
+      "path": "assets/scene-refresh-2026-10/missed-turn-1536.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 201838,
+      "sha256": "b81acfe8a9a9d305ed6e02799e92563ebb552c25da95e8706bc68f054abcfc6f"
+    },
+    {
+      "path": "assets/scene-refresh-2026-10/night-shift-1536.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 188778,
+      "sha256": "b13719c7e069ef0fbd77bef2a513b430edfd4489dc0ffd6e2fc730fb3830c001"
+    }
+  ]
+}

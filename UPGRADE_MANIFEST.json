@@ -1,9 +1,9 @@
 {
   "schema": "medical_mysteries_upgrade_manifest_v1",
   "game": "Medical Mysteries",
-  "version": "0.7.0",
-  "status": "release_artifact",
-  "release_edition": "FG2-MEDICAL-MYSTERIES-0.7.0-20261017",
+  "version": "0.9.0",
+  "status": "local_unpublished_candidate",
+  "published": false,
   "human_review_claimed": false,
   "clinical_review_status": "prior_review_owner_reported_new_additions_not_separately_reviewed",
   "clinical_review_provenance": {
@@ -15,7 +15,7 @@
     "human_review_claimed_scope": "No separate clinician review is claimed for this exact candidate, its new arrival content or its workflow additions."
   },
   "clinical_use": false,
-  "generated_utc": "2026-10-17T14:24:22.911Z",
+  "generated_utc": "2026-10-18T00:16:42.432Z",
   "baseline": {
     "source_commit": "1c16a334772732ee4360d1d63d2b3ae62a69a55e",
     "frozen_source_directory": "baselines/published-beta-v2",
@@ -44,14 +44,24 @@
     "styles.css"
   ],
   "added_runtime_files": [
+    "assets/scene-refresh-2026-10/after-weekend-1536.webp",
+    "assets/scene-refresh-2026-10/missed-turn-1536.webp",
+    "assets/scene-refresh-2026-10/night-shift-1536.webp",
     "care_workflow.mjs",
     "care_workflow_content.mjs",
     "care_workflow_view.mjs",
     "confidence_assessment.mjs",
+    "educational_exhibits.mjs",
     "investigation_arrivals.mjs",
+    "investigation_content_v4.mjs",
+    "investigation_content_v5.mjs",
     "investigation_content_versions.mjs",
+    "investigation_coordination_content.mjs",
+    "investigation_editorial_content.mjs",
     "investigation_reasoning.mjs",
     "investigation_variants.mjs",
+    "investigation_visuals.mjs",
+    "story_content_v2.mjs",
     "story_decisions.mjs",
     "story_history_view.mjs",
     "story_progress.mjs",
@@ -67,8 +77,8 @@
       "sha256": "d368492517c398a02ab9f3d87e82c8a33b9434e7b116df09c2e9d630fa20cd2e"
     },
     "app.js": {
-      "bytes": 82595,
-      "sha256": "0cdb07422048979af803a6abf2d88d8ad25660a781a5b46b098fcb1a8836e2a9"
+      "bytes": 68852,
+      "sha256": "33ea789ee1d2bfb501709d1ff4bab9848ab3946a5f8ed4e495dd37b1cb51bb2e"
     },
     "assets/covers/doc-001-melanoma-480.webp": {
       "bytes": 14844,
@@ -358,6 +368,18 @@
       "bytes": 1753200,
       "sha256": "105e1edaa965a2fa198803fe9c7b10ee8035cec10079efd1e35905885debe6af"
     },
+    "assets/scene-refresh-2026-10/after-weekend-1536.webp": {
+      "bytes": 167730,
+      "sha256": "5cda225c48fbd0a262a3b76115d3229b4a7e8e78aa9565ed3bfbfd3fbd6e91e7"
+    },
+    "assets/scene-refresh-2026-10/missed-turn-1536.webp": {
+      "bytes": 201838,
+      "sha256": "b81acfe8a9a9d305ed6e02799e92563ebb552c25da95e8706bc68f054abcfc6f"
+    },
+    "assets/scene-refresh-2026-10/night-shift-1536.webp": {
+      "bytes": 188778,
+      "sha256": "b13719c7e069ef0fbd77bef2a513b430edfd4489dc0ffd6e2fc730fb3830c001"
+    },
     "assets/stu-001-dka.png": {
       "bytes": 1691775,
       "sha256": "562a7c8a7671ae07f9766d5f611acff19df8a504f0adc7302039573c33aaf98e"
@@ -367,32 +389,36 @@
       "sha256": "6f282f7d19066fa7eba5ed0d4b92250340224cf984e1ee68f164776f873b2dfc"
     },
     "care_workflow.mjs": {
-      "bytes": 15796,
-      "sha256": "44ce078fb24771b61a3584f0f9a240b3ea63ba62cd6831c859f32b49f27d8cf5"
+      "bytes": 18888,
+      "sha256": "f56d405b9edfe8a37a37ad8960a1a2b442e814a1e042c18985bfb47636224165"
     },
     "care_workflow_content.mjs": {
       "bytes": 31542,
       "sha256": "fbe9920ef704b82ad0aa8fa4402b975f6d52aef7be3eeaa580013868bf744784"
     },
     "care_workflow_view.mjs": {
-      "bytes": 15649,
-      "sha256": "84cfdf7201dadc4205e575a5676e34aaa9566c6cd65f8c5307c705d4fb76b907"
+      "bytes": 17591,
+      "sha256": "eefb3a463df70e906b39c3cde8efd6eb1d06f1bb1136b93c7d87ed2765234601"
     },
     "confidence_assessment.mjs": {
       "bytes": 7561,
       "sha256": "2aee20205d22d78add45e79def43cdb0a0b6bf475ba1dfbb90b5a106212a7338"
+    },
+    "educational_exhibits.mjs": {
+      "bytes": 19462,
+      "sha256": "f404f233882dd4f1f849a7b2abbab922cddbfa2750d684e722f694e91cc5eabb"
     },
     "game-data.mjs": {
       "bytes": 181084,
       "sha256": "a039e00d7993c2842f0722a46c5c15df6dfc0666ff281e21797c110151adf764"
     },
     "index.html": {
-      "bytes": 14491,
-      "sha256": "3e49d0d577d0ebe4d0db41a8471cafe3c7605f90503ea7b872b444149196b0d8"
+      "bytes": 14576,
+      "sha256": "6d4f417b60d91f7ee6401a898ac57b203f7b6211940b1b2552581b39fa39aa3f"
     },
     "investigation.mjs": {
-      "bytes": 17121,
-      "sha256": "f4402046174f8f3e0d1edb873a1293ca289b5120c98131a44f41c936e809dfe5"
+      "bytes": 17490,
+      "sha256": "833fa6080a5efe127686d9dcbb2961eea7ca3a6b89f75046ab9b7a011cdd0287"
     },
     "investigation_arrivals.mjs": {
       "bytes": 2111,
@@ -402,21 +428,37 @@
       "bytes": 18773,
       "sha256": "c8c51623485354780731a286e0f53b35fc14ec9cd3e4795b0e7daa715ea8b9e3"
     },
+    "investigation_content_v4.mjs": {
+      "bytes": 186041,
+      "sha256": "82886376f6f32e7de74d670e5d96e853e5433397c5b378c0b5c7c37c58b5c0b8"
+    },
+    "investigation_content_v5.mjs": {
+      "bytes": 453682,
+      "sha256": "2b3e0a56eef8e7f90349e316c1c2fa755f2c09d8a593f86726ac15253b380485"
+    },
     "investigation_content_versions.mjs": {
-      "bytes": 143384,
-      "sha256": "564df229db20966d6b00d8574d02b28d9f52ee1c7fed905f9b58e22fb1211089"
+      "bytes": 143774,
+      "sha256": "c1290282ffb0d3835a2153a5d324c27206925b7cc39b840edf6be0cfed10ff36"
+    },
+    "investigation_coordination_content.mjs": {
+      "bytes": 54069,
+      "sha256": "f93ed539e79e0a0ecb6f0a728ba52e1607fd8a107f3e362eb3d8216d70a0f2c8"
+    },
+    "investigation_editorial_content.mjs": {
+      "bytes": 32879,
+      "sha256": "3a846148ad52c0c6e2bbdb160379a977541d70a66c893165fc95475227db9e8e"
     },
     "investigation_history.mjs": {
       "bytes": 7883,
       "sha256": "136a8d3bd2d66aa5f6b643b274995d064de72c0f354d6d0ac6dc11103d65b534"
     },
     "investigation_journal.mjs": {
-      "bytes": 18402,
-      "sha256": "1954d313c843298dace7f9266efc4d7b4d8438b6174321a3ea01aa7447cabc12"
+      "bytes": 19526,
+      "sha256": "fa23b693cc46f9e6b36ba5b5ab9d4549345eda1094729ea86368643c59f7eaa2"
     },
     "investigation_learning_view.mjs": {
-      "bytes": 18351,
-      "sha256": "725c3ddee9092cbdaa939db30d40a8c401835e72a4e08e77f9657511704e3486"
+      "bytes": 18355,
+      "sha256": "04692f0c62aac94e863e53fc8cb380a94d5c5121ff4eee2e27ea8b8f03a79ebe"
     },
     "investigation_reasoning.mjs": {
       "bytes": 6367,
@@ -431,16 +473,20 @@
       "sha256": "a57a739371761ddee41019c881173e031f01fa8f216f937f939745378a60d63a"
     },
     "investigation_view.mjs": {
-      "bytes": 27508,
-      "sha256": "a3fa83c129a143f60b9a5a5f82c882a958e560e927b39f6ae607dcc5521a99d4"
+      "bytes": 28157,
+      "sha256": "0c8696a1c01e3e00fd1345e1b5603ef638f964ddb52231c2b35549fd1f5dd1af"
+    },
+    "investigation_visuals.mjs": {
+      "bytes": 3678,
+      "sha256": "b67abf3bf38f1545ae4bc67f018cf573f36a77a48acc413da26864fb6b1fcf25"
     },
     "offline_api.mjs": {
-      "bytes": 324,
-      "sha256": "e67f57cb12ce938381269c8e81e0f236f21ee352c6c24a9e7f4e280a4c47565c"
+      "bytes": 381,
+      "sha256": "f97dfbd9da8b1ef3841d59cc283e35371b5a7b200567b60aea2214c0e1bdd74d"
     },
     "offline_engine.mjs": {
-      "bytes": 33293,
-      "sha256": "d790f350431424d7e58796191778feede41d97882e5207681ddc9cc5ebca7d25"
+      "bytes": 34064,
+      "sha256": "4dab4d8486b8a8ef3f4c30d3cf82710d257cef1fb6a5f022ea474547e828d667"
     },
     "practice_history.mjs": {
       "bytes": 7186,
@@ -450,25 +496,29 @@
       "bytes": 6135,
       "sha256": "51b52f9711dec6fd4ab2ff2c297230198e1c4e477058d8453368af1ee0bd42b9"
     },
-    "story_decisions.mjs": {
+    "story_content_v2.mjs": {
       "bytes": 34006,
       "sha256": "3e6c35a61745cd06696fd983ab686d232c80bfed5af7db1ac589abb751ed6055"
+    },
+    "story_decisions.mjs": {
+      "bytes": 6192,
+      "sha256": "28bb68e25836fbf25ddc83548f70836858a832bf5a53c11384fe289bfbc88edb"
     },
     "story_history_view.mjs": {
       "bytes": 5492,
       "sha256": "2b01cb2dc2f1d62eaa05d09440582990d8b58d2a4a621ca346c5a50bb6f2a529"
     },
     "story_progress.mjs": {
-      "bytes": 14127,
-      "sha256": "61babe19e27386da541458a5fb2115a8e4e8e2714f1d0a59e8f41307d2ce6e96"
+      "bytes": 14205,
+      "sha256": "a9790c3bb1a550ca8bed274cba6fe72f21bb08ed9325e7ed137b14f8b89549f9"
     },
     "story_reviews.mjs": {
       "bytes": 1426,
       "sha256": "c46832341b540d5197b0aac9004b365ca034f987c25461dfba2bbade1853a978"
     },
     "styles.css": {
-      "bytes": 45400,
-      "sha256": "bcc0b90456327624dcfbad545fed794cfc29a300c1a48af105ff7987bf2b55d5"
+      "bytes": 50725,
+      "sha256": "79eec52afcdff94ce93968a8e0ac155e92557e9e9218867019c8541ebe777322"
     },
     "transfer_practice.mjs": {
       "bytes": 10014,
@@ -488,13 +538,33 @@
       "bytes": 4128,
       "sha256": "28638be413f7815704fe68aed52a4ea4cb7bd4d28b35f2dca9b78d438a4a90bf"
     },
+    "LICENSE_ADOPTION_SOURCE.json": {
+      "bytes": 1749,
+      "sha256": "45da2300963820846e232b3d3c32452a648f3184100408a433bce5c016e8f0a7"
+    },
     "LICENSING.md": {
       "bytes": 4309,
       "sha256": "a7d6a6f7979975ec4cc64dcc6af00a3586cc272685df5ad82dcb41a76adad4bc"
     },
+    "LICENSING_CHECKPOINT.json": {
+      "bytes": 1931,
+      "sha256": "b8544f2dbc4dd49d745d6d5895b88f7ce9aa2b9a72b58d2679fc99a13e04993e"
+    },
+    "MEDIA_RIGHTS.md": {
+      "bytes": 1929,
+      "sha256": "ae82c8f976fecb87d8132b07011df290841136d05c78276b37b282c62bbca61e"
+    },
     "README.md": {
-      "bytes": 12342,
-      "sha256": "24ace2a2674075189ca205638280b3a5460424578da2be5f3f3683870dc5a316"
+      "bytes": 16805,
+      "sha256": "6b44ef076fa6261fe2348552817ffc3fce1a34803ccdf9321e82a50be8424c40"
+    },
+    "RELEASE-0.7.0.md": {
+      "bytes": 3319,
+      "sha256": "18c3a2bce9480e7c2f2ad178dd39dc129690296fa85230ccf219d4516a8f39d0"
+    },
+    "RELEASE-0.9.0.md": {
+      "bytes": 5227,
+      "sha256": "29adbc6e43dd53e11fe44487151fa54b559133f942c044b6ba665c8f2a9804bb"
     },
     "SOURCE_SNAPSHOT.json": {
       "bytes": 16991,
@@ -572,9 +642,37 @@
       "bytes": 10014,
       "sha256": "20780d21c8711f1144ea29b67c6115428fc2d7a854c2feff84b74f93f3c16b9c"
     },
+    "docs/MEDIA_PROVENANCE_PUBLIC.json": {
+      "bytes": 13998,
+      "sha256": "e2d39d42ff6afaff2e4d73522b101a18b6536dc42216df8f44019b2e1f14886f"
+    },
+    "docs/SCENE_ART_2026-10-17.json": {
+      "bytes": 4185,
+      "sha256": "b8833d216340501d025f7b8488ddb12d73f1bca26f52e5403c1053cfac2a2452"
+    },
+    "docs/licensing-history/2026-10-15-before-forge-2.0/LICENSE": {
+      "bytes": 4128,
+      "sha256": "28638be413f7815704fe68aed52a4ea4cb7bd4d28b35f2dca9b78d438a4a90bf"
+    },
+    "docs/licensing-history/2026-10-15-before-forge-2.0/LICENSING.md": {
+      "bytes": 1424,
+      "sha256": "6c3a8d8e8d045c2102f4d487a10d61e76a7ebf4c9159a73ca3c4ba4aaa52dad3"
+    },
+    "docs/licensing-history/2026-10-15-before-forge-2.0/LICENSING_CHECKPOINT.json": {
+      "bytes": 918,
+      "sha256": "8ef36c671099e79680bee029d02f2664a31c9bdaa77d64153630c6c0f88cec24"
+    },
+    "docs/licensing-history/2026-10-15-before-forge-2.0/SOURCE_SNAPSHOT.json": {
+      "bytes": 16991,
+      "sha256": "3190d5fbfa3d238d8136c01af6f5fc1b47e2ab83bcfe1e978f1b2520957c66cd"
+    },
+    "docs/licensing-history/2026-10-15-before-forge-2.0/release-manifest.json": {
+      "bytes": 32157,
+      "sha256": "e61f73efeff83f23aae3978f10463307f75b948cf4cc12006cc281c56212494a"
+    },
     "package.json": {
-      "bytes": 723,
-      "sha256": "d282c80224fe512d423f5ee88d8a4cfb2bf2713fe59092313f07c012d523e7de"
+      "bytes": 949,
+      "sha256": "5daf428f7a1cd6d7c25c3e45df04f945763e7f68ce3e699e40388b13dfea1cdf"
     },
     "release-manifest.json": {
       "bytes": 32157,
@@ -585,8 +683,8 @@
       "sha256": "5b2c5b2fe4e3996124d2913d2c3271d708f6761f6b76ee68430aa66302927c64"
     },
     "scripts/check-upgrade.py": {
-      "bytes": 12207,
-      "sha256": "07889260f82e1a0c7d44f07bde46e4b04160b0aa3b02cef5e84815c45c0c26c6"
+      "bytes": 12429,
+      "sha256": "be3f741d952f3db7c82541344a9b09915b02816f3ce516e7a40b98278aec38e8"
     },
     "scripts/fixtures/investigation-journal-v1.json": {
       "bytes": 10124,
@@ -600,6 +698,10 @@
       "bytes": 663629,
       "sha256": "52ffb3fbd1ea05842f82043578b8ac53f95dbda5b511e99168b172f9b0a67c72"
     },
+    "scripts/fixtures/investigation-upgrade-0.7.0.json": {
+      "bytes": 1395653,
+      "sha256": "ca2d6a809261c99fd61af66eec427bfe7cdb57d9a74a2da86299c12a61a99e3c"
+    },
     "scripts/fixtures/investigation-v2-before-care.json": {
       "bytes": 26212,
       "sha256": "3d379448b6813892d983ccec30d1123d896ac12e291ea79aa939e28e4b876ca9"
@@ -607,6 +709,14 @@
     "scripts/fixtures/investigation-v3-before-variants.json": {
       "bytes": 84208,
       "sha256": "3be79f9f60df4f999157d51fdfc619e216384720e0b2c54dd20054a6f815ff45"
+    },
+    "scripts/fixtures/investigation-v4-before-coordination.json": {
+      "bytes": 185762,
+      "sha256": "6fb009517d34cb304a5e2b2fcfc5ed92baaf0bc360abbb81cde8437cf69a2ebb"
+    },
+    "scripts/fixtures/investigation-v5-before-editorial.json": {
+      "bytes": 453423,
+      "sha256": "7c0edbd74d24594a155e89cccd82d27181d59af59e75c10e52c5709d407580f4"
     },
     "scripts/fixtures/story-sessions-legacy-v1.json": {
       "bytes": 263865,
@@ -628,6 +738,18 @@
       "bytes": 10538,
       "sha256": "feddb53c2eb2a19d692306f55903605713f532f4ea83318d670e12b09e4ea716"
     },
+    "scripts/test-editorial-editions.mjs": {
+      "bytes": 12215,
+      "sha256": "989e4496c9d54fcbba4ad42bf2ef52e952b77361a1ea81c4be531264842e984f"
+    },
+    "scripts/test-editorial-journal-limits.mjs": {
+      "bytes": 7065,
+      "sha256": "877c07afe615074ed1c6caed7220143435c23075a4f4aaff9e07c13fc47a4ec6"
+    },
+    "scripts/test-educational-exhibits.mjs": {
+      "bytes": 4011,
+      "sha256": "96296d000f00edb8052612b76d250ef188e0cbb73efbd70c8ff1986b4db8e5a7"
+    },
     "scripts/test-investigation-arrivals.mjs": {
       "bytes": 3045,
       "sha256": "4c50c9340d455ff7b4cfaa6452d2fca48fcf7987e2f6b796cc7af11f5d3a1e83"
@@ -637,24 +759,32 @@
       "sha256": "70d0cdf0bef854063f9873f68854dca98d91bf69b10458b31d3da37dd1427700"
     },
     "scripts/test-investigation-v4.mjs": {
-      "bytes": 31053,
-      "sha256": "98397493f4b3adfee5a684eb59716c1e25e036d2852c693787794e048a5075b9"
+      "bytes": 31213,
+      "sha256": "434f2181db2e591c071012e68072dfd4ded0cfffa0adf64d03233d4c0698c9aa"
+    },
+    "scripts/test-investigation-v5.mjs": {
+      "bytes": 26787,
+      "sha256": "7dd0a47e74d8781c6ba280bdb3e48d0038f5290400529616f44a5d7c6a5a2197"
     },
     "scripts/test-investigation-versions.mjs": {
       "bytes": 27961,
-      "sha256": "b7c5f236ca02e923e9097545f969993dbe7003b4cd6faf41069f3db9db3a7c12"
+      "sha256": "e6fa627c4dad36dd4dfaa83479bd11b5f5d1110002f1781fdb1faebe748f7e61"
+    },
+    "scripts/test-local-http-session.mjs": {
+      "bytes": 1937,
+      "sha256": "0e07d7525e403862cbaf066d78f63a3292f15bca088339a83a2c3b71af52a538"
     },
     "scripts/test-review-retention.mjs": {
       "bytes": 7926,
       "sha256": "7386c5f137d599745d3de09b1d166d2c65016731c48bb1598895c2e622baa4a4"
     },
     "scripts/test-story-decisions.mjs": {
-      "bytes": 15384,
-      "sha256": "da7edc5c65c1d74c142eeb586a958cf34765f51d878afd908bdd7326d92547e9"
+      "bytes": 15385,
+      "sha256": "acfad387643f5db64b9ccd67f670f0c7324669820d718c9c211192caac43f571"
     },
     "scripts/test-story-history.mjs": {
-      "bytes": 24850,
-      "sha256": "f548a0f348708f610c2142585f1ccb2613d690bc3751b34dc4a3f9f85f09acc5"
+      "bytes": 24851,
+      "sha256": "a8e6a8536529b5fcb3102f045b60e15a864163383ee1d3974c3559b78e4293b7"
     },
     "scripts/test-story-progress.mjs": {
       "bytes": 13216,

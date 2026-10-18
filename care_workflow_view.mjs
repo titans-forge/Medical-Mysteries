@@ -2,6 +2,7 @@ import {
   getCareWorkflow, requestCareTask, advanceCareUpdate, reviewCareTask,
   chooseCarePriority, reassessCare, sendCareHandoff, acknowledgeCareHandoff, respondCareUpdate,
 } from './investigation.mjs';
+import { workboardSnapshot } from './investigation_visuals.mjs';
 
 const handoffDrafts = new Map();
 function node(tag, className = '', text = '') {
@@ -87,6 +88,7 @@ export function careWorkboard(state, apply) {
     rail.append(item);
   }
   board.append(rail);
+  if (state.version >= 5) board.append(workboardSnapshot(care));
   const priority = disclosure('Priority while the cause is uncertain', !care.priority || !care.priority.appropriate);
   priority.id = 'carePriority';
   priority.tabIndex = -1;
@@ -159,7 +161,15 @@ export function careWorkboard(state, apply) {
     reassessment.append(node('p', 'control-help', `Working explanation: ${care.hypothesisId
       ? care.profile.hypothesisLabels?.[care.hypothesisId] || care.hypothesisId.replaceAll('-', ' ')
       : state.hypothesisId ? state.hypothesisId.replaceAll('-', ' ') : 'Not recorded'}. Keep or revise it in the reasoning panel, using findings you actually reviewed.`));
-    reassessment.append(choices(care.reassessmentQuestion || profile.reassessment, care.choices.reassessment,
+    const reassessmentQuestion = care.reassessmentQuestion || profile.reassessment;
+    if (state.version >= 5 && reassessmentQuestion.message) reassessment.append(node('p', 'care-reassessment-context', reassessmentQuestion.message));
+    if (state.version >= 5 && reassessmentQuestion.contextSummary) {
+      const context = disclosure('Information for this reassessment');
+      const facts = Array.isArray(reassessmentQuestion.contextSummary) ? reassessmentQuestion.contextSummary : [reassessmentQuestion.contextSummary];
+      for (const text of facts) context.append(node('p', '', text));
+      reassessment.append(context);
+    }
+    reassessment.append(choices(reassessmentQuestion, care.choices.reassessment,
       care.reassessmentCurrent ? care.latestReassessment : null,
       (id) => apply(reassessCare(state, id), 'careReassessment')));
     if (!care.reassessmentCurrent) reassessment.append(node('p', 'control-help', care.latestReassessment
@@ -186,19 +196,28 @@ export function careHandoff(state, apply) {
       : latest.readback?.appropriate && Object.values(latest.choices).every((choice) => choice.appropriate)
         ? 'Communication loop recorded for the current information.'
         : 'Message recorded — check its content and the receiver’s reply.'));
-    const sent = disclosure(`Last message · update ${latest.updateRound}`, true);
+    const specific = state.version >= 5 && latest.readbackQuestion;
+    const sent = disclosure(`${specific ? 'Compare with your sent handoff' : 'Last message'} · update ${latest.updateRound}`, !specific);
     for (const field of ['receiver', 'situation', 'uncertainty', 'nextOwner']) {
       const chosen = latest.choices[field];
       sent.append(node('p', '', chosen.label));
       if (!chosen.appropriate) sent.append(feedback(chosen));
     }
     sent.append(attachedRecord(care, latest.reviewedActionIds, [...latest.pendingTaskIds, ...latest.availableTaskIds], latest.patientUpdates));
-    section.append(sent);
+    if (!specific || latest.outdated) section.append(sent);
     if (!latest.outdated) {
       const readback = node('div', 'care-readback');
       readback.id = 'careReadback';
       readback.tabIndex = -1;
-      readback.append(choices(profile.readback, care.choices.readback, latest.readback,
+      const question = care.readbackQuestion || latest.readbackQuestion || profile.readback;
+      if (specific) {
+        readback.classList.add('care-readback-check');
+        readback.append(node('h3', '', 'Check the receiver’s understanding'),
+          node('p', 'control-help', 'Compare these words with the information you sent. A reply may be accurate or need a specific correction.'),
+          node('div', 'eyebrow', 'RECEIVER SAYS'), node('blockquote', 'care-receiver-message', question.message));
+        readback.append(sent);
+      }
+      readback.append(choices(question, care.choices.readback, latest.readback,
         (id) => apply(acknowledgeCareHandoff(state, latest.id, id), 'careReadback')));
       section.append(readback);
     }
@@ -265,6 +284,13 @@ export function careSummary(state) {
   for (const update of care.patientUpdates || []) {
     section.append(node('h4', '', 'Patient update'), node('p', '', update.text),
       node('p', '', update.response ? `Your response: ${update.response.label}` : 'Response not recorded.'));
+  }
+  if (state.version >= 5 && care.handoff?.readbackQuestion) {
+    const verification = disclosure('Receiver message and your check');
+    verification.append(node('blockquote', 'care-receiver-message', care.handoff.readbackQuestion.message));
+    if (care.handoff.readback) verification.append(node('p', '', care.handoff.readback.label), feedback(care.handoff.readback));
+    else verification.append(node('p', 'control-help', 'No verification response recorded.'));
+    section.append(verification);
   }
   const trail = disclosure(`Coordination record · ${state.workflow.events.length} decisions and events`);
   trail.append(node('p', 'control-help', 'The exported investigation includes every workflow attempt, report request, update, reviewed finding and handoff snapshot.'));

@@ -1,0 +1,8809 @@
+// Exact v5 definitions preserved before the editorial revision.
+function freeze(value) { if (value && typeof value === "object") { Object.values(value).forEach(freeze); Object.freeze(value); } return value; }
+export const V5_INVESTIGATION_CONTENT = freeze([
+  {
+    "episode": {
+      "id": "doc-002-tearing-back-investigation",
+      "version": 5,
+      "careWorkflow": {
+        "episodeId": "doc-002-tearing-back-investigation",
+        "version": 1,
+        "role": {
+          "label": "Doctor coordinating the ED team",
+          "boundary": "Coordinate concern, task owners and review; treatment and patient outcomes are outside this exercise."
+        },
+        "timingNote": "Fictional update rounds release reports and narrative events. They are not minutes, recommended waits or a prescribed clinical sequence.",
+        "priority": {
+          "prompt": "Who needs the opening concern before its cause is settled?",
+          "choices": [
+            {
+              "id": "share-opening-concern",
+              "label": "Share sudden chest discomfort with the ed senior clinician and confirm who accepts review.",
+              "appropriate": true,
+              "feedback": "Communicate the concern and uncertainty early; a diagnostic label is not required to name a review owner.",
+              "requires": []
+            },
+            {
+              "id": "finish-record-before-contact",
+              "label": "Collect the remaining reports first, then ask the ed senior clinician to accept the complete explanation.",
+              "appropriate": false,
+              "feedback": "A fuller record may refine the explanation. It does not replace early shared awareness and responsibility for the presenting concern.",
+              "requires": []
+            }
+          ]
+        },
+        "tasks": {
+          "symptom-timeline": {
+            "owner": "ED history-taking clinician",
+            "label": "Follow up: symptom timeline",
+            "rounds": 1
+          },
+          "focused-examination": {
+            "owner": "ED examining clinician",
+            "label": "Follow up: focused examination",
+            "rounds": 1
+          },
+          "ecg": {
+            "owner": "ECG reporting clinician",
+            "label": "Follow up: ecg report",
+            "rounds": 1
+          },
+          "chest-radiograph": {
+            "owner": "Radiology reporting clinician",
+            "label": "Follow up: chest radiograph",
+            "rounds": 2
+          },
+          "aortic-cta": {
+            "owner": "ED senior clinician",
+            "label": "Follow up: aortic cta report",
+            "rounds": 2
+          },
+          "specialist-handoff": {
+            "owner": "ED senior clinician",
+            "label": "Follow up: specialist handoff",
+            "rounds": 1
+          }
+        },
+        "reassessment": {
+          "minimumReviewed": 1,
+          "update": "Fictional team checkpoint: identify what you reviewed, what remains pending and who accepts the next review. This checkpoint supplies no additional examination or laboratory finding."
+        },
+        "handoff": {
+          "receiver": {
+            "prompt": "Who accepts this concern?",
+            "choices": [
+              {
+                "id": "r-worklist",
+                "label": "The shared results worklist, with the next reader deciding who receives the concern.",
+                "appropriate": false,
+                "feedback": "A worklist records tasks; it does not show who accepted responsibility.",
+                "requires": []
+              },
+              {
+                "id": "r-clinical",
+                "label": "The ED senior coordinating this assessment.",
+                "appropriate": true,
+                "feedback": "Name the clinical receiver and verify acceptance of the concern.",
+                "requires": []
+              }
+            ]
+          },
+          "situation": {
+            "prompt": "Which known fact will you carry forward?",
+            "choices": [
+              {
+                "id": "s-opening",
+                "label": "A 61-year-old arrived with sudden severe chest discomfort and an incomplete handoff.",
+                "appropriate": true,
+                "feedback": "This is an opening fact, available for an early handoff. Add the actual reviewed and pending information to the shared record.",
+                "requires": []
+              },
+              {
+                "id": "s-cta",
+                "label": "The reviewed CTA describes an ascending-aortic intimal flap extending into the arch.",
+                "appropriate": true,
+                "feedback": "Carry the actual report wording, rather than replacing it with a broader diagnosis or exclusion claim.",
+                "requires": [
+                  "aortic-cta"
+                ]
+              },
+              {
+                "id": "s-overclaim",
+                "label": "The initial chest discomfort establishes a coronary cause; hand over the other reports as secondary details.",
+                "appropriate": false,
+                "feedback": "The opening observation does not establish that cause. Keep what happened separate from the explanation.",
+                "requires": []
+              }
+            ]
+          },
+          "uncertainty": {
+            "prompt": "Which limit belongs with that statement?",
+            "choices": [
+              {
+                "id": "u-delay",
+                "label": "Hold the handoff until a single cause is confirmed, so the receiver gets no unresolved question.",
+                "appropriate": false,
+                "feedback": "An unresolved question belongs in an early handoff. It should have a named clinical receiver, not be silently withheld.",
+                "requires": []
+              },
+              {
+                "id": "u-cta",
+                "label": "The CTA supports the aortic finding here; it does not settle every subsequent care decision.",
+                "appropriate": true,
+                "feedback": "The handoff should preserve the specific report finding and its scope.",
+                "requires": [
+                  "aortic-cta"
+                ]
+              },
+              {
+                "id": "u-opening",
+                "label": "The opening symptoms alone do not establish a cause; stronger claims must cite reviewed findings.",
+                "appropriate": true,
+                "feedback": "This limits the opening account without pretending later reports are still unknown.",
+                "requires": []
+              }
+            ]
+          },
+          "nextOwner": {
+            "prompt": "Who follows up the remaining concern?",
+            "choices": [
+              {
+                "id": "o-clinical",
+                "label": "Confirm the ed senior clinician owns the next review and how new reports or symptom changes reach them.",
+                "appropriate": true,
+                "feedback": "Identify an accountable receiver and an update route. This assigns communication responsibility, not treatment.",
+                "requires": []
+              },
+              {
+                "id": "o-worklist",
+                "label": "Use the completed request as the transfer of responsibility; the receiving worklist can assign the next review.",
+                "appropriate": false,
+                "feedback": "A sent request is not evidence that another person accepted the concern or the next review.",
+                "requires": []
+              }
+            ]
+          }
+        },
+        "readback": {
+          "prompt": "Verify the receiver’s reply against the sent handoff.",
+          "choices": []
+        },
+        "sources": [
+          {
+            "title": "WHO Emergency Care Toolkit: Interagency Integrated Triage Tool",
+            "url": "https://www.who.int/teams/integrated-health-services/clinical-services-and-systems/emergency-and-critical-care/emergency-care-toolkit",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Prioritizing clinical concern separately from establishing a diagnosis. These role-specific exercises do not implement or validate a triage scale."
+          },
+          {
+            "title": "NICE CG50: recognising and responding to deterioration",
+            "url": "https://www.nice.org.uk/guidance/CG50/chapter/recommendations",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Clinical concern, response ownership and reassessment. No physiological thresholds, observation intervals or treatment instructions are introduced."
+          },
+          {
+            "title": "AHRQ TeamSTEPPS: Handoff",
+            "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/handoff.html",
+            "checkedDate": "2026-10-17",
+            "scope": "Communicate uncertainty, recent changes, named responsibility and receiver acceptance. The educational exercise does not transfer real clinical authority."
+          },
+          {
+            "title": "AHRQ TeamSTEPPS: Check-Back (or Repeat-Back)",
+            "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/checkback.html",
+            "checkedDate": "2026-10-17",
+            "scope": "The receiver repeats the message and the sender verifies or corrects understanding. These scripted exchanges are newly authored fiction, without treatment instructions."
+          }
+        ],
+        "reviewProvenance": {
+          "status": "unreviewed",
+          "ownerReportedPriorClinicianReview": true,
+          "priorReviewScope": "unverified",
+          "priorReviewVersion": "unverified",
+          "text": "The owner reports clinician review of earlier material; the reviewed scope and version are unverified. These version 5 receiver exchanges, contextual questions and Arrival C contrasts are newly authored fiction and have not received separate clinician review."
+        },
+        "workboardPrompt": "Choose work to follow up; reports may arrive together.",
+        "patientUpdates": [
+          {
+            "id": "pain-change",
+            "afterRound": 1,
+            "requiresReviewed": [],
+            "text": "Authored fictional change after arrival: the patient tells the bedside nurse that the chest pain feels worse than at the opening handoff. No new vital signs or examination findings are supplied.",
+            "prompt": "How should this reported change reach the team?",
+            "choices": [
+              {
+                "id": "communicate-change",
+                "label": "Tell the ED senior the patient reports worse pain, distinguish it from reviewed reports, and confirm who accepts reassessment.",
+                "appropriate": true,
+                "feedback": "Communicate the actual reported change and confirm a clinical owner. It neither establishes the cause nor predicts the outcome.",
+                "requires": []
+              },
+              {
+                "id": "defer-change-to-summary",
+                "label": "Record the worse-pain report for the final handoff and wait for the outstanding report batch before flagging the change.",
+                "appropriate": false,
+                "feedback": "The new concern needs to reach the responsible clinician with its full detail. A pending report or one improved feature does not replace that communication.",
+                "requires": []
+              }
+            ]
+          }
+        ]
+      },
+      "title": "The Night Shift",
+      "subtitle": "Follow the concern. Review the record. Hand it over.",
+      "opening": "A 61-year-old arrives with sudden severe chest discomfort. The team is already arranging urgent assessment. The initial handoff is incomplete.",
+      "disclaimer": "Educational fiction pending human review. Reports, changes and update rounds are authored; they are not clinical advice or patient outcomes.",
+      "hypotheses": [
+        {
+          "id": "acute-aortic-syndrome",
+          "label": "Acute aortic syndrome"
+        },
+        {
+          "id": "acute-coronary-syndrome",
+          "label": "Acute coronary syndrome"
+        },
+        {
+          "id": "pulmonary-embolism",
+          "label": "Pulmonary embolism"
+        },
+        {
+          "id": "cause-unresolved",
+          "label": "Cause not established by this record"
+        }
+      ],
+      "sources": [
+        {
+          "title": "2022 ACC/AHA Guideline for the Diagnosis and Management of Aortic Disease",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10784847/"
+        },
+        {
+          "title": "2022 ACC/AHA Aortic Disease Guideline: CT image quality",
+          "url": "https://www.ahajournals.org/doi/10.1161/CIR.0000000000001106",
+          "scope": "Motion affects root and ascending-aortic image quality and diagnostic confidence. A segment explicitly reported as nondiagnostic cannot support exclusion or confirmation. No care protocol is authored.",
+          "checkedDate": "2026-10-16"
+        },
+        {
+          "title": "AHRQ TeamSTEPPS: Check-Back (or Repeat-Back)",
+          "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/checkback.html",
+          "checkedDate": "2026-10-17",
+          "scope": "The receiver repeats the message and the sender verifies or corrects understanding. These scripted exchanges are newly authored fiction, without treatment instructions."
+        },
+        {
+          "title": "AHRQ TeamSTEPPS: Handoff",
+          "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/handoff.html",
+          "checkedDate": "2026-10-17",
+          "scope": "Communicate uncertainty, recent changes, named responsibility and receiver acceptance. The educational exercise does not transfer real clinical authority."
+        }
+      ],
+      "actions": [
+        {
+          "id": "symptom-timeline",
+          "label": "Symptom timeline",
+          "category": "history",
+          "minutes": 4,
+          "requires": [],
+          "finding": "Authored fictional history: abrupt chest pain was maximal at onset and moved through to the back.",
+          "interpretation": "The onset and radiation are high-risk features, but they do not identify one diagnosis by themselves.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "focused-examination",
+          "label": "Focused examination",
+          "category": "examination",
+          "minutes": 6,
+          "requires": [],
+          "finding": "Authored fictional measurement: arm pressures are 178/105 on the right and 142/88 on the left; the difference is reproducible.",
+          "interpretation": "The fictional inter-arm difference increases concern for an aortic process and keeps premature coronary anchoring unsafe.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "ecg",
+          "label": "ECG report",
+          "category": "cardiac",
+          "minutes": 5,
+          "requires": [],
+          "finding": "Authored fictional tracing: a small, nonspecific ST change is present in aVL without a complete diagnostic pattern.",
+          "interpretation": "This finding keeps acute coronary syndrome in the differential but is not decisive and cannot erase the aortic warning signs.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "chest-radiograph",
+          "label": "Chest radiograph",
+          "category": "imaging",
+          "minutes": 5,
+          "requires": [],
+          "finding": "Authored fictional radiograph: the mediastinal contour is described as subtly widened, with no single definitive answer.",
+          "interpretation": "A plain chest radiograph cannot exclude acute aortic syndrome; this fictional image is an ambiguity-preserving clue, not a diagnosis.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "aortic-cta",
+          "label": "Aortic CTA report",
+          "category": "imaging",
+          "minutes": 12,
+          "requires": [],
+          "finding": "Authored fictional CTA report: an intimal flap is seen in the ascending aorta and extends into the arch.",
+          "interpretation": "In this fictional episode, the CTA is the decisive clue favoring acute aortic syndrome over the competing hypotheses.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "specialist-handoff",
+          "label": "Specialist handoff",
+          "category": "coordination",
+          "minutes": 8,
+          "requires": [
+            "aortic-cta"
+          ],
+          "finding": "The fictional handoff carries the symptom report and CTA finding; it does not imply that other observations were performed.",
+          "interpretation": "A structured handoff preserves uncertainty and the decisive clue for human review; it does not model treatment or outcome.",
+          "sourceIds": [
+            0
+          ]
+        }
+      ],
+      "reasoning": {
+        "openingFacts": [
+          {
+            "id": "opening:chest-discomfort",
+            "label": "Sudden severe chest discomfort in the opening handoff",
+            "strength": "concern",
+            "supports": [
+              "acute-aortic-syndrome",
+              "acute-coronary-syndrome",
+              "pulmonary-embolism",
+              "cause-unresolved"
+            ]
+          }
+        ],
+        "supportRules": {
+          "symptom-timeline": {
+            "strength": "suggestive",
+            "supports": [
+              "acute-aortic-syndrome"
+            ]
+          },
+          "focused-examination": {
+            "strength": "suggestive",
+            "supports": [
+              "acute-aortic-syndrome"
+            ]
+          },
+          "ecg": {
+            "strength": "limited",
+            "supports": [
+              "acute-coronary-syndrome"
+            ]
+          },
+          "chest-radiograph": {
+            "strength": "suggestive",
+            "supports": [
+              "acute-aortic-syndrome"
+            ]
+          },
+          "aortic-cta": {
+            "strength": "decisive",
+            "supports": [
+              "acute-aortic-syndrome"
+            ]
+          },
+          "specialist-handoff": {
+            "strength": "coordination",
+            "supports": []
+          }
+        },
+        "uncertaintyOptions": [
+          {
+            "id": "symptoms-not-confirmation",
+            "label": "The opening symptom does not identify one cause.",
+            "requires": [],
+            "scope": "provisional"
+          },
+          {
+            "id": "limited-ecg",
+            "label": "The nonspecific ECG finding does not settle the cause.",
+            "requires": [
+              "ecg"
+            ],
+            "scope": "any"
+          },
+          {
+            "id": "report-scope",
+            "label": "The CTA supports an aortic finding; it does not settle every aspect of care.",
+            "requires": [
+              "aortic-cta"
+            ],
+            "scope": "supported"
+          },
+          {
+            "id": "all-excluded",
+            "label": "Every competing explanation has now been excluded.",
+            "requires": [],
+            "scope": "unsupported"
+          }
+        ],
+        "supportLabel": "Evidence for your explanation",
+        "limitationLabel": "A comparison or limit",
+        "prompt": "Connect your explanation to reviewed evidence, then state a limit."
+      },
+      "familyId": "doc-002-tearing-back-investigation",
+      "familyTitle": "The Night Shift",
+      "recordLabel": "Arrival A",
+      "workboardPrompt": "Choose work to follow up; reports may arrive together.",
+      "reviewStatus": "pending_human_review",
+      "authoredFiction": true,
+      "reviewProvenance": {
+        "status": "unreviewed",
+        "ownerReportedPriorClinicianReview": true,
+        "priorReviewScope": "unverified",
+        "priorReviewVersion": "unverified",
+        "text": "The owner reports clinician review of earlier material; the reviewed scope and version are unverified. These version 5 receiver exchanges, contextual questions and Arrival C contrasts are newly authored fiction and have not received separate clinician review."
+      },
+      "resolution": {
+        "hypothesisId": "acute-aortic-syndrome",
+        "conclusionKind": "diagnostic",
+        "evidenceActionIds": [
+          "aortic-cta"
+        ],
+        "supportedSummary": "The reviewed CTA describes the aortic finding that supports acute aortic syndrome in this fictional record.",
+        "mismatchSummary": "The selected explanation does not account for the aortic finding described in the reviewed CTA.",
+        "provisionalSummary": "The CTA was not reviewed. This remains a working explanation, not a confirmed cause.",
+        "decisiveClue": "The fictional CTA describes an ascending-aortic intimal flap extending into the arch.",
+        "missingClue": "The CTA report was not reviewed on this route.",
+        "nextLearning": "Keep concerning symptoms separate from a report that establishes a finding.",
+        "limitations": [
+          "Authored fictional records pending human medical review; source references support educational framing, not these patient measurements or events.",
+          "Update rounds are narrative release events, not clinical minutes, recommended waits or an investigation sequence. Emergency assessment continues independently.",
+          "No treatment, dose, eligibility, prognosis or patient outcome is modeled. A recorded explanation does not establish clinical competence.",
+          "Earlier owner-reported clinician review has unverified scope and version; it does not cover these version 5 questions, exchanges or Arrival C records."
+        ]
+      },
+      "transferQuestion": {
+        "version": 1,
+        "synthetic": true,
+        "reviewStatus": "pending_human_review",
+        "sourceCheckedDate": "2026-10-16",
+        "delivery": "after-another-arrival",
+        "id": "aortic-image-quality-contrast-v4",
+        "prompt": "A different fictional CTA calls the motion-obscured ascending segment nondiagnostic, with no definite flap reported. Which conclusion fits?",
+        "choices": [
+          {
+            "id": "negative",
+            "label": "No reported flap makes this a reliable negative aortic scan.",
+            "feedback": "A symptom change does not repair the stated image limitation. Nondiagnostic is not a reliable exclusion."
+          },
+          {
+            "id": "unresolved",
+            "label": "The aortic question remains unresolved; name the clinician responsible for clarifying the inadequate study.",
+            "feedback": "Preserve the report limitation and clinical ownership without confirming or excluding aortic disease."
+          },
+          {
+            "id": "confirmed",
+            "label": "The symptom account confirms an aortic cause despite the inadequate study.",
+            "feedback": "Concerning symptoms do not turn this inadequate report into confirmation."
+          }
+        ],
+        "answerId": "unresolved",
+        "source": {
+          "title": "2022 ACC/AHA Aortic Disease Guideline: CT image quality",
+          "url": "https://www.ahajournals.org/doi/10.1161/CIR.0000000000001106",
+          "scope": "Motion affects root and ascending-aortic image quality and diagnostic confidence. A segment explicitly reported as nondiagnostic cannot support exclusion or confirmation. No care protocol is authored.",
+          "checkedDate": "2026-10-16"
+        }
+      },
+      "coordination": {
+        "readbackScenarios": [
+          {
+            "id": "aorta-a-receiver-not-accepted",
+            "requiresSelections": {
+              "receiverId": "r-worklist"
+            },
+            "message": "“The worklist entry for sudden chest discomfort is visible. I have not accepted the next clinical review.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "aorta-a-receiver-not-accepted-alternative-1",
+                "label": "Verify that the entry is visible and record the next clinical review as accepted through the shared worklist.",
+                "appropriate": false,
+                "feedback": "Visibility does not establish that a person accepted responsibility.",
+                "requires": []
+              },
+              {
+                "id": "aorta-a-receiver-not-accepted-verify",
+                "label": "Clarify who accepts the sudden chest discomfort concern and ask the named clinician to repeat their responsibility.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              },
+              {
+                "id": "aorta-a-receiver-not-accepted-alternative-2",
+                "label": "Ask for a more complete diagnostic summary, then use its inclusion in the worklist as the review assignment.",
+                "appropriate": false,
+                "feedback": "More detail does not resolve the missing clinical receiver.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-a-next-owner-missing",
+            "requiresSelections": {
+              "nextOwnerId": "o-worklist"
+            },
+            "message": "“I received the summary. Whoever reads the last report will take responsibility for the next review.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "aorta-a-next-owner-missing-alternative-1",
+                "label": "Confirm that the final report reader will be recorded as the owner when the worklist becomes complete.",
+                "appropriate": false,
+                "feedback": "A future reader is not a named person accepting the concern now.",
+                "requires": []
+              },
+              {
+                "id": "aorta-a-next-owner-missing-alternative-2",
+                "label": "Verify the findings in the summary and leave ownership to the team handling the remaining requests.",
+                "appropriate": false,
+                "feedback": "Finding accuracy and ownership are separate parts of the exchange.",
+                "requires": []
+              },
+              {
+                "id": "aorta-a-next-owner-missing-verify",
+                "label": "Ask the ED senior clinician to accept the next review and confirm the route for later reports or changes.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-a-opening-overclaim",
+            "requiresSelections": {
+              "situationId": "s-overclaim"
+            },
+            "message": "“I heard that the opening sudden severe chest discomfort establishes a coronary cause.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "aorta-a-opening-overclaim-verify",
+                "label": "Correct the opening claim: it describes the presenting concern; stronger conclusions must use findings actually reviewed.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              },
+              {
+                "id": "aorta-a-opening-overclaim-alternative-1",
+                "label": "Verify the diagnostic wording because it repeats the situation selected in the handoff accurately.",
+                "appropriate": false,
+                "feedback": "Repeating an inaccurate claim does not make it valid. The sender must also check its meaning against the known record.",
+                "requires": []
+              },
+              {
+                "id": "aorta-a-opening-overclaim-alternative-2",
+                "label": "Keep that diagnosis in the exchange and label the remaining reports as details about its extent.",
+                "appropriate": false,
+                "feedback": "The opening account does not establish the diagnosis or make other findings secondary.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-a-uncertainty-withheld",
+            "requiresSelections": {
+              "uncertaintyId": "u-delay"
+            },
+            "message": "“I will accept the unresolved question after one cause has been confirmed.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "aorta-a-uncertainty-withheld-alternative-1",
+                "label": "Verify the condition for acceptance and keep responsibility with the results worklist until the cause is confirmed.",
+                "appropriate": false,
+                "feedback": "Diagnostic uncertainty does not supply an accountable next reviewer.",
+                "requires": []
+              },
+              {
+                "id": "aorta-a-uncertainty-withheld-verify",
+                "label": "Clarify that the ED senior clinician needs to accept the concern with its current uncertainty and outstanding work.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              },
+              {
+                "id": "aorta-a-uncertainty-withheld-alternative-2",
+                "label": "Replace the unresolved question with the leading diagnosis so the receiver can accept a definite account.",
+                "appropriate": false,
+                "feedback": "A stronger label cannot substitute for communicating the actual evidence and uncertainty.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-a-report-and-change",
+            "requiresReviewed": [
+              "aortic-cta"
+            ],
+            "requiresPatientUpdates": [
+              "pain-change"
+            ],
+            "message": "“The reviewed CTA describes the flap. The attached update says the pain has eased, and I accept the next review.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "aorta-a-report-and-change-alternative-1",
+                "label": "Verify the exchange because the CTA detail is repeated accurately and carries the main explanation.",
+                "appropriate": false,
+                "feedback": "Check the change and its interpretation as well as the report wording.",
+                "requires": []
+              },
+              {
+                "id": "aorta-a-report-and-change-verify",
+                "label": "Correct the pain detail: the patient reported worse pain; retain the reviewed flap finding and accepted review owner.",
+                "appropriate": true,
+                "feedback": "Verify each part of the exchange. Repeating the CTA correctly does not repair the reversed symptom update.",
+                "requires": []
+              },
+              {
+                "id": "aorta-a-report-and-change-alternative-2",
+                "label": "Replace the flap finding with an unresolved imaging statement because the symptom account has changed.",
+                "appropriate": false,
+                "feedback": "The reported symptom change does not alter the supplied CTA finding.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-a-ecg-change-cta-pending",
+            "requiresReviewed": [
+              "ecg"
+            ],
+            "requiresPatientUpdates": [
+              "pain-change"
+            ],
+            "requiresPending": [
+              "aortic-cta"
+            ],
+            "message": "“The ECG confirms a coronary cause. I have the patient reports worse chest pain; the CTA request is still pending.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "aorta-a-ecg-change-cta-pending-alternative-1",
+                "label": "Verify the coronary explanation and keep the CTA pending as a check for a concurrent aortic finding.",
+                "appropriate": false,
+                "feedback": "The supplied nonspecific ECG does not establish a coronary explanation.",
+                "requires": []
+              },
+              {
+                "id": "aorta-a-ecg-change-cta-pending-verify",
+                "label": "Correct the ECG claim: it is nonspecific; pass on the reported change and identify CTA as pending, without a finding.",
+                "appropriate": true,
+                "feedback": "Only the ECG and reported change are known here. The pending CTA supplies no positive or negative result.",
+                "requires": []
+              },
+              {
+                "id": "aorta-a-ecg-change-cta-pending-alternative-2",
+                "label": "Correct the account by reporting the expected CTA finding and asking the senior to compare it with the pain.",
+                "appropriate": false,
+                "feedback": "A requested report is not reviewed evidence. Its future finding cannot enter this exchange.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-a-change-before-cta",
+            "requiresPatientUpdates": [
+              "pain-change"
+            ],
+            "excludesReviewed": [
+              "aortic-cta"
+            ],
+            "message": "“I heard the patient reports worse chest pain. I accept review of that change; this handoff has no reviewed CTA finding.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "aorta-a-change-before-cta-alternative-1",
+                "label": "Correct the account to the likely CTA finding so the changed pain has a specific diagnosis in the handoff.",
+                "appropriate": false,
+                "feedback": "A symptom update cannot supply an unreviewed imaging result.",
+                "requires": []
+              },
+              {
+                "id": "aorta-a-change-before-cta-alternative-2",
+                "label": "Leave the change out of this exchange until the CTA report can explain whether it is clinically related.",
+                "appropriate": false,
+                "feedback": "A reported change belongs with the concern even while its explanation remains unsettled.",
+                "requires": []
+              },
+              {
+                "id": "aorta-a-change-before-cta-verify",
+                "label": "Verify the reported change and review owner; keep the CTA status separate from a result that has not been reviewed.",
+                "appropriate": true,
+                "feedback": "The receiver repeats the available change without inventing a CTA finding or attributing a cause.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-a-opening-only",
+            "message": "“I heard the presenting sudden severe chest discomfort. The opening account alone does not establish its cause. I accept the next review; separately listed reports retain their recorded status.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "aorta-a-opening-only-verify",
+                "label": "Verify the presenting concern, its limited certainty and accepted review; add no result that the sent snapshot does not contain.",
+                "appropriate": true,
+                "feedback": "This is a valid early exchange. A complete diagnostic worklist is not required to communicate the known concern and ownership.",
+                "requires": []
+              },
+              {
+                "id": "aorta-a-opening-only-alternative-1",
+                "label": "Correct the receiver to the final diagnosis expected for this arrival, even if its supporting report is not reviewed.",
+                "appropriate": false,
+                "feedback": "A future report or a remembered arrival cannot enter the current sent snapshot.",
+                "requires": []
+              },
+              {
+                "id": "aorta-a-opening-only-alternative-2",
+                "label": "Withhold verification until all work is complete so the opening concern can be replaced by one definite explanation.",
+                "appropriate": false,
+                "feedback": "The known concern and next reviewer can be verified while the cause remains uncertain.",
+                "requires": []
+              }
+            ]
+          }
+        ],
+        "reassessmentScenarios": [
+          {
+            "id": "aorta-a-reassess-report-change",
+            "requiresReviewed": [
+              "aortic-cta"
+            ],
+            "requiresPatientUpdates": [
+              "pain-change"
+            ],
+            "message": "Reviewed: the CTA describes an ascending-aortic intimal flap extending into the arch. Reported change: the patient reports worse chest pain.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "aorta-a-reassess-report-change-alternative-1",
+                "label": "Use the current pain report to decide whether the already reviewed flap should remain in the handoff.",
+                "appropriate": false,
+                "feedback": "The symptom report does not repair an imaging limitation or erase a positive reviewed finding.",
+                "requires": []
+              },
+              {
+                "id": "aorta-a-reassess-report-change-alternative-2",
+                "label": "Keep the earlier report summary and omit the symptom change because no repeat examination is supplied.",
+                "appropriate": false,
+                "feedback": "A patient-reported change should be identified as such, not silently discarded because it is not a new examination.",
+                "requires": []
+              },
+              {
+                "id": "aorta-a-reassess-report-change-verify",
+                "label": "Bring both the CTA wording and the reported pain change to the ED senior. The reviewed report supports the aortic finding; it does not settle every later decision.",
+                "appropriate": true,
+                "feedback": "The reassessment joins the new symptom account to the actual report without changing either one’s evidential status.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-a-reassess-ecg-pending",
+            "requiresReviewed": [
+              "ecg"
+            ],
+            "requiresPatientUpdates": [
+              "pain-change"
+            ],
+            "requiresPending": [
+              "aortic-cta"
+            ],
+            "message": "Reviewed: nonspecific ECG. Reported change: the patient reports worse chest pain. The requested CTA remains pending.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "aorta-a-reassess-ecg-pending-alternative-1",
+                "label": "Make the ECG the confirmed explanation for the change and retain the pending CTA as a secondary check.",
+                "appropriate": false,
+                "feedback": "The ECG is nonspecific and does not settle the cause.",
+                "requires": []
+              },
+              {
+                "id": "aorta-a-reassess-ecg-pending-verify",
+                "label": "Update the senior with the pain report and nonspecific ECG; the pending CTA has no reviewed finding yet.",
+                "appropriate": true,
+                "feedback": "The change adds a communication need, while the reviewed ECG and outstanding CTA retain their actual limits.",
+                "requires": []
+              },
+              {
+                "id": "aorta-a-reassess-ecg-pending-alternative-2",
+                "label": "Prepare the final aortic conclusion from the requested CTA while the senior reviews the symptom change.",
+                "appropriate": false,
+                "feedback": "A pending request has no finding to synthesize.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-a-reassess-change",
+            "requiresPatientUpdates": [
+              "pain-change"
+            ],
+            "message": "Reported change: the patient reports worse chest pain. Separate reviewed findings from outstanding work in the current snapshot.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "aorta-a-reassess-change-alternative-1",
+                "label": "Keep the earlier account until one of the outstanding reports explains the symptom change.",
+                "appropriate": false,
+                "feedback": "An explanation is not required to communicate a reported change and assign review.",
+                "requires": []
+              },
+              {
+                "id": "aorta-a-reassess-change-alternative-2",
+                "label": "Treat the pain change as a new examination finding and use it to settle the leading explanation.",
+                "appropriate": false,
+                "feedback": "The update supplies a patient report, not a new examination or diagnostic result.",
+                "requires": []
+              },
+              {
+                "id": "aorta-a-reassess-change-verify",
+                "label": "Report the change as a patient account, add only reviewed findings, and confirm the ED senior owns the next review.",
+                "appropriate": true,
+                "feedback": "A change can require an updated shared account without supplying a diagnosis, new measurement or outcome.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-a-reassess-current-record",
+            "message": "Use the reviewed findings and task statuses in the current snapshot. This checkpoint supplies no additional patient finding.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "aorta-a-reassess-current-record-alternative-1",
+                "label": "Build the explanation from the expected final reports and revise it only if one later result disagrees.",
+                "appropriate": false,
+                "feedback": "A requested or expected finding is not reviewed evidence.",
+                "requires": []
+              },
+              {
+                "id": "aorta-a-reassess-current-record-verify",
+                "label": "Separate what you reviewed from what is pending or available to read, and confirm the ED senior clinician owns the next review.",
+                "appropriate": true,
+                "feedback": "Reading, availability and pending work are different statuses. Use only the current snapshot; no later fact is supplied by this question.",
+                "requires": []
+              },
+              {
+                "id": "aorta-a-reassess-current-record-alternative-2",
+                "label": "Carry the opening account alone until every requested report is ready, then assign the next clinical reviewer.",
+                "appropriate": false,
+                "feedback": "Reviewed findings can update the account before the worklist is complete, and the concern already needs an owner.",
+                "requires": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "transfer": {
+      "version": 1,
+      "synthetic": true,
+      "reviewStatus": "pending_human_review",
+      "sourceCheckedDate": "2026-10-16",
+      "delivery": "after-another-arrival",
+      "id": "aortic-image-quality-contrast-v4",
+      "prompt": "A different fictional CTA calls the motion-obscured ascending segment nondiagnostic, with no definite flap reported. Which conclusion fits?",
+      "choices": [
+        {
+          "id": "negative",
+          "label": "No reported flap makes this a reliable negative aortic scan.",
+          "feedback": "A symptom change does not repair the stated image limitation. Nondiagnostic is not a reliable exclusion."
+        },
+        {
+          "id": "unresolved",
+          "label": "The aortic question remains unresolved; name the clinician responsible for clarifying the inadequate study.",
+          "feedback": "Preserve the report limitation and clinical ownership without confirming or excluding aortic disease."
+        },
+        {
+          "id": "confirmed",
+          "label": "The symptom account confirms an aortic cause despite the inadequate study.",
+          "feedback": "Concerning symptoms do not turn this inadequate report into confirmation."
+        }
+      ],
+      "answerId": "unresolved",
+      "source": {
+        "title": "2022 ACC/AHA Aortic Disease Guideline: CT image quality",
+        "url": "https://www.ahajournals.org/doi/10.1161/CIR.0000000000001106",
+        "scope": "Motion affects root and ascending-aortic image quality and diagnostic confidence. A segment explicitly reported as nondiagnostic cannot support exclusion or confirmation. No care protocol is authored.",
+        "checkedDate": "2026-10-16"
+      }
+    }
+  },
+  {
+    "episode": {
+      "id": "doc-002-tearing-back-investigation-record-b",
+      "version": 5,
+      "careWorkflow": {
+        "episodeId": "doc-002-tearing-back-investigation-record-b",
+        "version": 1,
+        "role": {
+          "label": "Doctor coordinating the ED team",
+          "boundary": "Coordinate concern, task owners and review; treatment and patient outcomes are outside this exercise."
+        },
+        "timingNote": "Fictional update rounds release reports and narrative events. They are not minutes, recommended waits or a prescribed clinical sequence.",
+        "priority": {
+          "prompt": "Who needs the opening concern before its cause is settled?",
+          "choices": [
+            {
+              "id": "finish-record-before-contact",
+              "label": "Collect the remaining reports first, then ask the ed senior clinician to accept the complete explanation.",
+              "appropriate": false,
+              "feedback": "A fuller record may refine the explanation. It does not replace early shared awareness and responsibility for the presenting concern.",
+              "requires": []
+            },
+            {
+              "id": "share-opening-concern",
+              "label": "Share sudden chest discomfort with the ed senior clinician and confirm who accepts review.",
+              "appropriate": true,
+              "feedback": "Communicate the concern and uncertainty early; a diagnostic label is not required to name a review owner.",
+              "requires": []
+            }
+          ]
+        },
+        "tasks": {
+          "symptom-timeline": {
+            "owner": "ED history-taking clinician",
+            "label": "Follow up: symptom timeline",
+            "rounds": 1
+          },
+          "focused-examination": {
+            "owner": "ED examining clinician",
+            "label": "Follow up: focused examination",
+            "rounds": 1
+          },
+          "ecg": {
+            "owner": "ECG reporting clinician",
+            "label": "Follow up: ecg report",
+            "rounds": 1
+          },
+          "chest-radiograph": {
+            "owner": "Radiology reporting clinician",
+            "label": "Follow up: chest radiograph",
+            "rounds": 2
+          },
+          "aortic-cta": {
+            "owner": "ED senior clinician",
+            "label": "Follow up: aortic cta report",
+            "rounds": 2
+          },
+          "specialist-handoff": {
+            "owner": "ED senior clinician",
+            "label": "Follow up: specialist handoff",
+            "rounds": 1
+          }
+        },
+        "reassessment": {
+          "minimumReviewed": 1,
+          "update": "Fictional team checkpoint: identify what you reviewed, what remains pending and who accepts the next review. This checkpoint supplies no additional examination or laboratory finding."
+        },
+        "handoff": {
+          "receiver": {
+            "prompt": "Who accepts this concern?",
+            "choices": [
+              {
+                "id": "r-clinical",
+                "label": "The ED senior coordinating this assessment.",
+                "appropriate": true,
+                "feedback": "Name the clinical receiver and verify acceptance of the concern.",
+                "requires": []
+              },
+              {
+                "id": "r-worklist",
+                "label": "The shared results worklist, with the next reader deciding who receives the concern.",
+                "appropriate": false,
+                "feedback": "A worklist records tasks; it does not show who accepted responsibility.",
+                "requires": []
+              }
+            ]
+          },
+          "situation": {
+            "prompt": "Which known fact will you carry forward?",
+            "choices": [
+              {
+                "id": "s-overclaim",
+                "label": "The initial chest discomfort establishes a coronary cause; hand over the other reports as secondary details.",
+                "appropriate": false,
+                "feedback": "The opening observation does not establish that cause. Keep what happened separate from the explanation.",
+                "requires": []
+              },
+              {
+                "id": "s-cta",
+                "label": "The reviewed CTA calls the motion-obscured ascending segment nondiagnostic; no definite flap is reported.",
+                "appropriate": true,
+                "feedback": "Carry the actual report wording, rather than replacing it with a broader diagnosis or exclusion claim.",
+                "requires": [
+                  "aortic-cta"
+                ]
+              },
+              {
+                "id": "s-opening",
+                "label": "A 61-year-old arrived with sudden severe chest discomfort and an incomplete handoff.",
+                "appropriate": true,
+                "feedback": "This is an opening fact, available for an early handoff. Add the actual reviewed and pending information to the shared record.",
+                "requires": []
+              }
+            ]
+          },
+          "uncertainty": {
+            "prompt": "Which limit belongs with that statement?",
+            "choices": [
+              {
+                "id": "u-opening",
+                "label": "The opening symptoms alone do not establish a cause; stronger claims must cite reviewed findings.",
+                "appropriate": true,
+                "feedback": "This limits the opening account without pretending later reports are still unknown.",
+                "requires": []
+              },
+              {
+                "id": "u-cta",
+                "label": "The nondiagnostic ascending segment neither confirms nor excludes aortic disease.",
+                "appropriate": true,
+                "feedback": "The handoff should preserve the specific report finding and its scope.",
+                "requires": [
+                  "aortic-cta"
+                ]
+              },
+              {
+                "id": "u-delay",
+                "label": "Hold the handoff until a single cause is confirmed, so the receiver gets no unresolved question.",
+                "appropriate": false,
+                "feedback": "An unresolved question belongs in an early handoff. It should have a named clinical receiver, not be silently withheld.",
+                "requires": []
+              }
+            ]
+          },
+          "nextOwner": {
+            "prompt": "Who follows up the remaining concern?",
+            "choices": [
+              {
+                "id": "o-worklist",
+                "label": "Use the completed request as the transfer of responsibility; the receiving worklist can assign the next review.",
+                "appropriate": false,
+                "feedback": "A sent request is not evidence that another person accepted the concern or the next review.",
+                "requires": []
+              },
+              {
+                "id": "o-clinical",
+                "label": "Confirm the ed senior clinician owns the next review and how new reports or symptom changes reach them.",
+                "appropriate": true,
+                "feedback": "Identify an accountable receiver and an update route. This assigns communication responsibility, not treatment.",
+                "requires": []
+              }
+            ]
+          }
+        },
+        "readback": {
+          "prompt": "Verify the receiver’s reply against the sent handoff.",
+          "choices": []
+        },
+        "sources": [
+          {
+            "title": "WHO Emergency Care Toolkit: Interagency Integrated Triage Tool",
+            "url": "https://www.who.int/teams/integrated-health-services/clinical-services-and-systems/emergency-and-critical-care/emergency-care-toolkit",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Prioritizing clinical concern separately from establishing a diagnosis. These role-specific exercises do not implement or validate a triage scale."
+          },
+          {
+            "title": "NICE CG50: recognising and responding to deterioration",
+            "url": "https://www.nice.org.uk/guidance/CG50/chapter/recommendations",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Clinical concern, response ownership and reassessment. No physiological thresholds, observation intervals or treatment instructions are introduced."
+          },
+          {
+            "title": "AHRQ TeamSTEPPS: Handoff",
+            "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/handoff.html",
+            "checkedDate": "2026-10-17",
+            "scope": "Communicate uncertainty, recent changes, named responsibility and receiver acceptance. The educational exercise does not transfer real clinical authority."
+          },
+          {
+            "title": "AHRQ TeamSTEPPS: Check-Back (or Repeat-Back)",
+            "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/checkback.html",
+            "checkedDate": "2026-10-17",
+            "scope": "The receiver repeats the message and the sender verifies or corrects understanding. These scripted exchanges are newly authored fiction, without treatment instructions."
+          }
+        ],
+        "reviewProvenance": {
+          "status": "unreviewed",
+          "ownerReportedPriorClinicianReview": true,
+          "priorReviewScope": "unverified",
+          "priorReviewVersion": "unverified",
+          "text": "The owner reports clinician review of earlier material; the reviewed scope and version are unverified. These version 5 receiver exchanges, contextual questions and Arrival C contrasts are newly authored fiction and have not received separate clinician review."
+        },
+        "workboardPrompt": "Choose work to follow up; reports may arrive together.",
+        "patientUpdates": [
+          {
+            "id": "pain-change",
+            "afterRound": 1,
+            "requiresReviewed": [],
+            "text": "Authored fictional change after arrival: the patient tells the bedside nurse that the chest pain feels worse than at the opening handoff. No new vital signs or examination findings are supplied.",
+            "prompt": "How should this reported change reach the team?",
+            "choices": [
+              {
+                "id": "defer-change-to-summary",
+                "label": "Record the worse-pain report for the final handoff and wait for the outstanding report batch before flagging the change.",
+                "appropriate": false,
+                "feedback": "The new concern needs to reach the responsible clinician with its full detail. A pending report or one improved feature does not replace that communication.",
+                "requires": []
+              },
+              {
+                "id": "communicate-change",
+                "label": "Tell the ED senior the patient reports worse pain, distinguish it from reviewed reports, and confirm who accepts reassessment.",
+                "appropriate": true,
+                "feedback": "Communicate the actual reported change and confirm a clinical owner. It neither establishes the cause nor predicts the outcome.",
+                "requires": []
+              }
+            ]
+          }
+        ]
+      },
+      "title": "The Night Shift",
+      "subtitle": "Follow the concern. Review the record. Hand it over.",
+      "opening": "A 61-year-old arrives with sudden severe chest discomfort. The team is already arranging urgent assessment. The initial handoff is incomplete.",
+      "disclaimer": "Educational fiction pending human review. Reports, changes and update rounds are authored; they are not clinical advice or patient outcomes.",
+      "hypotheses": [
+        {
+          "id": "acute-aortic-syndrome",
+          "label": "Acute aortic syndrome"
+        },
+        {
+          "id": "acute-coronary-syndrome",
+          "label": "Acute coronary syndrome"
+        },
+        {
+          "id": "pulmonary-embolism",
+          "label": "Pulmonary embolism"
+        },
+        {
+          "id": "cause-unresolved",
+          "label": "Cause not established by this record"
+        }
+      ],
+      "sources": [
+        {
+          "title": "2022 ACC/AHA Guideline for the Diagnosis and Management of Aortic Disease",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10784847/"
+        },
+        {
+          "title": "2022 ACC/AHA Aortic Disease Guideline: CT image quality",
+          "url": "https://www.ahajournals.org/doi/10.1161/CIR.0000000000001106",
+          "scope": "Motion affects root and ascending-aortic image quality and diagnostic confidence. A segment explicitly reported as nondiagnostic cannot support exclusion or confirmation. No care protocol is authored.",
+          "checkedDate": "2026-10-16"
+        },
+        {
+          "title": "AHRQ TeamSTEPPS: Check-Back (or Repeat-Back)",
+          "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/checkback.html",
+          "checkedDate": "2026-10-17",
+          "scope": "The receiver repeats the message and the sender verifies or corrects understanding. These scripted exchanges are newly authored fiction, without treatment instructions."
+        },
+        {
+          "title": "AHRQ TeamSTEPPS: Handoff",
+          "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/handoff.html",
+          "checkedDate": "2026-10-17",
+          "scope": "Communicate uncertainty, recent changes, named responsibility and receiver acceptance. The educational exercise does not transfer real clinical authority."
+        }
+      ],
+      "actions": [
+        {
+          "id": "symptom-timeline",
+          "label": "Symptom timeline",
+          "category": "history",
+          "minutes": 4,
+          "requires": [],
+          "finding": "Authored fictional history: abrupt chest pain was maximal at onset and moved through to the back.",
+          "interpretation": "The onset and radiation are high-risk features, but they do not identify one diagnosis by themselves.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "focused-examination",
+          "label": "Focused examination",
+          "category": "examination",
+          "minutes": 6,
+          "requires": [],
+          "finding": "Authored fictional measurement: arm pressures are 178/105 on the right and 142/88 on the left; the difference is reproducible.",
+          "interpretation": "The fictional inter-arm difference increases concern for an aortic process and keeps premature coronary anchoring unsafe.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "ecg",
+          "label": "ECG report",
+          "category": "cardiac",
+          "minutes": 5,
+          "requires": [],
+          "finding": "Authored fictional tracing: a small, nonspecific ST change is present in aVL without a complete diagnostic pattern.",
+          "interpretation": "This finding keeps acute coronary syndrome in the differential but is not decisive and cannot erase the aortic warning signs.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "chest-radiograph",
+          "label": "Chest radiograph",
+          "category": "imaging",
+          "minutes": 5,
+          "requires": [],
+          "finding": "Authored fictional radiograph: the mediastinal contour is described as subtly widened, with no single definitive answer.",
+          "interpretation": "A plain chest radiograph cannot exclude acute aortic syndrome; this fictional image is an ambiguity-preserving clue, not a diagnosis.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "aortic-cta",
+          "label": "Aortic CTA report",
+          "category": "imaging",
+          "minutes": 12,
+          "requires": [],
+          "finding": "Authored fictional CTA report: motion obscures the ascending aorta. That segment is nondiagnostic; no definite flap is reported.",
+          "interpretation": "A nondiagnostic segment cannot confirm or exclude an aortic process. The limitation needs clinician-owned clarification.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "specialist-handoff",
+          "label": "Specialist handoff",
+          "category": "coordination",
+          "minutes": 8,
+          "requires": [
+            "aortic-cta"
+          ],
+          "finding": "The fictional handoff states the presenting concern and the motion-limited ascending-aortic report. It does not call the scan negative or confirm a cause.",
+          "interpretation": "Pass on the report limitation and confirm who owns clarification; a sent message is not an accepted handoff.",
+          "sourceIds": [
+            0
+          ]
+        }
+      ],
+      "reasoning": {
+        "openingFacts": [
+          {
+            "id": "opening:chest-discomfort",
+            "label": "Sudden severe chest discomfort in the opening handoff",
+            "strength": "concern",
+            "supports": [
+              "acute-aortic-syndrome",
+              "acute-coronary-syndrome",
+              "pulmonary-embolism",
+              "cause-unresolved"
+            ]
+          }
+        ],
+        "supportRules": {
+          "symptom-timeline": {
+            "strength": "suggestive",
+            "supports": [
+              "acute-aortic-syndrome"
+            ]
+          },
+          "focused-examination": {
+            "strength": "suggestive",
+            "supports": [
+              "acute-aortic-syndrome"
+            ]
+          },
+          "ecg": {
+            "strength": "limited",
+            "supports": [
+              "acute-coronary-syndrome"
+            ]
+          },
+          "chest-radiograph": {
+            "strength": "suggestive",
+            "supports": [
+              "acute-aortic-syndrome"
+            ]
+          },
+          "aortic-cta": {
+            "strength": "decisive",
+            "supports": [
+              "cause-unresolved"
+            ]
+          },
+          "specialist-handoff": {
+            "strength": "coordination",
+            "supports": []
+          }
+        },
+        "uncertaintyOptions": [
+          {
+            "id": "symptoms-not-confirmation",
+            "label": "Chest discomfort alone does not establish a cause.",
+            "requires": [],
+            "scope": "provisional"
+          },
+          {
+            "id": "limited-ecg",
+            "label": "The nonspecific ECG alone does not settle the coronary or aortic question.",
+            "requires": [
+              "ecg"
+            ],
+            "scope": "any"
+          },
+          {
+            "id": "report-scope",
+            "label": "The ascending segment is nondiagnostic: aortic disease is neither confirmed nor excluded.",
+            "requires": [
+              "aortic-cta"
+            ],
+            "scope": "supported",
+            "forHypotheses": [
+              "cause-unresolved"
+            ]
+          },
+          {
+            "id": "all-excluded",
+            "label": "No reported flap means every aortic explanation is excluded.",
+            "requires": [],
+            "scope": "unsupported"
+          }
+        ],
+        "supportLabel": "Evidence for your explanation",
+        "limitationLabel": "A comparison or limit",
+        "prompt": "Connect your explanation to reviewed evidence, then state a limit.",
+        "insufficientCitationFeedback": "Cite the reviewed nondiagnostic CTA to justify why this supplied record leaves the cause unresolved. An opening concern alone does not demonstrate that limitation.",
+        "caseLearningText": "A technically limited report is evidence about what the record cannot establish. It is neither a negative scan nor proof of the suspected disease."
+      },
+      "familyId": "doc-002-tearing-back-investigation",
+      "familyTitle": "The Night Shift",
+      "recordLabel": "Arrival B",
+      "workboardPrompt": "Choose work to follow up; reports may arrive together.",
+      "reviewStatus": "pending_human_review",
+      "authoredFiction": true,
+      "reviewProvenance": {
+        "status": "unreviewed",
+        "ownerReportedPriorClinicianReview": true,
+        "priorReviewScope": "unverified",
+        "priorReviewVersion": "unverified",
+        "text": "The owner reports clinician review of earlier material; the reviewed scope and version are unverified. These version 5 receiver exchanges, contextual questions and Arrival C contrasts are newly authored fiction and have not received separate clinician review."
+      },
+      "resolution": {
+        "hypothesisId": "cause-unresolved",
+        "conclusionKind": "unresolved",
+        "evidenceActionIds": [
+          "aortic-cta"
+        ],
+        "supportedSummary": "The reviewed CTA explicitly leaves the ascending segment nondiagnostic. The supplied record does not establish the cause; it neither confirms nor excludes aortic disease.",
+        "mismatchSummary": "The nondiagnostic ascending segment does not confirm the selected diagnosis or justify excluding an aortic cause.",
+        "provisionalSummary": "Without reviewing the CTA limitation, an unresolved explanation is still provisional on this route.",
+        "decisiveClue": "The CTA calls the motion-obscured ascending segment nondiagnostic, with no definite flap reported.",
+        "missingClue": "The CTA limitation was not reviewed on this route.",
+        "nextLearning": "Carry the inadequate-study limitation into the handoff and name the clinician who owns clarification.",
+        "limitations": [
+          "Authored fictional records pending human medical review; source references support educational framing, not these patient measurements or events.",
+          "Update rounds are narrative release events, not clinical minutes, recommended waits or an investigation sequence. Emergency assessment continues independently.",
+          "No treatment, dose, eligibility, prognosis or patient outcome is modeled. A recorded explanation does not establish clinical competence.",
+          "Earlier owner-reported clinician review has unverified scope and version; it does not cover these version 5 questions, exchanges or Arrival C records."
+        ]
+      },
+      "transferQuestion": {
+        "version": 1,
+        "synthetic": true,
+        "reviewStatus": "pending_human_review",
+        "sourceCheckedDate": "2026-10-16",
+        "delivery": "after-another-arrival",
+        "id": "aortic-diagnostic-report-contrast-v4",
+        "prompt": "A different fictional arrival has a diagnostic-quality CTA. The radiologist explicitly reports acute dissection of the ascending aorta. Which conclusion fits this different report?",
+        "choices": [
+          {
+            "id": "still-nondiagnostic",
+            "label": "The aortic question must stay unresolved because a previous arrival had motion-limited imaging.",
+            "feedback": "The earlier record does not determine this report’s quality. Use the supplied diagnostic finding for this arrival."
+          },
+          {
+            "id": "finding-supported",
+            "label": "The diagnostic report supports the aortic finding here; later care decisions still need the responsible team.",
+            "feedback": "This report supplies a positive diagnostic finding. It has a different evidential status from a nondiagnostic segment."
+          },
+          {
+            "id": "all-settled",
+            "label": "Attribute the entire presentation to that finding and leave the competing concerns out of the handoff.",
+            "feedback": "A diagnostic finding supports a conclusion without resolving every concurrent condition or removing other relevant observations from the handoff."
+          }
+        ],
+        "answerId": "finding-supported",
+        "source": {
+          "title": "2022 ACC/AHA Aortic Disease Guideline: CT image quality",
+          "url": "https://www.ahajournals.org/doi/10.1161/CIR.0000000000001106",
+          "scope": "Motion affects root and ascending-aortic image quality and diagnostic confidence. A segment explicitly reported as nondiagnostic cannot support exclusion or confirmation. No care protocol is authored.",
+          "checkedDate": "2026-10-16"
+        }
+      },
+      "coordination": {
+        "readbackScenarios": [
+          {
+            "id": "aorta-b-receiver-not-accepted",
+            "requiresSelections": {
+              "receiverId": "r-worklist"
+            },
+            "message": "“The worklist entry for sudden chest discomfort is visible. I have not accepted the next clinical review.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "aorta-b-receiver-not-accepted-alternative-1",
+                "label": "Verify that the entry is visible and record the next clinical review as accepted through the shared worklist.",
+                "appropriate": false,
+                "feedback": "Visibility does not establish that a person accepted responsibility.",
+                "requires": []
+              },
+              {
+                "id": "aorta-b-receiver-not-accepted-alternative-2",
+                "label": "Ask for a more complete diagnostic summary, then use its inclusion in the worklist as the review assignment.",
+                "appropriate": false,
+                "feedback": "More detail does not resolve the missing clinical receiver.",
+                "requires": []
+              },
+              {
+                "id": "aorta-b-receiver-not-accepted-verify",
+                "label": "Clarify who accepts the sudden chest discomfort concern and ask the named clinician to repeat their responsibility.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-b-next-owner-missing",
+            "requiresSelections": {
+              "nextOwnerId": "o-worklist"
+            },
+            "message": "“I received the summary. Whoever reads the last report will take responsibility for the next review.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "aorta-b-next-owner-missing-verify",
+                "label": "Ask the ED senior clinician to accept the next review and confirm the route for later reports or changes.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              },
+              {
+                "id": "aorta-b-next-owner-missing-alternative-1",
+                "label": "Confirm that the final report reader will be recorded as the owner when the worklist becomes complete.",
+                "appropriate": false,
+                "feedback": "A future reader is not a named person accepting the concern now.",
+                "requires": []
+              },
+              {
+                "id": "aorta-b-next-owner-missing-alternative-2",
+                "label": "Verify the findings in the summary and leave ownership to the team handling the remaining requests.",
+                "appropriate": false,
+                "feedback": "Finding accuracy and ownership are separate parts of the exchange.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-b-opening-overclaim",
+            "requiresSelections": {
+              "situationId": "s-overclaim"
+            },
+            "message": "“I heard that the opening sudden severe chest discomfort establishes a coronary cause.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "aorta-b-opening-overclaim-alternative-1",
+                "label": "Verify the diagnostic wording because it repeats the situation selected in the handoff accurately.",
+                "appropriate": false,
+                "feedback": "Repeating an inaccurate claim does not make it valid. The sender must also check its meaning against the known record.",
+                "requires": []
+              },
+              {
+                "id": "aorta-b-opening-overclaim-verify",
+                "label": "Correct the opening claim: it describes the presenting concern; stronger conclusions must use findings actually reviewed.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              },
+              {
+                "id": "aorta-b-opening-overclaim-alternative-2",
+                "label": "Keep that diagnosis in the exchange and label the remaining reports as details about its extent.",
+                "appropriate": false,
+                "feedback": "The opening account does not establish the diagnosis or make other findings secondary.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-b-uncertainty-withheld",
+            "requiresSelections": {
+              "uncertaintyId": "u-delay"
+            },
+            "message": "“I will accept the unresolved question after one cause has been confirmed.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "aorta-b-uncertainty-withheld-alternative-1",
+                "label": "Verify the condition for acceptance and keep responsibility with the results worklist until the cause is confirmed.",
+                "appropriate": false,
+                "feedback": "Diagnostic uncertainty does not supply an accountable next reviewer.",
+                "requires": []
+              },
+              {
+                "id": "aorta-b-uncertainty-withheld-alternative-2",
+                "label": "Replace the unresolved question with the leading diagnosis so the receiver can accept a definite account.",
+                "appropriate": false,
+                "feedback": "A stronger label cannot substitute for communicating the actual evidence and uncertainty.",
+                "requires": []
+              },
+              {
+                "id": "aorta-b-uncertainty-withheld-verify",
+                "label": "Clarify that the ED senior clinician needs to accept the concern with its current uncertainty and outstanding work.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-b-report-and-change",
+            "requiresReviewed": [
+              "aortic-cta"
+            ],
+            "requiresPatientUpdates": [
+              "pain-change"
+            ],
+            "message": "“The reviewed CTA says the ascending segment is motion-limited and nondiagnostic, with no definite flap reported. You also attached worse reported pain. I accept the next review; the cause remains unresolved in this supplied record.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "aorta-b-report-and-change-verify",
+                "label": "Verify the report limitation, worse-pain update and accepted review; keep the unresolved aortic question explicit.",
+                "appropriate": true,
+                "feedback": "The repetition fits both the reviewed limitation and the reported change. Verification does not resolve the cause.",
+                "requires": []
+              },
+              {
+                "id": "aorta-b-report-and-change-alternative-1",
+                "label": "Correct the report to a confirmed aortic diagnosis, treating the worse pain as additional confirmation.",
+                "appropriate": false,
+                "feedback": "Worse pain does not convert a nondiagnostic segment into confirmation.",
+                "requires": []
+              },
+              {
+                "id": "aorta-b-report-and-change-alternative-2",
+                "label": "Correct the cause to excluded because no definite flap was reported in the ascending segment.",
+                "appropriate": false,
+                "feedback": "No definite flap in a nondiagnostic segment is not a reliable exclusion.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-b-ecg-change-cta-pending",
+            "requiresReviewed": [
+              "ecg"
+            ],
+            "requiresPatientUpdates": [
+              "pain-change"
+            ],
+            "requiresPending": [
+              "aortic-cta"
+            ],
+            "message": "“The ECG confirms a coronary cause. I have the patient reports worse chest pain; the CTA request is still pending.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "aorta-b-ecg-change-cta-pending-alternative-1",
+                "label": "Verify the coronary explanation and keep the CTA pending as a check for a concurrent aortic finding.",
+                "appropriate": false,
+                "feedback": "The supplied nonspecific ECG does not establish a coronary explanation.",
+                "requires": []
+              },
+              {
+                "id": "aorta-b-ecg-change-cta-pending-verify",
+                "label": "Correct the ECG claim: it is nonspecific; pass on the reported change and identify CTA as pending, without a finding.",
+                "appropriate": true,
+                "feedback": "Only the ECG and reported change are known here. The pending CTA supplies no positive or negative result.",
+                "requires": []
+              },
+              {
+                "id": "aorta-b-ecg-change-cta-pending-alternative-2",
+                "label": "Correct the account by reporting the expected CTA finding and asking the senior to compare it with the pain.",
+                "appropriate": false,
+                "feedback": "A requested report is not reviewed evidence. Its future finding cannot enter this exchange.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-b-change-before-cta",
+            "requiresPatientUpdates": [
+              "pain-change"
+            ],
+            "excludesReviewed": [
+              "aortic-cta"
+            ],
+            "message": "“I heard the patient reports worse chest pain. I accept review of that change; this handoff has no reviewed CTA finding.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "aorta-b-change-before-cta-alternative-1",
+                "label": "Correct the account to the likely CTA finding so the changed pain has a specific diagnosis in the handoff.",
+                "appropriate": false,
+                "feedback": "A symptom update cannot supply an unreviewed imaging result.",
+                "requires": []
+              },
+              {
+                "id": "aorta-b-change-before-cta-verify",
+                "label": "Verify the reported change and review owner; keep the CTA status separate from a result that has not been reviewed.",
+                "appropriate": true,
+                "feedback": "The receiver repeats the available change without inventing a CTA finding or attributing a cause.",
+                "requires": []
+              },
+              {
+                "id": "aorta-b-change-before-cta-alternative-2",
+                "label": "Leave the change out of this exchange until the CTA report can explain whether it is clinically related.",
+                "appropriate": false,
+                "feedback": "A reported change belongs with the concern even while its explanation remains unsettled.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-b-opening-only",
+            "message": "“I heard the presenting sudden severe chest discomfort. The opening account alone does not establish its cause. I accept the next review; separately listed reports retain their recorded status.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "aorta-b-opening-only-alternative-1",
+                "label": "Correct the receiver to the final diagnosis expected for this arrival, even if its supporting report is not reviewed.",
+                "appropriate": false,
+                "feedback": "A future report or a remembered arrival cannot enter the current sent snapshot.",
+                "requires": []
+              },
+              {
+                "id": "aorta-b-opening-only-verify",
+                "label": "Verify the presenting concern, its limited certainty and accepted review; add no result that the sent snapshot does not contain.",
+                "appropriate": true,
+                "feedback": "This is a valid early exchange. A complete diagnostic worklist is not required to communicate the known concern and ownership.",
+                "requires": []
+              },
+              {
+                "id": "aorta-b-opening-only-alternative-2",
+                "label": "Withhold verification until all work is complete so the opening concern can be replaced by one definite explanation.",
+                "appropriate": false,
+                "feedback": "The known concern and next reviewer can be verified while the cause remains uncertain.",
+                "requires": []
+              }
+            ]
+          }
+        ],
+        "reassessmentScenarios": [
+          {
+            "id": "aorta-b-reassess-report-change",
+            "requiresReviewed": [
+              "aortic-cta"
+            ],
+            "requiresPatientUpdates": [
+              "pain-change"
+            ],
+            "message": "Reviewed: the ascending segment is motion-limited and nondiagnostic, with no definite flap reported. Reported change: the patient reports worse chest pain.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "aorta-b-reassess-report-change-verify",
+                "label": "Bring both the CTA wording and the reported pain change to the ED senior. The report neither confirms nor excludes an aortic cause.",
+                "appropriate": true,
+                "feedback": "The reassessment joins the new symptom account to the actual report without changing either one’s evidential status.",
+                "requires": []
+              },
+              {
+                "id": "aorta-b-reassess-report-change-alternative-1",
+                "label": "Use the worse pain to classify the nondiagnostic segment as a positive result for the next handoff.",
+                "appropriate": false,
+                "feedback": "The symptom report does not repair an imaging limitation or erase a positive reviewed finding.",
+                "requires": []
+              },
+              {
+                "id": "aorta-b-reassess-report-change-alternative-2",
+                "label": "Keep the earlier report summary and omit the symptom change because no repeat examination is supplied.",
+                "appropriate": false,
+                "feedback": "A patient-reported change should be identified as such, not silently discarded because it is not a new examination.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-b-reassess-ecg-pending",
+            "requiresReviewed": [
+              "ecg"
+            ],
+            "requiresPatientUpdates": [
+              "pain-change"
+            ],
+            "requiresPending": [
+              "aortic-cta"
+            ],
+            "message": "Reviewed: nonspecific ECG. Reported change: the patient reports worse chest pain. The requested CTA remains pending.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "aorta-b-reassess-ecg-pending-alternative-1",
+                "label": "Make the ECG the confirmed explanation for the change and retain the pending CTA as a secondary check.",
+                "appropriate": false,
+                "feedback": "The ECG is nonspecific and does not settle the cause.",
+                "requires": []
+              },
+              {
+                "id": "aorta-b-reassess-ecg-pending-verify",
+                "label": "Update the senior with the pain report and nonspecific ECG; the pending CTA has no reviewed finding yet.",
+                "appropriate": true,
+                "feedback": "The change adds a communication need, while the reviewed ECG and outstanding CTA retain their actual limits.",
+                "requires": []
+              },
+              {
+                "id": "aorta-b-reassess-ecg-pending-alternative-2",
+                "label": "Prepare the final aortic conclusion from the requested CTA while the senior reviews the symptom change.",
+                "appropriate": false,
+                "feedback": "A pending request has no finding to synthesize.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-b-reassess-change",
+            "requiresPatientUpdates": [
+              "pain-change"
+            ],
+            "message": "Reported change: the patient reports worse chest pain. Separate reviewed findings from outstanding work in the current snapshot.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "aorta-b-reassess-change-alternative-1",
+                "label": "Keep the earlier account until one of the outstanding reports explains the symptom change.",
+                "appropriate": false,
+                "feedback": "An explanation is not required to communicate a reported change and assign review.",
+                "requires": []
+              },
+              {
+                "id": "aorta-b-reassess-change-alternative-2",
+                "label": "Treat the pain change as a new examination finding and use it to settle the leading explanation.",
+                "appropriate": false,
+                "feedback": "The update supplies a patient report, not a new examination or diagnostic result.",
+                "requires": []
+              },
+              {
+                "id": "aorta-b-reassess-change-verify",
+                "label": "Report the change as a patient account, add only reviewed findings, and confirm the ED senior owns the next review.",
+                "appropriate": true,
+                "feedback": "A change can require an updated shared account without supplying a diagnosis, new measurement or outcome.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-b-reassess-current-record",
+            "message": "Use the reviewed findings and task statuses in the current snapshot. This checkpoint supplies no additional patient finding.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "aorta-b-reassess-current-record-alternative-1",
+                "label": "Build the explanation from the expected final reports and revise it only if one later result disagrees.",
+                "appropriate": false,
+                "feedback": "A requested or expected finding is not reviewed evidence.",
+                "requires": []
+              },
+              {
+                "id": "aorta-b-reassess-current-record-verify",
+                "label": "Separate what you reviewed from what is pending or available to read, and confirm the ED senior clinician owns the next review.",
+                "appropriate": true,
+                "feedback": "Reading, availability and pending work are different statuses. Use only the current snapshot; no later fact is supplied by this question.",
+                "requires": []
+              },
+              {
+                "id": "aorta-b-reassess-current-record-alternative-2",
+                "label": "Carry the opening account alone until every requested report is ready, then assign the next clinical reviewer.",
+                "appropriate": false,
+                "feedback": "Reviewed findings can update the account before the worklist is complete, and the concern already needs an owner.",
+                "requires": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "transfer": {
+      "version": 1,
+      "synthetic": true,
+      "reviewStatus": "pending_human_review",
+      "sourceCheckedDate": "2026-10-16",
+      "delivery": "after-another-arrival",
+      "id": "aortic-diagnostic-report-contrast-v4",
+      "prompt": "A different fictional arrival has a diagnostic-quality CTA. The radiologist explicitly reports acute dissection of the ascending aorta. Which conclusion fits this different report?",
+      "choices": [
+        {
+          "id": "still-nondiagnostic",
+          "label": "The aortic question must stay unresolved because a previous arrival had motion-limited imaging.",
+          "feedback": "The earlier record does not determine this report’s quality. Use the supplied diagnostic finding for this arrival."
+        },
+        {
+          "id": "finding-supported",
+          "label": "The diagnostic report supports the aortic finding here; later care decisions still need the responsible team.",
+          "feedback": "This report supplies a positive diagnostic finding. It has a different evidential status from a nondiagnostic segment."
+        },
+        {
+          "id": "all-settled",
+          "label": "Attribute the entire presentation to that finding and leave the competing concerns out of the handoff.",
+          "feedback": "A diagnostic finding supports a conclusion without resolving every concurrent condition or removing other relevant observations from the handoff."
+        }
+      ],
+      "answerId": "finding-supported",
+      "source": {
+        "title": "2022 ACC/AHA Aortic Disease Guideline: CT image quality",
+        "url": "https://www.ahajournals.org/doi/10.1161/CIR.0000000000001106",
+        "scope": "Motion affects root and ascending-aortic image quality and diagnostic confidence. A segment explicitly reported as nondiagnostic cannot support exclusion or confirmation. No care protocol is authored.",
+        "checkedDate": "2026-10-16"
+      }
+    }
+  },
+  {
+    "episode": {
+      "id": "doc-002-tearing-back-investigation-record-c",
+      "version": 5,
+      "careWorkflow": {
+        "episodeId": "doc-002-tearing-back-investigation-record-c",
+        "version": 1,
+        "role": {
+          "label": "Doctor coordinating the ED team",
+          "boundary": "Coordinate concern, task owners and review; treatment and patient outcomes are outside this exercise."
+        },
+        "timingNote": "Fictional update rounds release reports and narrative events. They are not minutes, recommended waits or a prescribed clinical sequence.",
+        "priority": {
+          "prompt": "Who needs the opening concern before its cause is settled?",
+          "choices": [
+            {
+              "id": "share-opening-concern",
+              "label": "Share sudden chest discomfort with the ed senior clinician and confirm who accepts review.",
+              "appropriate": true,
+              "feedback": "Communicate the concern and uncertainty early; a diagnostic label is not required to name a review owner.",
+              "requires": []
+            },
+            {
+              "id": "finish-record-before-contact",
+              "label": "Collect the remaining reports first, then ask the ed senior clinician to accept the complete explanation.",
+              "appropriate": false,
+              "feedback": "A fuller record may refine the explanation. It does not replace early shared awareness and responsibility for the presenting concern.",
+              "requires": []
+            }
+          ]
+        },
+        "tasks": {
+          "symptom-timeline": {
+            "owner": "ED history-taking clinician",
+            "label": "Follow up: symptom timeline",
+            "rounds": 1
+          },
+          "focused-examination": {
+            "owner": "ED examining clinician",
+            "label": "Follow up: focused examination",
+            "rounds": 1
+          },
+          "ecg": {
+            "owner": "ECG reporting clinician",
+            "label": "Follow up: ecg report",
+            "rounds": 1
+          },
+          "chest-radiograph": {
+            "owner": "Radiology reporting clinician",
+            "label": "Follow up: chest radiograph",
+            "rounds": 2
+          },
+          "aortic-cta": {
+            "owner": "ED senior clinician",
+            "label": "Follow up: aortic cta report",
+            "rounds": 2
+          },
+          "specialist-handoff": {
+            "owner": "ED senior clinician",
+            "label": "Follow up: specialist handoff",
+            "rounds": 1
+          }
+        },
+        "reassessment": {
+          "minimumReviewed": 1,
+          "update": "Fictional team checkpoint: identify what you reviewed, what remains pending and who accepts the next review. This checkpoint supplies no additional examination or laboratory finding."
+        },
+        "handoff": {
+          "receiver": {
+            "prompt": "Who accepts this concern?",
+            "choices": [
+              {
+                "id": "r-worklist",
+                "label": "The shared results worklist, with the next reader deciding who receives the concern.",
+                "appropriate": false,
+                "feedback": "A worklist records tasks; it does not show who accepted responsibility.",
+                "requires": []
+              },
+              {
+                "id": "r-clinical",
+                "label": "The ED senior coordinating this assessment.",
+                "appropriate": true,
+                "feedback": "Name the clinical receiver and verify acceptance of the concern.",
+                "requires": []
+              }
+            ]
+          },
+          "situation": {
+            "prompt": "Which known fact will you carry forward?",
+            "choices": [
+              {
+                "id": "s-opening",
+                "label": "A 61-year-old arrived with sudden severe chest discomfort and an incomplete handoff.",
+                "appropriate": true,
+                "feedback": "This is an opening fact, available for an early handoff. Add the actual reviewed and pending information to the shared record.",
+                "requires": []
+              },
+              {
+                "id": "s-cta",
+                "label": "The reviewed CTA describes an ascending-aortic intimal flap extending into the arch.",
+                "appropriate": true,
+                "feedback": "Carry the actual report wording, rather than replacing it with a broader diagnosis or exclusion claim.",
+                "requires": [
+                  "aortic-cta"
+                ]
+              },
+              {
+                "id": "s-overclaim",
+                "label": "The initial chest discomfort establishes a coronary cause; hand over the other reports as secondary details.",
+                "appropriate": false,
+                "feedback": "The opening observation does not establish that cause. Keep what happened separate from the explanation.",
+                "requires": []
+              }
+            ]
+          },
+          "uncertainty": {
+            "prompt": "Which limit belongs with that statement?",
+            "choices": [
+              {
+                "id": "u-delay",
+                "label": "Hold the handoff until a single cause is confirmed, so the receiver gets no unresolved question.",
+                "appropriate": false,
+                "feedback": "An unresolved question belongs in an early handoff. It should have a named clinical receiver, not be silently withheld.",
+                "requires": []
+              },
+              {
+                "id": "u-cta",
+                "label": "The CTA supports the aortic finding here; it does not settle every subsequent care decision.",
+                "appropriate": true,
+                "feedback": "The handoff should preserve the specific report finding and its scope.",
+                "requires": [
+                  "aortic-cta"
+                ]
+              },
+              {
+                "id": "u-opening",
+                "label": "The opening symptoms alone do not establish a cause; stronger claims must cite reviewed findings.",
+                "appropriate": true,
+                "feedback": "This limits the opening account without pretending later reports are still unknown.",
+                "requires": []
+              }
+            ]
+          },
+          "nextOwner": {
+            "prompt": "Who follows up the remaining concern?",
+            "choices": [
+              {
+                "id": "o-clinical",
+                "label": "Confirm the ed senior clinician owns the next review and how new reports or symptom changes reach them.",
+                "appropriate": true,
+                "feedback": "Identify an accountable receiver and an update route. This assigns communication responsibility, not treatment.",
+                "requires": []
+              },
+              {
+                "id": "o-worklist",
+                "label": "Use the completed request as the transfer of responsibility; the receiving worklist can assign the next review.",
+                "appropriate": false,
+                "feedback": "A sent request is not evidence that another person accepted the concern or the next review.",
+                "requires": []
+              }
+            ]
+          }
+        },
+        "readback": {
+          "prompt": "Verify the receiver’s reply against the sent handoff.",
+          "choices": []
+        },
+        "sources": [
+          {
+            "title": "WHO Emergency Care Toolkit: Interagency Integrated Triage Tool",
+            "url": "https://www.who.int/teams/integrated-health-services/clinical-services-and-systems/emergency-and-critical-care/emergency-care-toolkit",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Prioritizing clinical concern separately from establishing a diagnosis. These role-specific exercises do not implement or validate a triage scale."
+          },
+          {
+            "title": "NICE CG50: recognising and responding to deterioration",
+            "url": "https://www.nice.org.uk/guidance/CG50/chapter/recommendations",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Clinical concern, response ownership and reassessment. No physiological thresholds, observation intervals or treatment instructions are introduced."
+          },
+          {
+            "title": "AHRQ TeamSTEPPS: Handoff",
+            "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/handoff.html",
+            "checkedDate": "2026-10-17",
+            "scope": "Communicate uncertainty, recent changes, named responsibility and receiver acceptance. The educational exercise does not transfer real clinical authority."
+          },
+          {
+            "title": "AHRQ TeamSTEPPS: Check-Back (or Repeat-Back)",
+            "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/checkback.html",
+            "checkedDate": "2026-10-17",
+            "scope": "The receiver repeats the message and the sender verifies or corrects understanding. These scripted exchanges are newly authored fiction, without treatment instructions."
+          }
+        ],
+        "reviewProvenance": {
+          "status": "unreviewed",
+          "ownerReportedPriorClinicianReview": true,
+          "priorReviewScope": "unverified",
+          "priorReviewVersion": "unverified",
+          "text": "The owner reports clinician review of earlier material; the reviewed scope and version are unverified. These version 5 receiver exchanges, contextual questions and Arrival C contrasts are newly authored fiction and have not received separate clinician review."
+        },
+        "workboardPrompt": "Choose work to follow up; reports may arrive together.",
+        "patientUpdates": [
+          {
+            "id": "pain-easing-change",
+            "afterRound": 1,
+            "requiresReviewed": [],
+            "text": "Authored fictional change after arrival: the patient tells the bedside nurse the chest pain feels less severe than at the opening handoff. No new vital signs or examination findings are supplied.",
+            "prompt": "How should the easing-pain report reach the team alongside findings already reviewed?",
+            "choices": [
+              {
+                "id": "communicate-easing-change",
+                "label": "Report the easing pain as a patient account, preserve reviewed findings, and confirm the ED senior accepts review.",
+                "appropriate": true,
+                "feedback": "A symptom change belongs beside the actual reviewed report. It does not erase a supplied finding or establish a patient outcome.",
+                "requires": []
+              },
+              {
+                "id": "easing-replaces-findings",
+                "label": "Replace the earlier aortic concern with the easing-pain account and leave reviewed imaging as historical background.",
+                "appropriate": false,
+                "feedback": "The symptom account does not overwrite a reviewed positive finding. Communicate both with their actual sources.",
+                "requires": []
+              }
+            ]
+          }
+        ]
+      },
+      "title": "The Night Shift",
+      "subtitle": "Follow the concern. Review the record. Hand it over.",
+      "opening": "A 61-year-old arrives with sudden severe chest discomfort. The team is already arranging urgent assessment. The initial handoff is incomplete.",
+      "disclaimer": "Educational fiction pending human review. Reports, changes and update rounds are authored; they are not clinical advice or patient outcomes.",
+      "hypotheses": [
+        {
+          "id": "acute-aortic-syndrome",
+          "label": "Acute aortic syndrome"
+        },
+        {
+          "id": "acute-coronary-syndrome",
+          "label": "Acute coronary syndrome"
+        },
+        {
+          "id": "pulmonary-embolism",
+          "label": "Pulmonary embolism"
+        },
+        {
+          "id": "cause-unresolved",
+          "label": "Cause not established by this record"
+        }
+      ],
+      "sources": [
+        {
+          "title": "2022 ACC/AHA Guideline for the Diagnosis and Management of Aortic Disease",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10784847/"
+        },
+        {
+          "title": "2022 ACC/AHA Aortic Disease Guideline: CT image quality",
+          "url": "https://www.ahajournals.org/doi/10.1161/CIR.0000000000001106",
+          "scope": "Motion affects root and ascending-aortic image quality and diagnostic confidence. A segment explicitly reported as nondiagnostic cannot support exclusion or confirmation. No care protocol is authored.",
+          "checkedDate": "2026-10-16"
+        },
+        {
+          "title": "AHRQ TeamSTEPPS: Check-Back (or Repeat-Back)",
+          "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/checkback.html",
+          "checkedDate": "2026-10-17",
+          "scope": "The receiver repeats the message and the sender verifies or corrects understanding. These scripted exchanges are newly authored fiction, without treatment instructions."
+        },
+        {
+          "title": "AHRQ TeamSTEPPS: Handoff",
+          "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/handoff.html",
+          "checkedDate": "2026-10-17",
+          "scope": "Communicate uncertainty, recent changes, named responsibility and receiver acceptance. The educational exercise does not transfer real clinical authority."
+        }
+      ],
+      "actions": [
+        {
+          "id": "symptom-timeline",
+          "label": "Symptom timeline",
+          "category": "history",
+          "minutes": 4,
+          "requires": [],
+          "finding": "Authored fictional history: abrupt chest pain was maximal at onset and moved through to the back.",
+          "interpretation": "The onset and radiation are high-risk features, but they do not identify one diagnosis by themselves.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "focused-examination",
+          "label": "Focused examination",
+          "category": "examination",
+          "minutes": 6,
+          "requires": [],
+          "finding": "Authored fictional measurement: arm pressures are 178/105 on the right and 142/88 on the left; the difference is reproducible.",
+          "interpretation": "The fictional inter-arm difference increases concern for an aortic process and keeps premature coronary anchoring unsafe.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "ecg",
+          "label": "ECG report",
+          "category": "cardiac",
+          "minutes": 5,
+          "requires": [],
+          "finding": "Authored fictional tracing: a small, nonspecific ST change is present in aVL without a complete diagnostic pattern.",
+          "interpretation": "This finding keeps acute coronary syndrome in the differential but is not decisive and cannot erase the aortic warning signs.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "chest-radiograph",
+          "label": "Chest radiograph",
+          "category": "imaging",
+          "minutes": 5,
+          "requires": [],
+          "finding": "Authored fictional radiograph: the mediastinal contour is described as subtly widened, with no single definitive answer.",
+          "interpretation": "A plain chest radiograph cannot exclude acute aortic syndrome; this fictional image is an ambiguity-preserving clue, not a diagnosis.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "aortic-cta",
+          "label": "Aortic CTA report",
+          "category": "imaging",
+          "minutes": 12,
+          "requires": [],
+          "finding": "Authored fictional CTA report: an intimal flap is seen in the ascending aorta and extends into the arch.",
+          "interpretation": "In this fictional episode, the CTA is the decisive clue favoring acute aortic syndrome over the competing hypotheses.",
+          "sourceIds": [
+            0
+          ]
+        },
+        {
+          "id": "specialist-handoff",
+          "label": "Specialist handoff",
+          "category": "coordination",
+          "minutes": 8,
+          "requires": [
+            "aortic-cta"
+          ],
+          "finding": "The fictional handoff carries the symptom report and CTA finding; it does not imply that other observations were performed.",
+          "interpretation": "A structured handoff preserves uncertainty and the decisive clue for human review; it does not model treatment or outcome.",
+          "sourceIds": [
+            0
+          ]
+        }
+      ],
+      "reasoning": {
+        "openingFacts": [
+          {
+            "id": "opening:chest-discomfort",
+            "label": "Sudden severe chest discomfort in the opening handoff",
+            "strength": "concern",
+            "supports": [
+              "acute-aortic-syndrome",
+              "acute-coronary-syndrome",
+              "pulmonary-embolism",
+              "cause-unresolved"
+            ]
+          }
+        ],
+        "supportRules": {
+          "symptom-timeline": {
+            "strength": "suggestive",
+            "supports": [
+              "acute-aortic-syndrome"
+            ]
+          },
+          "focused-examination": {
+            "strength": "suggestive",
+            "supports": [
+              "acute-aortic-syndrome"
+            ]
+          },
+          "ecg": {
+            "strength": "limited",
+            "supports": [
+              "acute-coronary-syndrome"
+            ]
+          },
+          "chest-radiograph": {
+            "strength": "suggestive",
+            "supports": [
+              "acute-aortic-syndrome"
+            ]
+          },
+          "aortic-cta": {
+            "strength": "decisive",
+            "supports": [
+              "acute-aortic-syndrome"
+            ]
+          },
+          "specialist-handoff": {
+            "strength": "coordination",
+            "supports": []
+          }
+        },
+        "uncertaintyOptions": [
+          {
+            "id": "symptoms-not-confirmation",
+            "label": "The opening symptom does not identify one cause.",
+            "requires": [],
+            "scope": "provisional"
+          },
+          {
+            "id": "limited-ecg",
+            "label": "The nonspecific ECG finding does not settle the cause.",
+            "requires": [
+              "ecg"
+            ],
+            "scope": "any"
+          },
+          {
+            "id": "report-scope",
+            "label": "The CTA supports an aortic finding; it does not settle every aspect of care.",
+            "requires": [
+              "aortic-cta"
+            ],
+            "scope": "supported"
+          },
+          {
+            "id": "all-excluded",
+            "label": "Every competing explanation has now been excluded.",
+            "requires": [],
+            "scope": "unsupported"
+          }
+        ],
+        "supportLabel": "Evidence for your explanation",
+        "limitationLabel": "A comparison or limit",
+        "prompt": "Connect your explanation to reviewed evidence, then state a limit."
+      },
+      "familyId": "doc-002-tearing-back-investigation",
+      "familyTitle": "The Night Shift",
+      "recordLabel": "Arrival C",
+      "workboardPrompt": "Choose work to follow up; reports may arrive together.",
+      "reviewStatus": "pending_human_review",
+      "authoredFiction": true,
+      "reviewProvenance": {
+        "status": "unreviewed",
+        "ownerReportedPriorClinicianReview": true,
+        "priorReviewScope": "unverified",
+        "priorReviewVersion": "unverified",
+        "text": "The owner reports clinician review of earlier material; the reviewed scope and version are unverified. These version 5 receiver exchanges, contextual questions and Arrival C contrasts are newly authored fiction and have not received separate clinician review."
+      },
+      "resolution": {
+        "hypothesisId": "acute-aortic-syndrome",
+        "conclusionKind": "diagnostic",
+        "evidenceActionIds": [
+          "aortic-cta"
+        ],
+        "supportedSummary": "The reviewed CTA describes the aortic finding that supports acute aortic syndrome in this fictional record.",
+        "mismatchSummary": "The selected explanation does not account for the aortic finding described in the reviewed CTA.",
+        "provisionalSummary": "The CTA was not reviewed. This remains a working explanation, not a confirmed cause.",
+        "decisiveClue": "The fictional CTA describes an ascending-aortic intimal flap extending into the arch.",
+        "missingClue": "The CTA report was not reviewed on this route.",
+        "nextLearning": "Keep concerning symptoms separate from a report that establishes a finding.",
+        "limitations": [
+          "Authored fictional records pending human medical review; source references support educational framing, not these patient measurements or events.",
+          "Update rounds are narrative release events, not clinical minutes, recommended waits or an investigation sequence. Emergency assessment continues independently.",
+          "No treatment, dose, eligibility, prognosis or patient outcome is modeled. A recorded explanation does not establish clinical competence.",
+          "Earlier owner-reported clinician review has unverified scope and version; it does not cover these version 5 questions, exchanges or Arrival C records."
+        ]
+      },
+      "transferQuestion": {
+        "version": 1,
+        "synthetic": true,
+        "reviewStatus": "pending_human_review",
+        "sourceCheckedDate": "2026-10-16",
+        "delivery": "after-another-arrival",
+        "id": "aortic-easing-positive-report-contrast-v5",
+        "prompt": "A different fictional arrival reports less chest pain after a reviewed diagnostic CTA explicitly described an ascending-aortic dissection. What should the next handoff preserve?",
+        "choices": [
+          {
+            "id": "improvement-erases",
+            "label": "The eased pain makes the reviewed positive report a resolved historical concern.",
+            "feedback": "A reported symptom improvement does not erase the diagnostic finding or establish resolution."
+          },
+          {
+            "id": "preserve-both",
+            "label": "Carry both the positive reviewed CTA and the easing-pain report to the responsible clinician.",
+            "feedback": "Keep each source and its meaning visible. A new symptom report does not rewrite an existing diagnostic report."
+          },
+          {
+            "id": "symptoms-prove",
+            "label": "The pain change establishes the present extent of the aortic finding without another assessment.",
+            "feedback": "A symptom report does not supply a new imaging measurement or settle the next clinical assessment."
+          }
+        ],
+        "answerId": "preserve-both",
+        "source": {
+          "title": "2022 ACC/AHA Aortic Disease Guideline: CT image quality",
+          "url": "https://www.ahajournals.org/doi/10.1161/CIR.0000000000001106",
+          "scope": "Motion affects root and ascending-aortic image quality and diagnostic confidence. A segment explicitly reported as nondiagnostic cannot support exclusion or confirmation. No care protocol is authored.",
+          "checkedDate": "2026-10-16"
+        }
+      },
+      "coordination": {
+        "readbackScenarios": [
+          {
+            "id": "aorta-c-receiver-not-accepted",
+            "requiresSelections": {
+              "receiverId": "r-worklist"
+            },
+            "message": "“The worklist entry for sudden chest discomfort is visible. I have not accepted the next clinical review.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "aorta-c-receiver-not-accepted-alternative-1",
+                "label": "Verify that the entry is visible and record the next clinical review as accepted through the shared worklist.",
+                "appropriate": false,
+                "feedback": "Visibility does not establish that a person accepted responsibility.",
+                "requires": []
+              },
+              {
+                "id": "aorta-c-receiver-not-accepted-alternative-2",
+                "label": "Ask for a more complete diagnostic summary, then use its inclusion in the worklist as the review assignment.",
+                "appropriate": false,
+                "feedback": "More detail does not resolve the missing clinical receiver.",
+                "requires": []
+              },
+              {
+                "id": "aorta-c-receiver-not-accepted-verify",
+                "label": "Clarify who accepts the sudden chest discomfort concern and ask the named clinician to repeat their responsibility.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-c-next-owner-missing",
+            "requiresSelections": {
+              "nextOwnerId": "o-worklist"
+            },
+            "message": "“I received the summary. Whoever reads the last report will take responsibility for the next review.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "aorta-c-next-owner-missing-verify",
+                "label": "Ask the ED senior clinician to accept the next review and confirm the route for later reports or changes.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              },
+              {
+                "id": "aorta-c-next-owner-missing-alternative-1",
+                "label": "Confirm that the final report reader will be recorded as the owner when the worklist becomes complete.",
+                "appropriate": false,
+                "feedback": "A future reader is not a named person accepting the concern now.",
+                "requires": []
+              },
+              {
+                "id": "aorta-c-next-owner-missing-alternative-2",
+                "label": "Verify the findings in the summary and leave ownership to the team handling the remaining requests.",
+                "appropriate": false,
+                "feedback": "Finding accuracy and ownership are separate parts of the exchange.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-c-opening-overclaim",
+            "requiresSelections": {
+              "situationId": "s-overclaim"
+            },
+            "message": "“I heard that the opening sudden severe chest discomfort establishes a coronary cause.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "aorta-c-opening-overclaim-alternative-1",
+                "label": "Verify the diagnostic wording because it repeats the situation selected in the handoff accurately.",
+                "appropriate": false,
+                "feedback": "Repeating an inaccurate claim does not make it valid. The sender must also check its meaning against the known record.",
+                "requires": []
+              },
+              {
+                "id": "aorta-c-opening-overclaim-verify",
+                "label": "Correct the opening claim: it describes the presenting concern; stronger conclusions must use findings actually reviewed.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              },
+              {
+                "id": "aorta-c-opening-overclaim-alternative-2",
+                "label": "Keep that diagnosis in the exchange and label the remaining reports as details about its extent.",
+                "appropriate": false,
+                "feedback": "The opening account does not establish the diagnosis or make other findings secondary.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-c-uncertainty-withheld",
+            "requiresSelections": {
+              "uncertaintyId": "u-delay"
+            },
+            "message": "“I will accept the unresolved question after one cause has been confirmed.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "aorta-c-uncertainty-withheld-alternative-1",
+                "label": "Verify the condition for acceptance and keep responsibility with the results worklist until the cause is confirmed.",
+                "appropriate": false,
+                "feedback": "Diagnostic uncertainty does not supply an accountable next reviewer.",
+                "requires": []
+              },
+              {
+                "id": "aorta-c-uncertainty-withheld-alternative-2",
+                "label": "Replace the unresolved question with the leading diagnosis so the receiver can accept a definite account.",
+                "appropriate": false,
+                "feedback": "A stronger label cannot substitute for communicating the actual evidence and uncertainty.",
+                "requires": []
+              },
+              {
+                "id": "aorta-c-uncertainty-withheld-verify",
+                "label": "Clarify that the ED senior clinician needs to accept the concern with its current uncertainty and outstanding work.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-c-report-and-change",
+            "requiresReviewed": [
+              "aortic-cta"
+            ],
+            "requiresPatientUpdates": [
+              "pain-easing-change"
+            ],
+            "message": "“The reviewed CTA describes the flap, but the patient now reports less pain, so I will pass on the CTA finding as no longer supported.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "aorta-c-report-and-change-alternative-1",
+                "label": "Verify the exchange because the CTA detail is repeated accurately and carries the main explanation.",
+                "appropriate": false,
+                "feedback": "Check the change and its interpretation as well as the report wording.",
+                "requires": []
+              },
+              {
+                "id": "aorta-c-report-and-change-alternative-2",
+                "label": "Replace the flap finding with an unresolved imaging statement because the symptom account has changed.",
+                "appropriate": false,
+                "feedback": "The reported symptom change does not alter the supplied CTA finding.",
+                "requires": []
+              },
+              {
+                "id": "aorta-c-report-and-change-verify",
+                "label": "Correct the inference: less reported pain does not erase the reviewed positive CTA; carry both to the ED senior.",
+                "appropriate": true,
+                "feedback": "A symptom report does not rewrite a reviewed imaging finding. The next clinical assessment remains with the responsible team.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-c-ecg-change-cta-pending",
+            "requiresReviewed": [
+              "ecg"
+            ],
+            "requiresPatientUpdates": [
+              "pain-easing-change"
+            ],
+            "requiresPending": [
+              "aortic-cta"
+            ],
+            "message": "“The ECG confirms a coronary cause. I have the patient reports less chest pain; the CTA request is still pending.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "aorta-c-ecg-change-cta-pending-alternative-1",
+                "label": "Verify the coronary explanation and keep the CTA pending as a check for a concurrent aortic finding.",
+                "appropriate": false,
+                "feedback": "The supplied nonspecific ECG does not establish a coronary explanation.",
+                "requires": []
+              },
+              {
+                "id": "aorta-c-ecg-change-cta-pending-verify",
+                "label": "Correct the ECG claim: it is nonspecific; pass on the reported change and identify CTA as pending, without a finding.",
+                "appropriate": true,
+                "feedback": "Only the ECG and reported change are known here. The pending CTA supplies no positive or negative result.",
+                "requires": []
+              },
+              {
+                "id": "aorta-c-ecg-change-cta-pending-alternative-2",
+                "label": "Correct the account by reporting the expected CTA finding and asking the senior to compare it with the pain.",
+                "appropriate": false,
+                "feedback": "A requested report is not reviewed evidence. Its future finding cannot enter this exchange.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-c-change-before-cta",
+            "requiresPatientUpdates": [
+              "pain-easing-change"
+            ],
+            "excludesReviewed": [
+              "aortic-cta"
+            ],
+            "message": "“I heard the patient reports less chest pain. I accept review of that change; this handoff has no reviewed CTA finding.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "aorta-c-change-before-cta-alternative-1",
+                "label": "Correct the account to the likely CTA finding so the changed pain has a specific diagnosis in the handoff.",
+                "appropriate": false,
+                "feedback": "A symptom update cannot supply an unreviewed imaging result.",
+                "requires": []
+              },
+              {
+                "id": "aorta-c-change-before-cta-verify",
+                "label": "Verify the reported change and review owner; keep the CTA status separate from a result that has not been reviewed.",
+                "appropriate": true,
+                "feedback": "The receiver repeats the available change without inventing a CTA finding or attributing a cause.",
+                "requires": []
+              },
+              {
+                "id": "aorta-c-change-before-cta-alternative-2",
+                "label": "Leave the change out of this exchange until the CTA report can explain whether it is clinically related.",
+                "appropriate": false,
+                "feedback": "A reported change belongs with the concern even while its explanation remains unsettled.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-c-opening-only",
+            "message": "“I heard the presenting sudden severe chest discomfort. The opening account alone does not establish its cause. I accept the next review; separately listed reports retain their recorded status.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "aorta-c-opening-only-verify",
+                "label": "Verify the presenting concern, its limited certainty and accepted review; add no result that the sent snapshot does not contain.",
+                "appropriate": true,
+                "feedback": "This is a valid early exchange. A complete diagnostic worklist is not required to communicate the known concern and ownership.",
+                "requires": []
+              },
+              {
+                "id": "aorta-c-opening-only-alternative-1",
+                "label": "Correct the receiver to the final diagnosis expected for this arrival, even if its supporting report is not reviewed.",
+                "appropriate": false,
+                "feedback": "A future report or a remembered arrival cannot enter the current sent snapshot.",
+                "requires": []
+              },
+              {
+                "id": "aorta-c-opening-only-alternative-2",
+                "label": "Withhold verification until all work is complete so the opening concern can be replaced by one definite explanation.",
+                "appropriate": false,
+                "feedback": "The known concern and next reviewer can be verified while the cause remains uncertain.",
+                "requires": []
+              }
+            ]
+          }
+        ],
+        "reassessmentScenarios": [
+          {
+            "id": "aorta-c-reassess-report-change",
+            "requiresReviewed": [
+              "aortic-cta"
+            ],
+            "requiresPatientUpdates": [
+              "pain-easing-change"
+            ],
+            "message": "Reviewed: the CTA describes an ascending-aortic intimal flap extending into the arch. Reported change: the patient reports less chest pain.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "aorta-c-reassess-report-change-verify",
+                "label": "Bring both the CTA wording and the reported pain change to the ED senior. The reviewed report supports the aortic finding; it does not settle every later decision.",
+                "appropriate": true,
+                "feedback": "The reassessment joins the new symptom account to the actual report without changing either one’s evidential status.",
+                "requires": []
+              },
+              {
+                "id": "aorta-c-reassess-report-change-alternative-1",
+                "label": "Use the current pain report to decide whether the already reviewed flap should remain in the handoff.",
+                "appropriate": false,
+                "feedback": "The symptom report does not repair an imaging limitation or erase a positive reviewed finding.",
+                "requires": []
+              },
+              {
+                "id": "aorta-c-reassess-report-change-alternative-2",
+                "label": "Keep the earlier report summary and omit the symptom change because no repeat examination is supplied.",
+                "appropriate": false,
+                "feedback": "A patient-reported change should be identified as such, not silently discarded because it is not a new examination.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-c-reassess-ecg-pending",
+            "requiresReviewed": [
+              "ecg"
+            ],
+            "requiresPatientUpdates": [
+              "pain-easing-change"
+            ],
+            "requiresPending": [
+              "aortic-cta"
+            ],
+            "message": "Reviewed: nonspecific ECG. Reported change: the patient reports less chest pain. The requested CTA remains pending.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "aorta-c-reassess-ecg-pending-alternative-1",
+                "label": "Make the ECG the confirmed explanation for the change and retain the pending CTA as a secondary check.",
+                "appropriate": false,
+                "feedback": "The ECG is nonspecific and does not settle the cause.",
+                "requires": []
+              },
+              {
+                "id": "aorta-c-reassess-ecg-pending-verify",
+                "label": "Update the senior with the pain report and nonspecific ECG; the pending CTA has no reviewed finding yet.",
+                "appropriate": true,
+                "feedback": "The change adds a communication need, while the reviewed ECG and outstanding CTA retain their actual limits.",
+                "requires": []
+              },
+              {
+                "id": "aorta-c-reassess-ecg-pending-alternative-2",
+                "label": "Prepare the final aortic conclusion from the requested CTA while the senior reviews the symptom change.",
+                "appropriate": false,
+                "feedback": "A pending request has no finding to synthesize.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-c-reassess-change",
+            "requiresPatientUpdates": [
+              "pain-easing-change"
+            ],
+            "message": "Reported change: the patient reports less chest pain. Separate reviewed findings from outstanding work in the current snapshot.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "aorta-c-reassess-change-alternative-1",
+                "label": "Keep the earlier account until one of the outstanding reports explains the symptom change.",
+                "appropriate": false,
+                "feedback": "An explanation is not required to communicate a reported change and assign review.",
+                "requires": []
+              },
+              {
+                "id": "aorta-c-reassess-change-alternative-2",
+                "label": "Treat the pain change as a new examination finding and use it to settle the leading explanation.",
+                "appropriate": false,
+                "feedback": "The update supplies a patient report, not a new examination or diagnostic result.",
+                "requires": []
+              },
+              {
+                "id": "aorta-c-reassess-change-verify",
+                "label": "Report the change as a patient account, add only reviewed findings, and confirm the ED senior owns the next review.",
+                "appropriate": true,
+                "feedback": "A change can require an updated shared account without supplying a diagnosis, new measurement or outcome.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "aorta-c-reassess-current-record",
+            "message": "Use the reviewed findings and task statuses in the current snapshot. This checkpoint supplies no additional patient finding.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "aorta-c-reassess-current-record-alternative-1",
+                "label": "Build the explanation from the expected final reports and revise it only if one later result disagrees.",
+                "appropriate": false,
+                "feedback": "A requested or expected finding is not reviewed evidence.",
+                "requires": []
+              },
+              {
+                "id": "aorta-c-reassess-current-record-verify",
+                "label": "Separate what you reviewed from what is pending or available to read, and confirm the ED senior clinician owns the next review.",
+                "appropriate": true,
+                "feedback": "Reading, availability and pending work are different statuses. Use only the current snapshot; no later fact is supplied by this question.",
+                "requires": []
+              },
+              {
+                "id": "aorta-c-reassess-current-record-alternative-2",
+                "label": "Carry the opening account alone until every requested report is ready, then assign the next clinical reviewer.",
+                "appropriate": false,
+                "feedback": "Reviewed findings can update the account before the worklist is complete, and the concern already needs an owner.",
+                "requires": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "transfer": {
+      "version": 1,
+      "synthetic": true,
+      "reviewStatus": "pending_human_review",
+      "sourceCheckedDate": "2026-10-16",
+      "delivery": "after-another-arrival",
+      "id": "aortic-easing-positive-report-contrast-v5",
+      "prompt": "A different fictional arrival reports less chest pain after a reviewed diagnostic CTA explicitly described an ascending-aortic dissection. What should the next handoff preserve?",
+      "choices": [
+        {
+          "id": "improvement-erases",
+          "label": "The eased pain makes the reviewed positive report a resolved historical concern.",
+          "feedback": "A reported symptom improvement does not erase the diagnostic finding or establish resolution."
+        },
+        {
+          "id": "preserve-both",
+          "label": "Carry both the positive reviewed CTA and the easing-pain report to the responsible clinician.",
+          "feedback": "Keep each source and its meaning visible. A new symptom report does not rewrite an existing diagnostic report."
+        },
+        {
+          "id": "symptoms-prove",
+          "label": "The pain change establishes the present extent of the aortic finding without another assessment.",
+          "feedback": "A symptom report does not supply a new imaging measurement or settle the next clinical assessment."
+        }
+      ],
+      "answerId": "preserve-both",
+      "source": {
+        "title": "2022 ACC/AHA Aortic Disease Guideline: CT image quality",
+        "url": "https://www.ahajournals.org/doi/10.1161/CIR.0000000000001106",
+        "scope": "Motion affects root and ascending-aortic image quality and diagnostic confidence. A segment explicitly reported as nondiagnostic cannot support exclusion or confirmation. No care protocol is authored.",
+        "checkedDate": "2026-10-16"
+      }
+    }
+  },
+  {
+    "episode": {
+      "id": "pub-003-missed-turn-investigation",
+      "version": 5,
+      "title": "The Missed Turn",
+      "subtitle": "Follow the concern. Review the record. Hand it over.",
+      "opening": "At dinner, a 68-year-old suddenly cannot finish a sentence and has trouble holding a fork. Emergency help is already on the way. Follow the fictional team record as it arrives.",
+      "disclaimer": "Educational fiction pending human review. Reports, changes and update rounds are authored; they are not clinical advice or patient outcomes.",
+      "reviewStatus": "pending_human_review",
+      "presentation": {
+        "audience": "public",
+        "playMinutes": "4-7",
+        "image": "./assets/episodes/pub-001-stroke-escalation-720.webp",
+        "imageAlt": "Generated illustration of a dinner interrupted by an emergency response. Not diagnostic evidence."
+      },
+      "sources": [
+        {
+          "title": "NICE NG128: stroke recognition and initial assessment, recommendations 1.1.1-1.1.3",
+          "url": "https://www.nice.org.uk/guidance/ng128/chapter/recommendations",
+          "checkedUtc": "2026-10-16T04:29:45Z",
+          "scope": "Sudden focal symptoms and checking hypoglycaemia as a competing explanation. The fictional normal glucose weakens that rival without establishing stroke; no treatment content is used."
+        },
+        {
+          "title": "NINDS: Assess and Treat, CT and MRI sections",
+          "url": "https://www.ninds.nih.gov/health-information/stroke/assess-and-treat",
+          "checkedUtc": "2026-10-16T04:29:45Z",
+          "scope": "CT detects bleeding; diffusion MRI can show ischemia before a non-contrast CT. Supports limits of the authored reports, not a required scan sequence or patient-specific advice."
+        },
+        {
+          "title": "NINDS: Assess and Treat, diagnostic imaging",
+          "url": "https://www.ninds.nih.gov/health-information/stroke/assess-and-treat",
+          "scope": "Early ischemia may not be visible on noncontrast CT. An absent or nondiagnostic later study supplies no confirming finding; MRI is not presented as a universal prerequisite for urgent care.",
+          "checkedDate": "2026-10-16"
+        },
+        {
+          "title": "2026 AHA/ASA Guideline for Early Management of Acute Ischemic Stroke, section 3.2",
+          "url": "https://www.ahajournals.org/doi/10.1161/STR.0000000000000513",
+          "scope": "Clinicians can diagnose ischemic stroke from clinical presentation with a negative noncontrast CT in many patients. MRI is not universally required. This exercise only judges the incomplete supplied record and introduces no treatment or eligibility content.",
+          "checkedDate": "2026-10-16"
+        },
+        {
+          "title": "AHRQ TeamSTEPPS: Check-Back (or Repeat-Back)",
+          "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/checkback.html",
+          "checkedDate": "2026-10-17",
+          "scope": "The receiver repeats the message and the sender verifies or corrects understanding. These scripted exchanges are newly authored fiction, without treatment instructions."
+        },
+        {
+          "title": "AHRQ TeamSTEPPS: Handoff",
+          "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/handoff.html",
+          "checkedDate": "2026-10-17",
+          "scope": "Communicate uncertainty, recent changes, named responsibility and receiver acceptance. The educational exercise does not transfer real clinical authority."
+        }
+      ],
+      "hypotheses": [
+        {
+          "id": "ischemic-stroke",
+          "label": "Ischemic stroke (interrupted blood flow)"
+        },
+        {
+          "id": "hypoglycemia",
+          "label": "Low blood glucose"
+        },
+        {
+          "id": "migraine-aura",
+          "label": "Migraine with neurological symptoms"
+        },
+        {
+          "id": "cause-unresolved",
+          "label": "Cause not established by this record"
+        }
+      ],
+      "actions": [
+        {
+          "id": "witness-account",
+          "label": "Witness account",
+          "category": "history",
+          "minutes": 3,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional witness account: speech was normal a moment earlier. Word-finding difficulty and right-hand weakness began together and persist.",
+          "interpretation": "Sudden speech and one-sided movement changes call for urgent assessment, not a wait-and-see conclusion."
+        },
+        {
+          "id": "team-examination",
+          "label": "Team examination",
+          "category": "examination",
+          "minutes": 4,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional examination: the clinician records difficulty naming familiar objects and right-arm drift. The patient remains awake.",
+          "interpretation": "The observed pattern strengthens concern but does not establish its cause alone."
+        },
+        {
+          "id": "glucose-result",
+          "label": "Glucose report",
+          "category": "laboratory",
+          "minutes": 2,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional measurement during the symptoms: blood glucose is 106 mg/dL (5.9 mmol/L).",
+          "interpretation": "This result does not support low glucose as the current explanation; it does not itself prove stroke."
+        },
+        {
+          "id": "initial-ct",
+          "label": "First CT report",
+          "category": "imaging",
+          "minutes": 6,
+          "requires": [],
+          "sourceIds": [
+            1
+          ],
+          "finding": "Fictional non-contrast head CT report: no hemorrhage is seen; no definite early infarct is visible.",
+          "interpretation": "An early CT without a visible infarct does not rule out ischemic stroke."
+        },
+        {
+          "id": "team-mri-summary",
+          "label": "Later imaging update",
+          "category": "imaging",
+          "minutes": 8,
+          "requires": [],
+          "sourceIds": [
+            1
+          ],
+          "finding": "Fictional team review: diffusion MRI shows a small acute left frontal infarct corresponding to the speech and right-arm changes.",
+          "interpretation": "The matching imaging finding supports ischemic stroke in this authored story; it is not a rule that every suspected stroke needs MRI before action."
+        },
+        {
+          "id": "witness-handoff",
+          "label": "Witness handoff",
+          "category": "coordination",
+          "minutes": 2,
+          "requires": [
+            "witness-account"
+          ],
+          "sourceIds": [
+            0
+          ],
+          "finding": "The fictional handoff preserves the witnessed onset and persisting changes. It makes no claim about examinations or scans you did not read.",
+          "interpretation": "A useful handoff separates what was witnessed from what remains unknown."
+        }
+      ],
+      "reasoning": {
+        "supportLabel": "Evidence for your explanation",
+        "limitationLabel": "A comparison or limit",
+        "prompt": "Connect your explanation to reviewed evidence, then state a limit.",
+        "caseLearningText": "Weakening one explanation does not prove another. Connect each collected finding to the concern it supports or weakens, and keep a working hypothesis provisional when decisive evidence is absent.",
+        "insufficientCitationFeedback": "Your route includes the matching fictional imaging finding. Cite that finding to support the conclusion rather than an earlier concern or a result that only weakens a rival.",
+        "openingFacts": [
+          {
+            "id": "opening:speech-hand-change",
+            "label": "Sudden speech and hand-use changes in the opening handoff",
+            "strength": "concern",
+            "supports": [
+              "ischemic-stroke",
+              "hypoglycemia",
+              "migraine-aura",
+              "cause-unresolved"
+            ]
+          }
+        ],
+        "supportRules": {
+          "witness-account": {
+            "strength": "suggestive",
+            "supports": [
+              "ischemic-stroke"
+            ]
+          },
+          "team-examination": {
+            "strength": "suggestive",
+            "supports": [
+              "ischemic-stroke"
+            ]
+          },
+          "glucose-result": {
+            "strength": "limited",
+            "supports": [],
+            "conflictsWith": [
+              "hypoglycemia"
+            ],
+            "conflictFeedback": "The glucose result you read during the symptoms does not support low glucose as the current explanation. It weakens that rival without proving ischemic stroke."
+          },
+          "initial-ct": {
+            "strength": "limited",
+            "supports": []
+          },
+          "team-mri-summary": {
+            "strength": "decisive",
+            "supports": [
+              "ischemic-stroke"
+            ]
+          },
+          "witness-handoff": {
+            "strength": "coordination",
+            "supports": []
+          }
+        },
+        "uncertaintyOptions": [
+          {
+            "id": "symptoms-not-confirmation",
+            "label": "The opening symptoms raise concern but do not establish a cause.",
+            "requires": [],
+            "scope": "provisional"
+          },
+          {
+            "id": "glucose-discriminator",
+            "label": "The glucose result weakens the low-glucose explanation; it is not a positive stroke test.",
+            "requires": [
+              "glucose-result"
+            ],
+            "forHypotheses": [
+              "ischemic-stroke",
+              "migraine-aura"
+            ],
+            "scope": "any"
+          },
+          {
+            "id": "ct-limit",
+            "label": "The first CT report does not exclude an early ischemic stroke.",
+            "requires": [
+              "initial-ct"
+            ],
+            "scope": "any"
+          },
+          {
+            "id": "mri-scope",
+            "label": "The matching MRI finding supports ischemic stroke here; it does not determine every cause or later care decision.",
+            "requires": [
+              "team-mri-summary"
+            ],
+            "forHypotheses": [
+              "ischemic-stroke"
+            ],
+            "scope": "supported"
+          },
+          {
+            "id": "all-excluded",
+            "label": "Every competing cause has now been ruled out.",
+            "requires": [],
+            "scope": "unsupported"
+          }
+        ]
+      },
+      "resolution": {
+        "hypothesisId": "ischemic-stroke",
+        "evidenceActionIds": [
+          "team-mri-summary"
+        ],
+        "supportedSummary": "Your conclusion fits the matching acute infarct described in the fictional imaging review. This is support from that recorded finding, beyond the opening symptoms alone.",
+        "mismatchSummary": "The chosen explanation does not account for the matching acute infarct described in the fictional imaging review.",
+        "provisionalSummary": "Your route ended before the later imaging review. The conclusion remains provisional; a working hypothesis is not confirmation.",
+        "decisiveClue": "The later fictional MRI report describes an acute left frontal infarct matching the symptoms.",
+        "missingClue": "The later imaging review was not collected. No decisive imaging clue was reached on this route.",
+        "nextLearning": "Distinguish a test that finds no bleeding from evidence that excludes interrupted blood flow. Keep uncertainty visible.",
+        "limitations": [
+          "Authored fictional records pending human medical review; source references support educational framing, not these patient measurements or events.",
+          "Update rounds are narrative release events, not clinical minutes, recommended waits or an investigation sequence. Emergency assessment continues independently.",
+          "No treatment, dose, eligibility, prognosis or patient outcome is modeled. A recorded explanation does not establish clinical competence.",
+          "Earlier owner-reported clinician review has unverified scope and version; it does not cover these version 5 questions, exchanges or Arrival C records."
+        ],
+        "conclusionKind": "diagnostic"
+      },
+      "careWorkflow": {
+        "episodeId": "pub-003-missed-turn-investigation",
+        "version": 1,
+        "role": {
+          "label": "Family witness communicating with the ED team",
+          "boundary": "Report what you witnessed and ask who accepts updates. The ED team owns tests, clinical assessment and care decisions."
+        },
+        "timingNote": "Fictional update rounds release reports and narrative events. They are not minutes, recommended waits or a prescribed clinical sequence.",
+        "priority": {
+          "prompt": "Who needs the opening concern before its cause is settled?",
+          "choices": [
+            {
+              "id": "finish-record-before-contact",
+              "label": "Collect the remaining reports first, then ask the receiving ed clinician to accept the complete explanation.",
+              "appropriate": false,
+              "feedback": "A fuller record may refine the explanation. It does not replace early shared awareness and responsibility for the presenting concern.",
+              "requires": []
+            },
+            {
+              "id": "share-opening-concern",
+              "label": "Share sudden speech and hand-use changes with the receiving ed clinician and confirm who accepts review.",
+              "appropriate": true,
+              "feedback": "Communicate the concern and uncertainty early; a diagnostic label is not required to name a review owner.",
+              "requires": []
+            }
+          ]
+        },
+        "tasks": {
+          "witness-account": {
+            "owner": "Receiving ED nurse",
+            "label": "Follow up: witness account",
+            "rounds": 1
+          },
+          "team-examination": {
+            "owner": "ED examining clinician",
+            "label": "Follow up: team examination",
+            "rounds": 1
+          },
+          "glucose-result": {
+            "owner": "ED examining clinician",
+            "label": "Follow up: glucose report",
+            "rounds": 1
+          },
+          "initial-ct": {
+            "owner": "ED senior clinician",
+            "label": "Follow up: first ct report",
+            "rounds": 2
+          },
+          "team-mri-summary": {
+            "owner": "ED senior clinician",
+            "label": "Follow up: later imaging update",
+            "rounds": 2
+          },
+          "witness-handoff": {
+            "owner": "Receiving ED nurse",
+            "label": "Follow up: witness handoff",
+            "rounds": 1
+          }
+        },
+        "reassessment": {
+          "minimumReviewed": 1,
+          "update": "Fictional team checkpoint: identify what you reviewed, what remains pending and who accepts the next review. This checkpoint supplies no additional examination or laboratory finding."
+        },
+        "handoff": {
+          "receiver": {
+            "prompt": "Who accepts this concern?",
+            "choices": [
+              {
+                "id": "r-clinical",
+                "label": "The receiving ED clinician or nurse accepting the witness account.",
+                "appropriate": true,
+                "feedback": "Name the clinical receiver and verify acceptance of the concern.",
+                "requires": []
+              },
+              {
+                "id": "r-worklist",
+                "label": "The shared results worklist, with the next reader deciding who receives the concern.",
+                "appropriate": false,
+                "feedback": "A worklist records tasks; it does not show who accepted responsibility.",
+                "requires": []
+              }
+            ]
+          },
+          "situation": {
+            "prompt": "Which known fact will you carry forward?",
+            "choices": [
+              {
+                "id": "s-overclaim",
+                "label": "The initial speech change establishes stroke; hand over the arm change as a severity detail.",
+                "appropriate": false,
+                "feedback": "The opening observation does not establish that cause. Keep what happened separate from the explanation.",
+                "requires": []
+              },
+              {
+                "id": "s-imaging",
+                "label": "The later MRI report describes a matching small acute left frontal infarct.",
+                "appropriate": true,
+                "feedback": "State the findings actually reviewed. Do not replace an unavailable diagnostic result with a normal scan.",
+                "requires": [
+                  "team-mri-summary"
+                ]
+              },
+              {
+                "id": "s-witness",
+                "label": "The reviewed witness account places the speech and right-hand changes together, with continuing difficulty.",
+                "appropriate": true,
+                "feedback": "Distinguish witnessed onset and changes from a diagnosis.",
+                "requires": [
+                  "witness-account"
+                ]
+              },
+              {
+                "id": "s-opening",
+                "label": "At dinner, a 68-year-old suddenly had trouble speaking and holding a fork; emergency help was called.",
+                "appropriate": true,
+                "feedback": "This is an opening fact, available for an early handoff. Add the actual reviewed and pending information to the shared record.",
+                "requires": []
+              }
+            ]
+          },
+          "uncertainty": {
+            "prompt": "Which limit belongs with that statement?",
+            "choices": [
+              {
+                "id": "u-opening",
+                "label": "The opening symptoms alone do not establish a cause; stronger claims must cite reviewed findings.",
+                "appropriate": true,
+                "feedback": "This limits the opening account without pretending later reports are still unknown.",
+                "requires": []
+              },
+              {
+                "id": "u-imaging",
+                "label": "The matching imaging supports ischemic stroke here; it does not settle every cause or care decision.",
+                "appropriate": true,
+                "feedback": "The witness reports evidence and concerns; the clinical team owns the assessment and further decisions.",
+                "requires": [
+                  "team-mri-summary"
+                ]
+              },
+              {
+                "id": "u-delay",
+                "label": "Hold the handoff until a single cause is confirmed, so the receiver gets no unresolved question.",
+                "appropriate": false,
+                "feedback": "An unresolved question belongs in an early handoff. It should have a named clinical receiver, not be silently withheld.",
+                "requires": []
+              }
+            ]
+          },
+          "nextOwner": {
+            "prompt": "Who follows up the remaining concern?",
+            "choices": [
+              {
+                "id": "o-worklist",
+                "label": "Use the completed request as the transfer of responsibility; the receiving worklist can assign the next review.",
+                "appropriate": false,
+                "feedback": "A sent request is not evidence that another person accepted the concern or the next review.",
+                "requires": []
+              },
+              {
+                "id": "o-clinical",
+                "label": "Confirm the receiving ed clinician owns the next review and how new reports or symptom changes reach them.",
+                "appropriate": true,
+                "feedback": "Identify an accountable receiver and an update route. This assigns communication responsibility, not treatment.",
+                "requires": []
+              }
+            ]
+          }
+        },
+        "readback": {
+          "prompt": "Verify the receiver’s reply against the sent handoff.",
+          "choices": []
+        },
+        "sources": [
+          {
+            "title": "WHO Emergency Care Toolkit: Interagency Integrated Triage Tool",
+            "url": "https://www.who.int/teams/integrated-health-services/clinical-services-and-systems/emergency-and-critical-care/emergency-care-toolkit",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Prioritizing clinical concern separately from establishing a diagnosis. These role-specific exercises do not implement or validate a triage scale."
+          },
+          {
+            "title": "NICE CG50: recognising and responding to deterioration",
+            "url": "https://www.nice.org.uk/guidance/CG50/chapter/recommendations",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Clinical concern, response ownership and reassessment. No physiological thresholds, observation intervals or treatment instructions are introduced."
+          },
+          {
+            "title": "AHRQ TeamSTEPPS: Handoff",
+            "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/handoff.html",
+            "checkedDate": "2026-10-17",
+            "scope": "Communicate uncertainty, recent changes, named responsibility and receiver acceptance. The educational exercise does not transfer real clinical authority."
+          },
+          {
+            "title": "AHRQ TeamSTEPPS: Check-Back (or Repeat-Back)",
+            "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/checkback.html",
+            "checkedDate": "2026-10-17",
+            "scope": "The receiver repeats the message and the sender verifies or corrects understanding. These scripted exchanges are newly authored fiction, without treatment instructions."
+          }
+        ],
+        "reviewProvenance": {
+          "status": "unreviewed",
+          "ownerReportedPriorClinicianReview": true,
+          "priorReviewScope": "unverified",
+          "priorReviewVersion": "unverified",
+          "text": "The owner reports clinician review of earlier material; the reviewed scope and version are unverified. These version 5 receiver exchanges, contextual questions and Arrival C contrasts are newly authored fiction and have not received separate clinician review."
+        },
+        "workboardPrompt": "Choose work to follow up; reports may arrive together.",
+        "patientUpdates": [
+          {
+            "id": "speech-arm-change",
+            "afterRound": 1,
+            "requiresReviewed": [],
+            "text": "Authored fictional change after arrival: a family member reports speech sounds clearer, while difficulty using the right arm continues. This is a witness update, not a new clinician examination.",
+            "prompt": "How should you pass on this mixed change?",
+            "choices": [
+              {
+                "id": "defer-change-to-summary",
+                "label": "Pass on the clearer speech as the main update and leave the continuing arm difficulty in the earlier written account.",
+                "appropriate": false,
+                "feedback": "The new concern needs to reach the responsible clinician with its full detail. A pending report or one improved feature does not replace that communication.",
+                "requires": []
+              },
+              {
+                "id": "communicate-change",
+                "label": "Tell the receiving ED team that speech seems clearer but the arm difficulty continues, and ask who accepts the update.",
+                "appropriate": true,
+                "feedback": "Communicate the actual reported change and confirm a clinical owner. It neither establishes the cause nor predicts the outcome.",
+                "requires": []
+              }
+            ]
+          }
+        ]
+      },
+      "familyId": "pub-003-missed-turn-investigation",
+      "familyTitle": "The Missed Turn",
+      "recordLabel": "Arrival A",
+      "workboardPrompt": "Choose work to follow up; reports may arrive together.",
+      "authoredFiction": true,
+      "reviewProvenance": {
+        "status": "unreviewed",
+        "ownerReportedPriorClinicianReview": true,
+        "priorReviewScope": "unverified",
+        "priorReviewVersion": "unverified",
+        "text": "The owner reports clinician review of earlier material; the reviewed scope and version are unverified. These version 5 receiver exchanges, contextual questions and Arrival C contrasts are newly authored fiction and have not received separate clinician review."
+      },
+      "transferQuestion": {
+        "version": 1,
+        "synthetic": true,
+        "reviewStatus": "pending_human_review",
+        "sourceCheckedDate": "2026-10-16",
+        "delivery": "after-another-arrival",
+        "id": "stroke-improving-symptoms-v4",
+        "prompt": "In a different fictional record, sudden speech difficulty improves while one-sided hand difficulty continues. Emergency help is already called. What changes about the concern?",
+        "choices": [
+          {
+            "id": "exclude",
+            "label": "The improvement or lack of a visible infarct establishes a non-stroke explanation.",
+            "feedback": "Neither partial symptom improvement nor this early CT excludes ischemia or establishes another cause."
+          },
+          {
+            "id": "confirmed",
+            "label": "The symptoms alone establish a confirmed ischemic stroke for the handoff.",
+            "feedback": "The focal concern is important but does not by itself establish the cause in this supplied record."
+          },
+          {
+            "id": "concern-and-limits",
+            "label": "Report the continuing focal change and the evidence limits to the ED team; the cause still needs clinical assessment.",
+            "feedback": "Communicate both the actual observation and uncertainty. A diagnostic later image is not a universal prerequisite for urgent assessment."
+          }
+        ],
+        "answerId": "concern-and-limits",
+        "source": {
+          "title": "NINDS: Assess and Treat, diagnostic imaging",
+          "url": "https://www.ninds.nih.gov/health-information/stroke/assess-and-treat",
+          "scope": "Early ischemia may not be visible on noncontrast CT. An absent or nondiagnostic later study supplies no confirming finding; MRI is not presented as a universal prerequisite for urgent care.",
+          "checkedDate": "2026-10-16"
+        }
+      },
+      "coordination": {
+        "readbackScenarios": [
+          {
+            "id": "stroke-a-receiver-not-accepted",
+            "requiresSelections": {
+              "receiverId": "r-worklist"
+            },
+            "message": "“The worklist entry for speech and hand-use changes is visible. I have not accepted the next clinical review.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "stroke-a-receiver-not-accepted-alternative-1",
+                "label": "Verify that the entry is visible and record the next clinical review as accepted through the shared worklist.",
+                "appropriate": false,
+                "feedback": "Visibility does not establish that a person accepted responsibility.",
+                "requires": []
+              },
+              {
+                "id": "stroke-a-receiver-not-accepted-alternative-2",
+                "label": "Ask for a more complete diagnostic summary, then use its inclusion in the worklist as the review assignment.",
+                "appropriate": false,
+                "feedback": "More detail does not resolve the missing clinical receiver.",
+                "requires": []
+              },
+              {
+                "id": "stroke-a-receiver-not-accepted-verify",
+                "label": "Clarify who accepts the speech and hand-use changes concern and ask the named clinician to repeat their responsibility.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-a-next-owner-missing",
+            "requiresSelections": {
+              "nextOwnerId": "o-worklist"
+            },
+            "message": "“I received the summary. Whoever reads the last report will take responsibility for the next review.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "stroke-a-next-owner-missing-verify",
+                "label": "Ask the receiving ED clinician to accept the next review and confirm the route for later reports or changes.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              },
+              {
+                "id": "stroke-a-next-owner-missing-alternative-1",
+                "label": "Confirm that the final report reader will be recorded as the owner when the worklist becomes complete.",
+                "appropriate": false,
+                "feedback": "A future reader is not a named person accepting the concern now.",
+                "requires": []
+              },
+              {
+                "id": "stroke-a-next-owner-missing-alternative-2",
+                "label": "Verify the findings in the summary and leave ownership to the team handling the remaining requests.",
+                "appropriate": false,
+                "feedback": "Finding accuracy and ownership are separate parts of the exchange.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-a-opening-overclaim",
+            "requiresSelections": {
+              "situationId": "s-overclaim"
+            },
+            "message": "“I heard that the opening sudden speech and hand-use difficulty at dinner establishes a confirmed stroke.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "stroke-a-opening-overclaim-alternative-1",
+                "label": "Verify the diagnostic wording because it repeats the situation selected in the handoff accurately.",
+                "appropriate": false,
+                "feedback": "Repeating an inaccurate claim does not make it valid. The sender must also check its meaning against the known record.",
+                "requires": []
+              },
+              {
+                "id": "stroke-a-opening-overclaim-verify",
+                "label": "Correct the opening claim: it describes the presenting concern; stronger conclusions must use findings actually reviewed.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              },
+              {
+                "id": "stroke-a-opening-overclaim-alternative-2",
+                "label": "Keep that diagnosis in the exchange and label the remaining reports as details about its extent.",
+                "appropriate": false,
+                "feedback": "The opening account does not establish the diagnosis or make other findings secondary.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-a-uncertainty-withheld",
+            "requiresSelections": {
+              "uncertaintyId": "u-delay"
+            },
+            "message": "“I will accept the unresolved question after one cause has been confirmed.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "stroke-a-uncertainty-withheld-alternative-1",
+                "label": "Verify the condition for acceptance and keep responsibility with the results worklist until the cause is confirmed.",
+                "appropriate": false,
+                "feedback": "Diagnostic uncertainty does not supply an accountable next reviewer.",
+                "requires": []
+              },
+              {
+                "id": "stroke-a-uncertainty-withheld-alternative-2",
+                "label": "Replace the unresolved question with the leading diagnosis so the receiver can accept a definite account.",
+                "appropriate": false,
+                "feedback": "A stronger label cannot substitute for communicating the actual evidence and uncertainty.",
+                "requires": []
+              },
+              {
+                "id": "stroke-a-uncertainty-withheld-verify",
+                "label": "Clarify that the receiving ED clinician needs to accept the concern with its current uncertainty and outstanding work.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-a-imaging-and-change",
+            "requiresReviewed": [
+              "team-mri-summary"
+            ],
+            "requiresPatientUpdates": [
+              "speech-arm-change"
+            ],
+            "message": "“I heard clearer speech with continuing right-arm difficulty. the later MRI reports a matching small acute left frontal infarct. I accept this update for the ED team’s review.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "stroke-a-imaging-and-change-verify",
+                "label": "Verify the mixed witness update and the actual imaging account; keep clinical assessment with the ED team.",
+                "appropriate": true,
+                "feedback": "The repetition preserves both the continuing arm difficulty and the reviewed finding or report limit.",
+                "requires": []
+              },
+              {
+                "id": "stroke-a-imaging-and-change-alternative-1",
+                "label": "Correct the update to complete recovery because the speech improvement is the most recent observation.",
+                "appropriate": false,
+                "feedback": "Clearer speech does not mean the continuing right-arm difficulty has resolved.",
+                "requires": []
+              },
+              {
+                "id": "stroke-a-imaging-and-change-alternative-2",
+                "label": "Correct the account to an unconfirmed imaging question because the speech seems clearer now.",
+                "appropriate": false,
+                "feedback": "A witness-reported improvement does not erase the matching reviewed finding.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-a-first-ct-change-pending",
+            "requiresReviewed": [
+              "initial-ct"
+            ],
+            "requiresPatientUpdates": [
+              "speech-arm-change"
+            ],
+            "requiresPending": [
+              "team-mri-summary"
+            ],
+            "message": "“The first CT shows no definite infarct, so I heard a non-stroke problem. The speech seems clearer; the arm difficulty continues and later imaging is pending.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "stroke-a-first-ct-change-pending-alternative-1",
+                "label": "Verify the non-stroke wording because the improved speech agrees with the first CT’s lack of a visible infarct.",
+                "appropriate": false,
+                "feedback": "The improvement and this CT do not establish a non-stroke explanation.",
+                "requires": []
+              },
+              {
+                "id": "stroke-a-first-ct-change-pending-verify",
+                "label": "Correct the non-stroke claim: this CT does not exclude early ischemia; retain the mixed update and pending status.",
+                "appropriate": true,
+                "feedback": "The known CT, continuing focal concern and unreviewed later report have different roles in this exchange.",
+                "requires": []
+              },
+              {
+                "id": "stroke-a-first-ct-change-pending-alternative-2",
+                "label": "Replace the pending status with the later imaging finding so the team can receive a complete cause statement.",
+                "appropriate": false,
+                "feedback": "A pending later report cannot supply a finding in the current snapshot.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-a-mixed-change",
+            "requiresPatientUpdates": [
+              "speech-arm-change"
+            ],
+            "message": "“Speech seems clearer, but right-arm difficulty continues. I accept that as a family report, not a new clinical examination.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "stroke-a-mixed-change-verify",
+                "label": "Verify both parts of the witness update and its source; keep the ED team responsible for clinical reassessment.",
+                "appropriate": true,
+                "feedback": "The receiver has repeated the actual mixed observation without turning it into a diagnosis or an outcome.",
+                "requires": []
+              },
+              {
+                "id": "stroke-a-mixed-change-alternative-1",
+                "label": "Correct the update to resolved focal symptoms because clearer speech is the newer reported feature.",
+                "appropriate": false,
+                "feedback": "The arm difficulty remains in the same update and must not disappear from the account.",
+                "requires": []
+              },
+              {
+                "id": "stroke-a-mixed-change-alternative-2",
+                "label": "Confirm the account as a new clinician examination because a receiving team member has repeated it.",
+                "appropriate": false,
+                "feedback": "Repeating a family report does not change its source into a clinical examination.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-a-opening-only",
+            "message": "“I heard the presenting sudden speech and hand-use difficulty at dinner. The opening account alone does not establish its cause. I accept the next review; separately listed reports retain their recorded status.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "stroke-a-opening-only-alternative-1",
+                "label": "Correct the receiver to the final diagnosis expected for this arrival, even if its supporting report is not reviewed.",
+                "appropriate": false,
+                "feedback": "A future report or a remembered arrival cannot enter the current sent snapshot.",
+                "requires": []
+              },
+              {
+                "id": "stroke-a-opening-only-verify",
+                "label": "Verify the presenting concern, its limited certainty and accepted review; add no result that the sent snapshot does not contain.",
+                "appropriate": true,
+                "feedback": "This is a valid early exchange. A complete diagnostic worklist is not required to communicate the known concern and ownership.",
+                "requires": []
+              },
+              {
+                "id": "stroke-a-opening-only-alternative-2",
+                "label": "Withhold verification until all work is complete so the opening concern can be replaced by one definite explanation.",
+                "appropriate": false,
+                "feedback": "The known concern and next reviewer can be verified while the cause remains uncertain.",
+                "requires": []
+              }
+            ]
+          }
+        ],
+        "reassessmentScenarios": [
+          {
+            "id": "stroke-a-reassess-imaging-change",
+            "requiresReviewed": [
+              "team-mri-summary"
+            ],
+            "requiresPatientUpdates": [
+              "speech-arm-change"
+            ],
+            "message": "Reviewed: the later MRI reports a matching small acute left frontal infarct. Family reports clearer speech with continuing right-arm difficulty.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "stroke-a-reassess-imaging-change-alternative-1",
+                "label": "Revise the account to resolved focal symptoms and use the imaging only as background for the earlier episode.",
+                "appropriate": false,
+                "feedback": "The family still reports right-arm difficulty. The exercise has not supplied resolution or a patient outcome.",
+                "requires": []
+              },
+              {
+                "id": "stroke-a-reassess-imaging-change-alternative-2",
+                "label": "Treat the clearer speech as counterevidence that removes the matching infarct from the handoff.",
+                "appropriate": false,
+                "feedback": "The change does not erase the matching reviewed imaging finding.",
+                "requires": []
+              },
+              {
+                "id": "stroke-a-reassess-imaging-change-verify",
+                "label": "Give the ED team both the continuing arm difficulty and the reviewed imaging account. The matching reviewed finding supports ischemic stroke here; its mechanism remains a separate question.",
+                "appropriate": true,
+                "feedback": "A partial witness-reported improvement belongs alongside the actual reviewed record; it does not replace it.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-a-reassess-ct-change-pending",
+            "requiresReviewed": [
+              "initial-ct"
+            ],
+            "requiresPatientUpdates": [
+              "speech-arm-change"
+            ],
+            "requiresPending": [
+              "team-mri-summary"
+            ],
+            "message": "Reviewed: first CT without hemorrhage or definite early infarct. Speech seems clearer, arm difficulty continues, and later imaging remains pending.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "stroke-a-reassess-ct-change-pending-alternative-1",
+                "label": "Use the clearer speech and first CT together to describe a settled non-stroke explanation to the team.",
+                "appropriate": false,
+                "feedback": "Those observations do not establish that conclusion.",
+                "requires": []
+              },
+              {
+                "id": "stroke-a-reassess-ct-change-pending-verify",
+                "label": "Report the mixed change and first CT’s limit; leave the later report pending and the assessment with the ED team.",
+                "appropriate": true,
+                "feedback": "This uses what is known without treating the first CT as exclusion or forecasting the later report.",
+                "requires": []
+              },
+              {
+                "id": "stroke-a-reassess-ct-change-pending-alternative-2",
+                "label": "Hold the continuing arm concern until the later report is available to determine whether it belongs in the account.",
+                "appropriate": false,
+                "feedback": "The continuing reported difficulty belongs in the update before its explanation is settled.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-a-reassess-mixed-change",
+            "requiresPatientUpdates": [
+              "speech-arm-change"
+            ],
+            "message": "The family reports clearer speech with continuing right-arm difficulty. Other findings have only the status shown in this snapshot.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "stroke-a-reassess-mixed-change-verify",
+                "label": "Carry both observations and their witness source to the ED team, adding only findings already reviewed.",
+                "appropriate": true,
+                "feedback": "A clearer symptom and a continuing symptom must both remain visible; neither supplies an unreviewed test result.",
+                "requires": []
+              },
+              {
+                "id": "stroke-a-reassess-mixed-change-alternative-1",
+                "label": "Carry the improved speech as the current situation and leave the continuing arm difficulty in the earlier account.",
+                "appropriate": false,
+                "feedback": "That separates two parts of the same update and creates a misleading recovery account.",
+                "requires": []
+              },
+              {
+                "id": "stroke-a-reassess-mixed-change-alternative-2",
+                "label": "Use the continuing arm difficulty to label the cause as confirmed without relying on the reviewed record.",
+                "appropriate": false,
+                "feedback": "Continuing concern belongs in the handoff without converting it into an unsupported diagnostic label.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-a-reassess-current-record",
+            "message": "Use the reviewed findings and task statuses in the current snapshot. This checkpoint supplies no additional patient finding.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "stroke-a-reassess-current-record-verify",
+                "label": "Separate what you reviewed from what is pending or available to read, and confirm the receiving ED clinician owns the next review.",
+                "appropriate": true,
+                "feedback": "Reading, availability and pending work are different statuses. Use only the current snapshot; no later fact is supplied by this question.",
+                "requires": []
+              },
+              {
+                "id": "stroke-a-reassess-current-record-alternative-1",
+                "label": "Build the explanation from the expected final reports and revise it only if one later result disagrees.",
+                "appropriate": false,
+                "feedback": "A requested or expected finding is not reviewed evidence.",
+                "requires": []
+              },
+              {
+                "id": "stroke-a-reassess-current-record-alternative-2",
+                "label": "Carry the opening account alone until every requested report is ready, then assign the next clinical reviewer.",
+                "appropriate": false,
+                "feedback": "Reviewed findings can update the account before the worklist is complete, and the concern already needs an owner.",
+                "requires": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "transfer": {
+      "version": 1,
+      "synthetic": true,
+      "reviewStatus": "pending_human_review",
+      "sourceCheckedDate": "2026-10-16",
+      "delivery": "after-another-arrival",
+      "id": "stroke-improving-symptoms-v4",
+      "prompt": "In a different fictional record, sudden speech difficulty improves while one-sided hand difficulty continues. Emergency help is already called. What changes about the concern?",
+      "choices": [
+        {
+          "id": "exclude",
+          "label": "The improvement or lack of a visible infarct establishes a non-stroke explanation.",
+          "feedback": "Neither partial symptom improvement nor this early CT excludes ischemia or establishes another cause."
+        },
+        {
+          "id": "confirmed",
+          "label": "The symptoms alone establish a confirmed ischemic stroke for the handoff.",
+          "feedback": "The focal concern is important but does not by itself establish the cause in this supplied record."
+        },
+        {
+          "id": "concern-and-limits",
+          "label": "Report the continuing focal change and the evidence limits to the ED team; the cause still needs clinical assessment.",
+          "feedback": "Communicate both the actual observation and uncertainty. A diagnostic later image is not a universal prerequisite for urgent assessment."
+        }
+      ],
+      "answerId": "concern-and-limits",
+      "source": {
+        "title": "NINDS: Assess and Treat, diagnostic imaging",
+        "url": "https://www.ninds.nih.gov/health-information/stroke/assess-and-treat",
+        "scope": "Early ischemia may not be visible on noncontrast CT. An absent or nondiagnostic later study supplies no confirming finding; MRI is not presented as a universal prerequisite for urgent care.",
+        "checkedDate": "2026-10-16"
+      }
+    }
+  },
+  {
+    "episode": {
+      "id": "pub-003-missed-turn-investigation-record-b",
+      "version": 5,
+      "title": "The Missed Turn",
+      "subtitle": "Follow the concern. Review the record. Hand it over.",
+      "opening": "At dinner, a 68-year-old suddenly cannot finish a sentence and has trouble holding a fork. Emergency help is already on the way. Follow the fictional team record as it arrives.",
+      "disclaimer": "Educational fiction pending human review. Reports, changes and update rounds are authored; they are not clinical advice or patient outcomes.",
+      "reviewStatus": "pending_human_review",
+      "presentation": {
+        "audience": "public",
+        "playMinutes": "4-7",
+        "image": "./assets/episodes/pub-001-stroke-escalation-720.webp",
+        "imageAlt": "Generated illustration of a dinner interrupted by an emergency response. Not diagnostic evidence."
+      },
+      "sources": [
+        {
+          "title": "NICE NG128: stroke recognition and initial assessment, recommendations 1.1.1-1.1.3",
+          "url": "https://www.nice.org.uk/guidance/ng128/chapter/recommendations",
+          "checkedUtc": "2026-10-16T04:29:45Z",
+          "scope": "Sudden focal symptoms and checking hypoglycaemia as a competing explanation. The fictional normal glucose weakens that rival without establishing stroke; no treatment content is used."
+        },
+        {
+          "title": "NINDS: Assess and Treat, CT and MRI sections",
+          "url": "https://www.ninds.nih.gov/health-information/stroke/assess-and-treat",
+          "checkedUtc": "2026-10-16T04:29:45Z",
+          "scope": "CT detects bleeding; diffusion MRI can show ischemia before a non-contrast CT. Supports limits of the authored reports, not a required scan sequence or patient-specific advice."
+        },
+        {
+          "title": "NINDS: Assess and Treat, diagnostic imaging",
+          "url": "https://www.ninds.nih.gov/health-information/stroke/assess-and-treat",
+          "scope": "Early ischemia may not be visible on noncontrast CT. An absent or nondiagnostic later study supplies no confirming finding; MRI is not presented as a universal prerequisite for urgent care.",
+          "checkedDate": "2026-10-16"
+        },
+        {
+          "title": "2026 AHA/ASA Guideline for Early Management of Acute Ischemic Stroke, section 3.2",
+          "url": "https://www.ahajournals.org/doi/10.1161/STR.0000000000000513",
+          "scope": "Clinicians can diagnose ischemic stroke from clinical presentation with a negative noncontrast CT in many patients. MRI is not universally required. This exercise only judges the incomplete supplied record and introduces no treatment or eligibility content.",
+          "checkedDate": "2026-10-16"
+        },
+        {
+          "title": "AHRQ TeamSTEPPS: Check-Back (or Repeat-Back)",
+          "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/checkback.html",
+          "checkedDate": "2026-10-17",
+          "scope": "The receiver repeats the message and the sender verifies or corrects understanding. These scripted exchanges are newly authored fiction, without treatment instructions."
+        },
+        {
+          "title": "AHRQ TeamSTEPPS: Handoff",
+          "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/handoff.html",
+          "checkedDate": "2026-10-17",
+          "scope": "Communicate uncertainty, recent changes, named responsibility and receiver acceptance. The educational exercise does not transfer real clinical authority."
+        }
+      ],
+      "hypotheses": [
+        {
+          "id": "ischemic-stroke",
+          "label": "Ischemic stroke (interrupted blood flow)"
+        },
+        {
+          "id": "hypoglycemia",
+          "label": "Low blood glucose"
+        },
+        {
+          "id": "migraine-aura",
+          "label": "Migraine with neurological symptoms"
+        },
+        {
+          "id": "cause-unresolved",
+          "label": "Cause not established by this record"
+        }
+      ],
+      "actions": [
+        {
+          "id": "witness-account",
+          "label": "Witness account",
+          "category": "history",
+          "minutes": 3,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional witness account: speech was normal a moment earlier. Word-finding difficulty and right-hand weakness began together and persist.",
+          "interpretation": "Sudden speech and one-sided movement changes call for urgent assessment, not a wait-and-see conclusion."
+        },
+        {
+          "id": "team-examination",
+          "label": "Team examination",
+          "category": "examination",
+          "minutes": 4,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional examination: the clinician records difficulty naming familiar objects and right-arm drift. The patient remains awake.",
+          "interpretation": "The observed pattern strengthens concern but does not establish its cause alone."
+        },
+        {
+          "id": "glucose-result",
+          "label": "Glucose report",
+          "category": "laboratory",
+          "minutes": 2,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional measurement during the symptoms: blood glucose is 106 mg/dL (5.9 mmol/L).",
+          "interpretation": "This result does not support low glucose as the current explanation; it does not itself prove stroke."
+        },
+        {
+          "id": "initial-ct",
+          "label": "First CT report",
+          "category": "imaging",
+          "minutes": 6,
+          "requires": [],
+          "sourceIds": [
+            1
+          ],
+          "finding": "Fictional non-contrast head CT report: no hemorrhage is seen; no definite early infarct is visible.",
+          "interpretation": "An early CT without a visible infarct does not rule out ischemic stroke."
+        },
+        {
+          "id": "team-mri-summary",
+          "label": "Later imaging update",
+          "category": "imaging",
+          "minutes": 8,
+          "requires": [],
+          "sourceIds": [
+            1
+          ],
+          "finding": "Fictional later imaging update: an attempted study is nondiagnostic. No diagnostic later imaging result is available in this supplied record.",
+          "interpretation": "This supplies no confirming image and does not rule out stroke. The persistent focal concern still needs clinician-owned assessment; this is not a rule that care waits for MRI."
+        },
+        {
+          "id": "witness-handoff",
+          "label": "Witness handoff",
+          "category": "coordination",
+          "minutes": 2,
+          "requires": [
+            "witness-account"
+          ],
+          "sourceIds": [
+            0
+          ],
+          "finding": "The fictional handoff preserves the witnessed onset and persisting changes. It makes no claim about examinations or scans you did not read.",
+          "interpretation": "A useful handoff separates what was witnessed from what remains unknown."
+        }
+      ],
+      "reasoning": {
+        "supportLabel": "Evidence for your explanation",
+        "limitationLabel": "A comparison or limit",
+        "prompt": "Connect your explanation to reviewed evidence, then state a limit.",
+        "caseLearningText": "No hemorrhage on this CT is different from excluding early ischemia. The supplied later study adds no diagnostic finding. Clinicians can diagnose stroke from clinical presentation and CT; this exercise judges only the incomplete supplied record, without making MRI a prerequisite.",
+        "insufficientCitationFeedback": "Connect the first CT and later nondiagnostic update. Together they explain why these supplied images have not established the cause; neither is proof that stroke is excluded.",
+        "openingFacts": [
+          {
+            "id": "opening:speech-hand-change",
+            "label": "Sudden speech and hand-use changes in the opening handoff",
+            "strength": "concern",
+            "supports": [
+              "ischemic-stroke",
+              "hypoglycemia",
+              "migraine-aura",
+              "cause-unresolved"
+            ]
+          }
+        ],
+        "supportRules": {
+          "witness-account": {
+            "strength": "suggestive",
+            "supports": [
+              "ischemic-stroke"
+            ]
+          },
+          "team-examination": {
+            "strength": "suggestive",
+            "supports": [
+              "ischemic-stroke"
+            ]
+          },
+          "glucose-result": {
+            "strength": "limited",
+            "supports": [],
+            "conflictsWith": [
+              "hypoglycemia"
+            ],
+            "conflictFeedback": "The glucose result you read during the symptoms does not support low glucose as the current explanation. It weakens that rival without proving ischemic stroke."
+          },
+          "initial-ct": {
+            "strength": "component",
+            "supports": [
+              "cause-unresolved"
+            ]
+          },
+          "team-mri-summary": {
+            "strength": "component",
+            "supports": [
+              "cause-unresolved"
+            ]
+          },
+          "witness-handoff": {
+            "strength": "coordination",
+            "supports": []
+          }
+        },
+        "uncertaintyOptions": [
+          {
+            "id": "symptoms-not-confirmation",
+            "label": "The opening speech and hand changes raise concern but do not establish a cause.",
+            "requires": [],
+            "scope": "provisional"
+          },
+          {
+            "id": "glucose-discriminator",
+            "label": "The glucose result weakens current low glucose; it is not a positive stroke test.",
+            "requires": [
+              "glucose-result"
+            ],
+            "scope": "any",
+            "forHypotheses": [
+              "ischemic-stroke",
+              "migraine-aura",
+              "cause-unresolved"
+            ]
+          },
+          {
+            "id": "ct-limit",
+            "label": "The first CT alone does not exclude early ischemia.",
+            "requires": [
+              "initial-ct"
+            ],
+            "scope": "any"
+          },
+          {
+            "id": "imaging-scope",
+            "label": "These reports leave the cause unestablished; persistent focal changes still belong in the clinician handoff.",
+            "requires": [
+              "initial-ct",
+              "team-mri-summary"
+            ],
+            "scope": "supported",
+            "forHypotheses": [
+              "cause-unresolved"
+            ]
+          },
+          {
+            "id": "all-excluded",
+            "label": "The first CT and absent diagnostic later image exclude stroke.",
+            "requires": [],
+            "scope": "unsupported"
+          }
+        ],
+        "supportGroups": [
+          {
+            "id": "pattern:imaging-limits",
+            "label": "First CT and later imaging limitation together",
+            "requires": [
+              "initial-ct",
+              "team-mri-summary"
+            ],
+            "strength": "decisive",
+            "supports": [
+              "cause-unresolved"
+            ]
+          }
+        ]
+      },
+      "resolution": {
+        "hypothesisId": "cause-unresolved",
+        "conclusionKind": "unresolved",
+        "evidenceActionIds": [
+          "initial-ct",
+          "team-mri-summary"
+        ],
+        "supportedSummary": "The first CT shows no hemorrhage or definite early infarct, and later imaging is nondiagnostic. The cause is not established by this supplied record; stroke is not excluded.",
+        "mismatchSummary": "The supplied imaging does not establish the selected cause. Persistent focal changes keep stroke a live concern rather than a confirmed or excluded diagnosis here.",
+        "provisionalSummary": "The first CT and later imaging limitation were not both reviewed. An unresolved explanation remains provisional on this route.",
+        "decisiveClue": "The early CT does not exclude ischemia; the later attempted study supplies no diagnostic result.",
+        "missingClue": "At least one of the two imaging reports was not reviewed.",
+        "nextLearning": "Report the ongoing focal concern and the actual imaging limits. Further assessment belongs to the responsible clinician, without a universal MRI requirement.",
+        "limitations": [
+          "Authored fictional records pending human medical review; source references support educational framing, not these patient measurements or events.",
+          "Update rounds are narrative release events, not clinical minutes, recommended waits or an investigation sequence. Emergency assessment continues independently.",
+          "No treatment, dose, eligibility, prognosis or patient outcome is modeled. A recorded explanation does not establish clinical competence.",
+          "Earlier owner-reported clinician review has unverified scope and version; it does not cover these version 5 questions, exchanges or Arrival C records."
+        ]
+      },
+      "careWorkflow": {
+        "episodeId": "pub-003-missed-turn-investigation-record-b",
+        "version": 1,
+        "role": {
+          "label": "Family witness communicating with the ED team",
+          "boundary": "Report what you witnessed and ask who accepts updates. The ED team owns tests, clinical assessment and care decisions."
+        },
+        "timingNote": "Fictional update rounds release reports and narrative events. They are not minutes, recommended waits or a prescribed clinical sequence.",
+        "priority": {
+          "prompt": "Who needs the opening concern before its cause is settled?",
+          "choices": [
+            {
+              "id": "share-opening-concern",
+              "label": "Share sudden speech and hand-use changes with the receiving ed clinician and confirm who accepts review.",
+              "appropriate": true,
+              "feedback": "Communicate the concern and uncertainty early; a diagnostic label is not required to name a review owner.",
+              "requires": []
+            },
+            {
+              "id": "finish-record-before-contact",
+              "label": "Collect the remaining reports first, then ask the receiving ed clinician to accept the complete explanation.",
+              "appropriate": false,
+              "feedback": "A fuller record may refine the explanation. It does not replace early shared awareness and responsibility for the presenting concern.",
+              "requires": []
+            }
+          ]
+        },
+        "tasks": {
+          "witness-account": {
+            "owner": "Receiving ED nurse",
+            "label": "Follow up: witness account",
+            "rounds": 1
+          },
+          "team-examination": {
+            "owner": "ED examining clinician",
+            "label": "Follow up: team examination",
+            "rounds": 1
+          },
+          "glucose-result": {
+            "owner": "ED examining clinician",
+            "label": "Follow up: glucose report",
+            "rounds": 1
+          },
+          "initial-ct": {
+            "owner": "ED senior clinician",
+            "label": "Follow up: first ct report",
+            "rounds": 2
+          },
+          "team-mri-summary": {
+            "owner": "ED senior clinician",
+            "label": "Follow up: later imaging update",
+            "rounds": 2
+          },
+          "witness-handoff": {
+            "owner": "Receiving ED nurse",
+            "label": "Follow up: witness handoff",
+            "rounds": 1
+          }
+        },
+        "reassessment": {
+          "minimumReviewed": 1,
+          "update": "Fictional team checkpoint: identify what you reviewed, what remains pending and who accepts the next review. This checkpoint supplies no additional examination or laboratory finding."
+        },
+        "handoff": {
+          "receiver": {
+            "prompt": "Who accepts this concern?",
+            "choices": [
+              {
+                "id": "r-worklist",
+                "label": "The shared results worklist, with the next reader deciding who receives the concern.",
+                "appropriate": false,
+                "feedback": "A worklist records tasks; it does not show who accepted responsibility.",
+                "requires": []
+              },
+              {
+                "id": "r-clinical",
+                "label": "The receiving ED clinician or nurse accepting the witness account.",
+                "appropriate": true,
+                "feedback": "Name the clinical receiver and verify acceptance of the concern.",
+                "requires": []
+              }
+            ]
+          },
+          "situation": {
+            "prompt": "Which known fact will you carry forward?",
+            "choices": [
+              {
+                "id": "s-opening",
+                "label": "At dinner, a 68-year-old suddenly had trouble speaking and holding a fork; emergency help was called.",
+                "appropriate": true,
+                "feedback": "This is an opening fact, available for an early handoff. Add the actual reviewed and pending information to the shared record.",
+                "requires": []
+              },
+              {
+                "id": "s-witness",
+                "label": "The reviewed witness account places the speech and right-hand changes together, with continuing difficulty.",
+                "appropriate": true,
+                "feedback": "Distinguish witnessed onset and changes from a diagnosis.",
+                "requires": [
+                  "witness-account"
+                ]
+              },
+              {
+                "id": "s-imaging",
+                "label": "The first CT shows no hemorrhage or definite early infarct; the later attempted study is nondiagnostic.",
+                "appropriate": true,
+                "feedback": "State the findings actually reviewed. Do not replace an unavailable diagnostic result with a normal scan.",
+                "requires": [
+                  "initial-ct",
+                  "team-mri-summary"
+                ]
+              },
+              {
+                "id": "s-overclaim",
+                "label": "The initial speech change establishes stroke; hand over the arm change as a severity detail.",
+                "appropriate": false,
+                "feedback": "The opening observation does not establish that cause. Keep what happened separate from the explanation.",
+                "requires": []
+              }
+            ]
+          },
+          "uncertainty": {
+            "prompt": "Which limit belongs with that statement?",
+            "choices": [
+              {
+                "id": "u-delay",
+                "label": "Hold the handoff until a single cause is confirmed, so the receiver gets no unresolved question.",
+                "appropriate": false,
+                "feedback": "An unresolved question belongs in an early handoff. It should have a named clinical receiver, not be silently withheld.",
+                "requires": []
+              },
+              {
+                "id": "u-imaging",
+                "label": "The supplied images do not establish the cause or exclude stroke; continuing focal changes need the ED team’s assessment.",
+                "appropriate": true,
+                "feedback": "The witness reports evidence and concerns; the clinical team owns the assessment and further decisions.",
+                "requires": [
+                  "initial-ct",
+                  "team-mri-summary"
+                ]
+              },
+              {
+                "id": "u-opening",
+                "label": "The opening symptoms alone do not establish a cause; stronger claims must cite reviewed findings.",
+                "appropriate": true,
+                "feedback": "This limits the opening account without pretending later reports are still unknown.",
+                "requires": []
+              }
+            ]
+          },
+          "nextOwner": {
+            "prompt": "Who follows up the remaining concern?",
+            "choices": [
+              {
+                "id": "o-clinical",
+                "label": "Confirm the receiving ed clinician owns the next review and how new reports or symptom changes reach them.",
+                "appropriate": true,
+                "feedback": "Identify an accountable receiver and an update route. This assigns communication responsibility, not treatment.",
+                "requires": []
+              },
+              {
+                "id": "o-worklist",
+                "label": "Use the completed request as the transfer of responsibility; the receiving worklist can assign the next review.",
+                "appropriate": false,
+                "feedback": "A sent request is not evidence that another person accepted the concern or the next review.",
+                "requires": []
+              }
+            ]
+          }
+        },
+        "readback": {
+          "prompt": "Verify the receiver’s reply against the sent handoff.",
+          "choices": []
+        },
+        "sources": [
+          {
+            "title": "WHO Emergency Care Toolkit: Interagency Integrated Triage Tool",
+            "url": "https://www.who.int/teams/integrated-health-services/clinical-services-and-systems/emergency-and-critical-care/emergency-care-toolkit",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Prioritizing clinical concern separately from establishing a diagnosis. These role-specific exercises do not implement or validate a triage scale."
+          },
+          {
+            "title": "NICE CG50: recognising and responding to deterioration",
+            "url": "https://www.nice.org.uk/guidance/CG50/chapter/recommendations",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Clinical concern, response ownership and reassessment. No physiological thresholds, observation intervals or treatment instructions are introduced."
+          },
+          {
+            "title": "AHRQ TeamSTEPPS: Handoff",
+            "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/handoff.html",
+            "checkedDate": "2026-10-17",
+            "scope": "Communicate uncertainty, recent changes, named responsibility and receiver acceptance. The educational exercise does not transfer real clinical authority."
+          },
+          {
+            "title": "AHRQ TeamSTEPPS: Check-Back (or Repeat-Back)",
+            "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/checkback.html",
+            "checkedDate": "2026-10-17",
+            "scope": "The receiver repeats the message and the sender verifies or corrects understanding. These scripted exchanges are newly authored fiction, without treatment instructions."
+          }
+        ],
+        "reviewProvenance": {
+          "status": "unreviewed",
+          "ownerReportedPriorClinicianReview": true,
+          "priorReviewScope": "unverified",
+          "priorReviewVersion": "unverified",
+          "text": "The owner reports clinician review of earlier material; the reviewed scope and version are unverified. These version 5 receiver exchanges, contextual questions and Arrival C contrasts are newly authored fiction and have not received separate clinician review."
+        },
+        "workboardPrompt": "Choose work to follow up; reports may arrive together.",
+        "patientUpdates": [
+          {
+            "id": "speech-arm-change",
+            "afterRound": 1,
+            "requiresReviewed": [],
+            "text": "Authored fictional change after arrival: a family member reports speech sounds clearer, while difficulty using the right arm continues. This is a witness update, not a new clinician examination.",
+            "prompt": "How should you pass on this mixed change?",
+            "choices": [
+              {
+                "id": "communicate-change",
+                "label": "Tell the receiving ED team that speech seems clearer but the arm difficulty continues, and ask who accepts the update.",
+                "appropriate": true,
+                "feedback": "Communicate the actual reported change and confirm a clinical owner. It neither establishes the cause nor predicts the outcome.",
+                "requires": []
+              },
+              {
+                "id": "defer-change-to-summary",
+                "label": "Pass on the clearer speech as the main update and leave the continuing arm difficulty in the earlier written account.",
+                "appropriate": false,
+                "feedback": "The new concern needs to reach the responsible clinician with its full detail. A pending report or one improved feature does not replace that communication.",
+                "requires": []
+              }
+            ]
+          }
+        ]
+      },
+      "familyId": "pub-003-missed-turn-investigation",
+      "familyTitle": "The Missed Turn",
+      "recordLabel": "Arrival B",
+      "workboardPrompt": "Choose work to follow up; reports may arrive together.",
+      "authoredFiction": true,
+      "reviewProvenance": {
+        "status": "unreviewed",
+        "ownerReportedPriorClinicianReview": true,
+        "priorReviewScope": "unverified",
+        "priorReviewVersion": "unverified",
+        "text": "The owner reports clinician review of earlier material; the reviewed scope and version are unverified. These version 5 receiver exchanges, contextual questions and Arrival C contrasts are newly authored fiction and have not received separate clinician review."
+      },
+      "transferQuestion": {
+        "version": 1,
+        "synthetic": true,
+        "reviewStatus": "pending_human_review",
+        "sourceCheckedDate": "2026-10-16",
+        "delivery": "after-another-arrival",
+        "id": "stroke-positive-report-contrast-v4",
+        "prompt": "A different fictional arrival has continuing focal changes. A later diagnostic imaging report explicitly identifies acute ischemic injury matching those changes. What can this report add?",
+        "choices": [
+          {
+            "id": "still-no-evidence",
+            "label": "The cause remains unsupported solely because the first CT showed no definite early infarct.",
+            "feedback": "A later positive finding changes this supplied record. The first CT does not cancel it."
+          },
+          {
+            "id": "matching-support",
+            "label": "The matching report supports ischemic stroke here, while its cause and later care decisions still need assessment.",
+            "feedback": "A matching diagnostic finding adds support beyond the early limited report. It does not mean all suspected strokes universally require this imaging."
+          },
+          {
+            "id": "all-focal-proven",
+            "label": "Use the matching injury to establish its mechanism as well, without a separate cause assessment.",
+            "feedback": "A matching injury supports ischemic stroke in this record; its mechanism and later care decisions are separate questions."
+          }
+        ],
+        "answerId": "matching-support",
+        "source": {
+          "title": "NINDS: Assess and Treat, diagnostic imaging",
+          "url": "https://www.ninds.nih.gov/health-information/stroke/assess-and-treat",
+          "scope": "Early ischemia may not be visible on noncontrast CT. An absent or nondiagnostic later study supplies no confirming finding; MRI is not presented as a universal prerequisite for urgent care.",
+          "checkedDate": "2026-10-16"
+        }
+      },
+      "coordination": {
+        "readbackScenarios": [
+          {
+            "id": "stroke-b-receiver-not-accepted",
+            "requiresSelections": {
+              "receiverId": "r-worklist"
+            },
+            "message": "“The worklist entry for speech and hand-use changes is visible. I have not accepted the next clinical review.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "stroke-b-receiver-not-accepted-verify",
+                "label": "Clarify who accepts the speech and hand-use changes concern and ask the named clinician to repeat their responsibility.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              },
+              {
+                "id": "stroke-b-receiver-not-accepted-alternative-1",
+                "label": "Verify that the entry is visible and record the next clinical review as accepted through the shared worklist.",
+                "appropriate": false,
+                "feedback": "Visibility does not establish that a person accepted responsibility.",
+                "requires": []
+              },
+              {
+                "id": "stroke-b-receiver-not-accepted-alternative-2",
+                "label": "Ask for a more complete diagnostic summary, then use its inclusion in the worklist as the review assignment.",
+                "appropriate": false,
+                "feedback": "More detail does not resolve the missing clinical receiver.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-b-next-owner-missing",
+            "requiresSelections": {
+              "nextOwnerId": "o-worklist"
+            },
+            "message": "“I received the summary. Whoever reads the last report will take responsibility for the next review.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "stroke-b-next-owner-missing-alternative-1",
+                "label": "Confirm that the final report reader will be recorded as the owner when the worklist becomes complete.",
+                "appropriate": false,
+                "feedback": "A future reader is not a named person accepting the concern now.",
+                "requires": []
+              },
+              {
+                "id": "stroke-b-next-owner-missing-verify",
+                "label": "Ask the receiving ED clinician to accept the next review and confirm the route for later reports or changes.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              },
+              {
+                "id": "stroke-b-next-owner-missing-alternative-2",
+                "label": "Verify the findings in the summary and leave ownership to the team handling the remaining requests.",
+                "appropriate": false,
+                "feedback": "Finding accuracy and ownership are separate parts of the exchange.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-b-opening-overclaim",
+            "requiresSelections": {
+              "situationId": "s-overclaim"
+            },
+            "message": "“I heard that the opening sudden speech and hand-use difficulty at dinner establishes a confirmed stroke.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "stroke-b-opening-overclaim-alternative-1",
+                "label": "Verify the diagnostic wording because it repeats the situation selected in the handoff accurately.",
+                "appropriate": false,
+                "feedback": "Repeating an inaccurate claim does not make it valid. The sender must also check its meaning against the known record.",
+                "requires": []
+              },
+              {
+                "id": "stroke-b-opening-overclaim-alternative-2",
+                "label": "Keep that diagnosis in the exchange and label the remaining reports as details about its extent.",
+                "appropriate": false,
+                "feedback": "The opening account does not establish the diagnosis or make other findings secondary.",
+                "requires": []
+              },
+              {
+                "id": "stroke-b-opening-overclaim-verify",
+                "label": "Correct the opening claim: it describes the presenting concern; stronger conclusions must use findings actually reviewed.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-b-uncertainty-withheld",
+            "requiresSelections": {
+              "uncertaintyId": "u-delay"
+            },
+            "message": "“I will accept the unresolved question after one cause has been confirmed.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "stroke-b-uncertainty-withheld-verify",
+                "label": "Clarify that the receiving ED clinician needs to accept the concern with its current uncertainty and outstanding work.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              },
+              {
+                "id": "stroke-b-uncertainty-withheld-alternative-1",
+                "label": "Verify the condition for acceptance and keep responsibility with the results worklist until the cause is confirmed.",
+                "appropriate": false,
+                "feedback": "Diagnostic uncertainty does not supply an accountable next reviewer.",
+                "requires": []
+              },
+              {
+                "id": "stroke-b-uncertainty-withheld-alternative-2",
+                "label": "Replace the unresolved question with the leading diagnosis so the receiver can accept a definite account.",
+                "appropriate": false,
+                "feedback": "A stronger label cannot substitute for communicating the actual evidence and uncertainty.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-b-imaging-and-change",
+            "requiresReviewed": [
+              "initial-ct",
+              "team-mri-summary"
+            ],
+            "requiresPatientUpdates": [
+              "speech-arm-change"
+            ],
+            "message": "“The imaging is limited and I accept the update: the speech and right-arm difficulty have both resolved.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "stroke-b-imaging-and-change-alternative-1",
+                "label": "Correct the update to complete recovery because the speech improvement is the most recent observation.",
+                "appropriate": false,
+                "feedback": "Clearer speech does not mean the continuing right-arm difficulty has resolved.",
+                "requires": []
+              },
+              {
+                "id": "stroke-b-imaging-and-change-alternative-2",
+                "label": "Correct the imaging account to a negative stroke evaluation because no later positive image was supplied.",
+                "appropriate": false,
+                "feedback": "A missing or nondiagnostic later result does not exclude stroke or establish another cause.",
+                "requires": []
+              },
+              {
+                "id": "stroke-b-imaging-and-change-verify",
+                "label": "Correct the change: speech seems clearer, but right-arm difficulty continues; retain the supplied imaging limits.",
+                "appropriate": true,
+                "feedback": "The receiver has turned partial improvement into resolution. The sender must correct that specific mismatch.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-b-first-ct-change-pending",
+            "requiresReviewed": [
+              "initial-ct"
+            ],
+            "requiresPatientUpdates": [
+              "speech-arm-change"
+            ],
+            "requiresPending": [
+              "team-mri-summary"
+            ],
+            "message": "“The first CT shows no definite infarct, so I heard a non-stroke problem. The speech seems clearer; the arm difficulty continues and later imaging is pending.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "stroke-b-first-ct-change-pending-alternative-1",
+                "label": "Verify the non-stroke wording because the improved speech agrees with the first CT’s lack of a visible infarct.",
+                "appropriate": false,
+                "feedback": "The improvement and this CT do not establish a non-stroke explanation.",
+                "requires": []
+              },
+              {
+                "id": "stroke-b-first-ct-change-pending-verify",
+                "label": "Correct the non-stroke claim: this CT does not exclude early ischemia; retain the mixed update and pending status.",
+                "appropriate": true,
+                "feedback": "The known CT, continuing focal concern and unreviewed later report have different roles in this exchange.",
+                "requires": []
+              },
+              {
+                "id": "stroke-b-first-ct-change-pending-alternative-2",
+                "label": "Replace the pending status with the later imaging finding so the team can receive a complete cause statement.",
+                "appropriate": false,
+                "feedback": "A pending later report cannot supply a finding in the current snapshot.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-b-mixed-change",
+            "requiresPatientUpdates": [
+              "speech-arm-change"
+            ],
+            "message": "“Speech seems clearer, but right-arm difficulty continues. I accept that as a family report, not a new clinical examination.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "stroke-b-mixed-change-verify",
+                "label": "Verify both parts of the witness update and its source; keep the ED team responsible for clinical reassessment.",
+                "appropriate": true,
+                "feedback": "The receiver has repeated the actual mixed observation without turning it into a diagnosis or an outcome.",
+                "requires": []
+              },
+              {
+                "id": "stroke-b-mixed-change-alternative-1",
+                "label": "Correct the update to resolved focal symptoms because clearer speech is the newer reported feature.",
+                "appropriate": false,
+                "feedback": "The arm difficulty remains in the same update and must not disappear from the account.",
+                "requires": []
+              },
+              {
+                "id": "stroke-b-mixed-change-alternative-2",
+                "label": "Confirm the account as a new clinician examination because a receiving team member has repeated it.",
+                "appropriate": false,
+                "feedback": "Repeating a family report does not change its source into a clinical examination.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-b-opening-only",
+            "message": "“I heard the presenting sudden speech and hand-use difficulty at dinner. The opening account alone does not establish its cause. I accept the next review; separately listed reports retain their recorded status.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "stroke-b-opening-only-alternative-1",
+                "label": "Correct the receiver to the final diagnosis expected for this arrival, even if its supporting report is not reviewed.",
+                "appropriate": false,
+                "feedback": "A future report or a remembered arrival cannot enter the current sent snapshot.",
+                "requires": []
+              },
+              {
+                "id": "stroke-b-opening-only-verify",
+                "label": "Verify the presenting concern, its limited certainty and accepted review; add no result that the sent snapshot does not contain.",
+                "appropriate": true,
+                "feedback": "This is a valid early exchange. A complete diagnostic worklist is not required to communicate the known concern and ownership.",
+                "requires": []
+              },
+              {
+                "id": "stroke-b-opening-only-alternative-2",
+                "label": "Withhold verification until all work is complete so the opening concern can be replaced by one definite explanation.",
+                "appropriate": false,
+                "feedback": "The known concern and next reviewer can be verified while the cause remains uncertain.",
+                "requires": []
+              }
+            ]
+          }
+        ],
+        "reassessmentScenarios": [
+          {
+            "id": "stroke-b-reassess-imaging-change",
+            "requiresReviewed": [
+              "initial-ct",
+              "team-mri-summary"
+            ],
+            "requiresPatientUpdates": [
+              "speech-arm-change"
+            ],
+            "message": "Reviewed: the first CT reports no hemorrhage or definite early infarct, and the later attempted study is nondiagnostic. Family reports clearer speech with continuing right-arm difficulty.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "stroke-b-reassess-imaging-change-verify",
+                "label": "Give the ED team both the continuing arm difficulty and the reviewed imaging account. These supplied reports do not establish the cause or exclude stroke. This is not a rule that assessment waits for MRI.",
+                "appropriate": true,
+                "feedback": "A partial witness-reported improvement belongs alongside the actual reviewed record; it does not replace it.",
+                "requires": []
+              },
+              {
+                "id": "stroke-b-reassess-imaging-change-alternative-1",
+                "label": "Revise the account to resolved focal symptoms and use the imaging only as background for the earlier episode.",
+                "appropriate": false,
+                "feedback": "The family still reports right-arm difficulty. The exercise has not supplied resolution or a patient outcome.",
+                "requires": []
+              },
+              {
+                "id": "stroke-b-reassess-imaging-change-alternative-2",
+                "label": "Use the absent diagnostic later finding and clearer speech to establish a non-stroke cause.",
+                "appropriate": false,
+                "feedback": "Neither a limited supplied image record nor partial improvement establishes another cause.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-b-reassess-ct-change-pending",
+            "requiresReviewed": [
+              "initial-ct"
+            ],
+            "requiresPatientUpdates": [
+              "speech-arm-change"
+            ],
+            "requiresPending": [
+              "team-mri-summary"
+            ],
+            "message": "Reviewed: first CT without hemorrhage or definite early infarct. Speech seems clearer, arm difficulty continues, and later imaging remains pending.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "stroke-b-reassess-ct-change-pending-alternative-1",
+                "label": "Use the clearer speech and first CT together to describe a settled non-stroke explanation to the team.",
+                "appropriate": false,
+                "feedback": "Those observations do not establish that conclusion.",
+                "requires": []
+              },
+              {
+                "id": "stroke-b-reassess-ct-change-pending-verify",
+                "label": "Report the mixed change and first CT’s limit; leave the later report pending and the assessment with the ED team.",
+                "appropriate": true,
+                "feedback": "This uses what is known without treating the first CT as exclusion or forecasting the later report.",
+                "requires": []
+              },
+              {
+                "id": "stroke-b-reassess-ct-change-pending-alternative-2",
+                "label": "Hold the continuing arm concern until the later report is available to determine whether it belongs in the account.",
+                "appropriate": false,
+                "feedback": "The continuing reported difficulty belongs in the update before its explanation is settled.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-b-reassess-mixed-change",
+            "requiresPatientUpdates": [
+              "speech-arm-change"
+            ],
+            "message": "The family reports clearer speech with continuing right-arm difficulty. Other findings have only the status shown in this snapshot.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "stroke-b-reassess-mixed-change-verify",
+                "label": "Carry both observations and their witness source to the ED team, adding only findings already reviewed.",
+                "appropriate": true,
+                "feedback": "A clearer symptom and a continuing symptom must both remain visible; neither supplies an unreviewed test result.",
+                "requires": []
+              },
+              {
+                "id": "stroke-b-reassess-mixed-change-alternative-1",
+                "label": "Carry the improved speech as the current situation and leave the continuing arm difficulty in the earlier account.",
+                "appropriate": false,
+                "feedback": "That separates two parts of the same update and creates a misleading recovery account.",
+                "requires": []
+              },
+              {
+                "id": "stroke-b-reassess-mixed-change-alternative-2",
+                "label": "Use the continuing arm difficulty to label the cause as confirmed without relying on the reviewed record.",
+                "appropriate": false,
+                "feedback": "Continuing concern belongs in the handoff without converting it into an unsupported diagnostic label.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-b-reassess-current-record",
+            "message": "Use the reviewed findings and task statuses in the current snapshot. This checkpoint supplies no additional patient finding.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "stroke-b-reassess-current-record-verify",
+                "label": "Separate what you reviewed from what is pending or available to read, and confirm the receiving ED clinician owns the next review.",
+                "appropriate": true,
+                "feedback": "Reading, availability and pending work are different statuses. Use only the current snapshot; no later fact is supplied by this question.",
+                "requires": []
+              },
+              {
+                "id": "stroke-b-reassess-current-record-alternative-1",
+                "label": "Build the explanation from the expected final reports and revise it only if one later result disagrees.",
+                "appropriate": false,
+                "feedback": "A requested or expected finding is not reviewed evidence.",
+                "requires": []
+              },
+              {
+                "id": "stroke-b-reassess-current-record-alternative-2",
+                "label": "Carry the opening account alone until every requested report is ready, then assign the next clinical reviewer.",
+                "appropriate": false,
+                "feedback": "Reviewed findings can update the account before the worklist is complete, and the concern already needs an owner.",
+                "requires": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "transfer": {
+      "version": 1,
+      "synthetic": true,
+      "reviewStatus": "pending_human_review",
+      "sourceCheckedDate": "2026-10-16",
+      "delivery": "after-another-arrival",
+      "id": "stroke-positive-report-contrast-v4",
+      "prompt": "A different fictional arrival has continuing focal changes. A later diagnostic imaging report explicitly identifies acute ischemic injury matching those changes. What can this report add?",
+      "choices": [
+        {
+          "id": "still-no-evidence",
+          "label": "The cause remains unsupported solely because the first CT showed no definite early infarct.",
+          "feedback": "A later positive finding changes this supplied record. The first CT does not cancel it."
+        },
+        {
+          "id": "matching-support",
+          "label": "The matching report supports ischemic stroke here, while its cause and later care decisions still need assessment.",
+          "feedback": "A matching diagnostic finding adds support beyond the early limited report. It does not mean all suspected strokes universally require this imaging."
+        },
+        {
+          "id": "all-focal-proven",
+          "label": "Use the matching injury to establish its mechanism as well, without a separate cause assessment.",
+          "feedback": "A matching injury supports ischemic stroke in this record; its mechanism and later care decisions are separate questions."
+        }
+      ],
+      "answerId": "matching-support",
+      "source": {
+        "title": "NINDS: Assess and Treat, diagnostic imaging",
+        "url": "https://www.ninds.nih.gov/health-information/stroke/assess-and-treat",
+        "scope": "Early ischemia may not be visible on noncontrast CT. An absent or nondiagnostic later study supplies no confirming finding; MRI is not presented as a universal prerequisite for urgent care.",
+        "checkedDate": "2026-10-16"
+      }
+    }
+  },
+  {
+    "episode": {
+      "id": "pub-003-missed-turn-investigation-record-c",
+      "version": 5,
+      "title": "The Missed Turn",
+      "subtitle": "Follow the concern. Review the record. Hand it over.",
+      "opening": "At dinner, a 68-year-old suddenly cannot finish a sentence and has trouble holding a fork. Emergency help is already on the way. Follow the fictional team record as it arrives.",
+      "disclaimer": "Educational fiction pending human review. Reports, changes and update rounds are authored; they are not clinical advice or patient outcomes.",
+      "reviewStatus": "pending_human_review",
+      "presentation": {
+        "audience": "public",
+        "playMinutes": "4-7",
+        "image": "./assets/episodes/pub-001-stroke-escalation-720.webp",
+        "imageAlt": "Generated illustration of a dinner interrupted by an emergency response. Not diagnostic evidence."
+      },
+      "sources": [
+        {
+          "title": "NICE NG128: stroke recognition and initial assessment, recommendations 1.1.1-1.1.3",
+          "url": "https://www.nice.org.uk/guidance/ng128/chapter/recommendations",
+          "checkedUtc": "2026-10-16T04:29:45Z",
+          "scope": "Sudden focal symptoms and checking hypoglycaemia as a competing explanation. The fictional normal glucose weakens that rival without establishing stroke; no treatment content is used."
+        },
+        {
+          "title": "NINDS: Assess and Treat, CT and MRI sections",
+          "url": "https://www.ninds.nih.gov/health-information/stroke/assess-and-treat",
+          "checkedUtc": "2026-10-16T04:29:45Z",
+          "scope": "CT detects bleeding; diffusion MRI can show ischemia before a non-contrast CT. Supports limits of the authored reports, not a required scan sequence or patient-specific advice."
+        },
+        {
+          "title": "NINDS: Assess and Treat, diagnostic imaging",
+          "url": "https://www.ninds.nih.gov/health-information/stroke/assess-and-treat",
+          "scope": "Early ischemia may not be visible on noncontrast CT. An absent or nondiagnostic later study supplies no confirming finding; MRI is not presented as a universal prerequisite for urgent care.",
+          "checkedDate": "2026-10-16"
+        },
+        {
+          "title": "2026 AHA/ASA Guideline for Early Management of Acute Ischemic Stroke, section 3.2",
+          "url": "https://www.ahajournals.org/doi/10.1161/STR.0000000000000513",
+          "scope": "Clinicians can diagnose ischemic stroke from clinical presentation with a negative noncontrast CT in many patients. MRI is not universally required. This exercise only judges the incomplete supplied record and introduces no treatment or eligibility content.",
+          "checkedDate": "2026-10-16"
+        },
+        {
+          "title": "AHRQ TeamSTEPPS: Check-Back (or Repeat-Back)",
+          "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/checkback.html",
+          "checkedDate": "2026-10-17",
+          "scope": "The receiver repeats the message and the sender verifies or corrects understanding. These scripted exchanges are newly authored fiction, without treatment instructions."
+        },
+        {
+          "title": "AHRQ TeamSTEPPS: Handoff",
+          "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/handoff.html",
+          "checkedDate": "2026-10-17",
+          "scope": "Communicate uncertainty, recent changes, named responsibility and receiver acceptance. The educational exercise does not transfer real clinical authority."
+        }
+      ],
+      "hypotheses": [
+        {
+          "id": "ischemic-stroke",
+          "label": "Ischemic stroke (interrupted blood flow)"
+        },
+        {
+          "id": "hypoglycemia",
+          "label": "Low blood glucose"
+        },
+        {
+          "id": "migraine-aura",
+          "label": "Migraine with neurological symptoms"
+        },
+        {
+          "id": "cause-unresolved",
+          "label": "Cause not established by this record"
+        }
+      ],
+      "actions": [
+        {
+          "id": "witness-account",
+          "label": "Witness account",
+          "category": "history",
+          "minutes": 3,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional witness account: speech was normal a moment earlier. Word-finding difficulty and right-hand weakness began together and persist.",
+          "interpretation": "Sudden speech and one-sided movement changes call for urgent assessment, not a wait-and-see conclusion."
+        },
+        {
+          "id": "team-examination",
+          "label": "Team examination",
+          "category": "examination",
+          "minutes": 4,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional examination: the clinician records difficulty naming familiar objects and right-arm drift. The patient remains awake.",
+          "interpretation": "The observed pattern strengthens concern but does not establish its cause alone."
+        },
+        {
+          "id": "glucose-result",
+          "label": "Glucose report",
+          "category": "laboratory",
+          "minutes": 2,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional measurement during the symptoms: blood glucose is 106 mg/dL (5.9 mmol/L).",
+          "interpretation": "This result does not support low glucose as the current explanation; it does not itself prove stroke."
+        },
+        {
+          "id": "initial-ct",
+          "label": "First CT report",
+          "category": "imaging",
+          "minutes": 6,
+          "requires": [],
+          "sourceIds": [
+            1
+          ],
+          "finding": "Fictional non-contrast head CT report: no hemorrhage is seen; no definite early infarct is visible.",
+          "interpretation": "An early CT without a visible infarct does not rule out ischemic stroke."
+        },
+        {
+          "id": "team-mri-summary",
+          "label": "Later imaging status notice",
+          "category": "imaging",
+          "minutes": 8,
+          "requires": [],
+          "sourceIds": [
+            1
+          ],
+          "finding": "Fictional status notice: no later imaging report is available in this supplied record. This notice supplies no imaging finding and does not say a later study was diagnostic, negative or attempted.",
+          "interpretation": "The notice documents unavailable information, not a normal image or an unsuccessful study. The continuing focal concern needs the ED team’s assessment; MRI is not a universal prerequisite for urgent assessment."
+        },
+        {
+          "id": "witness-handoff",
+          "label": "Witness handoff",
+          "category": "coordination",
+          "minutes": 2,
+          "requires": [
+            "witness-account"
+          ],
+          "sourceIds": [
+            0
+          ],
+          "finding": "The fictional handoff preserves the witnessed onset and persisting changes. It makes no claim about examinations or scans you did not read.",
+          "interpretation": "A useful handoff separates what was witnessed from what remains unknown."
+        }
+      ],
+      "reasoning": {
+        "supportLabel": "Evidence for your explanation",
+        "limitationLabel": "A comparison or limit",
+        "prompt": "Connect your explanation to reviewed evidence, then state a limit.",
+        "caseLearningText": "The first CT does not exclude early ischemia. The later status notice supplies no image at all: unavailable information differs from an attempted nondiagnostic study. This supplied record does not establish the cause; clinicians can diagnose stroke from clinical presentation and CT, without a universal MRI requirement.",
+        "insufficientCitationFeedback": "Connect the first CT limit with the reviewed notice that no later imaging report is supplied. The notice is not a negative image or evidence that stroke is excluded.",
+        "openingFacts": [
+          {
+            "id": "opening:speech-hand-change",
+            "label": "Sudden speech and hand-use changes in the opening handoff",
+            "strength": "concern",
+            "supports": [
+              "ischemic-stroke",
+              "hypoglycemia",
+              "migraine-aura",
+              "cause-unresolved"
+            ]
+          }
+        ],
+        "supportRules": {
+          "witness-account": {
+            "strength": "suggestive",
+            "supports": [
+              "ischemic-stroke"
+            ]
+          },
+          "team-examination": {
+            "strength": "suggestive",
+            "supports": [
+              "ischemic-stroke"
+            ]
+          },
+          "glucose-result": {
+            "strength": "limited",
+            "supports": [],
+            "conflictsWith": [
+              "hypoglycemia"
+            ],
+            "conflictFeedback": "The glucose result you read during the symptoms does not support low glucose as the current explanation. It weakens that rival without proving ischemic stroke."
+          },
+          "initial-ct": {
+            "strength": "component",
+            "supports": [
+              "cause-unresolved"
+            ]
+          },
+          "team-mri-summary": {
+            "strength": "component",
+            "supports": [
+              "cause-unresolved"
+            ]
+          },
+          "witness-handoff": {
+            "strength": "coordination",
+            "supports": []
+          }
+        },
+        "uncertaintyOptions": [
+          {
+            "id": "symptoms-not-confirmation",
+            "label": "The opening speech and hand changes raise concern but do not establish a cause.",
+            "requires": [],
+            "scope": "provisional"
+          },
+          {
+            "id": "glucose-discriminator",
+            "label": "The glucose result weakens current low glucose; it is not a positive stroke test.",
+            "requires": [
+              "glucose-result"
+            ],
+            "scope": "any",
+            "forHypotheses": [
+              "ischemic-stroke",
+              "migraine-aura",
+              "cause-unresolved"
+            ]
+          },
+          {
+            "id": "ct-limit",
+            "label": "The first CT alone does not exclude early ischemia.",
+            "requires": [
+              "initial-ct"
+            ],
+            "scope": "any"
+          },
+          {
+            "id": "imaging-scope",
+            "label": "The first CT and unavailable later report leave this supplied cause unestablished; they do not exclude stroke.",
+            "requires": [
+              "initial-ct",
+              "team-mri-summary"
+            ],
+            "scope": "supported",
+            "forHypotheses": [
+              "cause-unresolved"
+            ]
+          },
+          {
+            "id": "all-excluded",
+            "label": "The first CT and absent diagnostic later image exclude stroke.",
+            "requires": [],
+            "scope": "unsupported"
+          }
+        ],
+        "supportGroups": [
+          {
+            "id": "pattern:imaging-limits",
+            "label": "First CT limit and unavailable later imaging notice together",
+            "requires": [
+              "initial-ct",
+              "team-mri-summary"
+            ],
+            "strength": "decisive",
+            "supports": [
+              "cause-unresolved"
+            ]
+          }
+        ]
+      },
+      "resolution": {
+        "hypothesisId": "cause-unresolved",
+        "conclusionKind": "unresolved",
+        "evidenceActionIds": [
+          "initial-ct",
+          "team-mri-summary"
+        ],
+        "supportedSummary": "The first CT shows no hemorrhage or definite early infarct, and no later imaging report is supplied. This record does not establish the cause; stroke is not excluded.",
+        "mismatchSummary": "The supplied CT and unavailable-report notice do not establish the selected cause or justify excluding stroke. Clinical assessment remains with the ED team.",
+        "provisionalSummary": "The first CT and later unavailable-report status notice were not both reviewed. The record-specific information gap is not yet demonstrated on this route.",
+        "decisiveClue": "The first CT does not exclude early ischemia; the reviewed status notice supplies no later image.",
+        "missingClue": "The first CT or the later unavailable-report status notice was not reviewed on this route.",
+        "nextLearning": "Distinguish an unavailable report from a negative or nondiagnostic image. Communicate the continuing focal concern and the supplied limits without making MRI a universal requirement.",
+        "limitations": [
+          "Authored fictional records pending human medical review; source references support educational framing, not these patient measurements or events.",
+          "Update rounds are narrative release events, not clinical minutes, recommended waits or an investigation sequence. Emergency assessment continues independently.",
+          "No treatment, dose, eligibility, prognosis or patient outcome is modeled. A recorded explanation does not establish clinical competence.",
+          "Earlier owner-reported clinician review has unverified scope and version; it does not cover these version 5 questions, exchanges or Arrival C records."
+        ]
+      },
+      "careWorkflow": {
+        "episodeId": "pub-003-missed-turn-investigation-record-c",
+        "version": 1,
+        "role": {
+          "label": "Family witness communicating with the ED team",
+          "boundary": "Report what you witnessed and ask who accepts updates. The ED team owns tests, clinical assessment and care decisions."
+        },
+        "timingNote": "Fictional update rounds release reports and narrative events. They are not minutes, recommended waits or a prescribed clinical sequence.",
+        "priority": {
+          "prompt": "Who needs the opening concern before its cause is settled?",
+          "choices": [
+            {
+              "id": "share-opening-concern",
+              "label": "Share sudden speech and hand-use changes with the receiving ed clinician and confirm who accepts review.",
+              "appropriate": true,
+              "feedback": "Communicate the concern and uncertainty early; a diagnostic label is not required to name a review owner.",
+              "requires": []
+            },
+            {
+              "id": "finish-record-before-contact",
+              "label": "Collect the remaining reports first, then ask the receiving ed clinician to accept the complete explanation.",
+              "appropriate": false,
+              "feedback": "A fuller record may refine the explanation. It does not replace early shared awareness and responsibility for the presenting concern.",
+              "requires": []
+            }
+          ]
+        },
+        "tasks": {
+          "witness-account": {
+            "owner": "Receiving ED nurse",
+            "label": "Follow up: witness account",
+            "rounds": 1
+          },
+          "team-examination": {
+            "owner": "ED examining clinician",
+            "label": "Follow up: team examination",
+            "rounds": 1
+          },
+          "glucose-result": {
+            "owner": "ED examining clinician",
+            "label": "Follow up: glucose report",
+            "rounds": 1
+          },
+          "initial-ct": {
+            "owner": "ED senior clinician",
+            "label": "Follow up: first ct report",
+            "rounds": 2
+          },
+          "team-mri-summary": {
+            "owner": "ED senior clinician",
+            "label": "Follow up: later imaging status notice",
+            "rounds": 2
+          },
+          "witness-handoff": {
+            "owner": "Receiving ED nurse",
+            "label": "Follow up: witness handoff",
+            "rounds": 1
+          }
+        },
+        "reassessment": {
+          "minimumReviewed": 1,
+          "update": "Fictional team checkpoint: identify what you reviewed, what remains pending and who accepts the next review. This checkpoint supplies no additional examination or laboratory finding."
+        },
+        "handoff": {
+          "receiver": {
+            "prompt": "Who accepts this concern?",
+            "choices": [
+              {
+                "id": "r-worklist",
+                "label": "The shared results worklist, with the next reader deciding who receives the concern.",
+                "appropriate": false,
+                "feedback": "A worklist records tasks; it does not show who accepted responsibility.",
+                "requires": []
+              },
+              {
+                "id": "r-clinical",
+                "label": "The receiving ED clinician or nurse accepting the witness account.",
+                "appropriate": true,
+                "feedback": "Name the clinical receiver and verify acceptance of the concern.",
+                "requires": []
+              }
+            ]
+          },
+          "situation": {
+            "prompt": "Which known fact will you carry forward?",
+            "choices": [
+              {
+                "id": "s-opening",
+                "label": "At dinner, a 68-year-old suddenly had trouble speaking and holding a fork; emergency help was called.",
+                "appropriate": true,
+                "feedback": "This is an opening fact, available for an early handoff. Add the actual reviewed and pending information to the shared record.",
+                "requires": []
+              },
+              {
+                "id": "s-witness",
+                "label": "The reviewed witness account places the speech and right-hand changes together, with continuing difficulty.",
+                "appropriate": true,
+                "feedback": "Distinguish witnessed onset and changes from a diagnosis.",
+                "requires": [
+                  "witness-account"
+                ]
+              },
+              {
+                "id": "s-imaging",
+                "label": "The first CT shows no hemorrhage or definite early infarct; a reviewed status notice says no later imaging report is available.",
+                "appropriate": true,
+                "feedback": "State the findings actually reviewed. Do not replace an unavailable diagnostic result with a normal scan.",
+                "requires": [
+                  "initial-ct",
+                  "team-mri-summary"
+                ]
+              },
+              {
+                "id": "s-overclaim",
+                "label": "The initial speech change establishes stroke; hand over the arm change as a severity detail.",
+                "appropriate": false,
+                "feedback": "The opening observation does not establish that cause. Keep what happened separate from the explanation.",
+                "requires": []
+              }
+            ]
+          },
+          "uncertainty": {
+            "prompt": "Which limit belongs with that statement?",
+            "choices": [
+              {
+                "id": "u-delay",
+                "label": "Hold the handoff until a single cause is confirmed, so the receiver gets no unresolved question.",
+                "appropriate": false,
+                "feedback": "An unresolved question belongs in an early handoff. It should have a named clinical receiver, not be silently withheld.",
+                "requires": []
+              },
+              {
+                "id": "u-imaging",
+                "label": "These supplied reports do not establish the cause or exclude stroke; the ED team owns assessment of the continuing focal concern.",
+                "appropriate": true,
+                "feedback": "The witness reports evidence and concerns; the clinical team owns the assessment and further decisions.",
+                "requires": [
+                  "initial-ct",
+                  "team-mri-summary"
+                ]
+              },
+              {
+                "id": "u-opening",
+                "label": "The opening symptoms alone do not establish a cause; stronger claims must cite reviewed findings.",
+                "appropriate": true,
+                "feedback": "This limits the opening account without pretending later reports are still unknown.",
+                "requires": []
+              }
+            ]
+          },
+          "nextOwner": {
+            "prompt": "Who follows up the remaining concern?",
+            "choices": [
+              {
+                "id": "o-clinical",
+                "label": "Confirm the receiving ed clinician owns the next review and how new reports or symptom changes reach them.",
+                "appropriate": true,
+                "feedback": "Identify an accountable receiver and an update route. This assigns communication responsibility, not treatment.",
+                "requires": []
+              },
+              {
+                "id": "o-worklist",
+                "label": "Use the completed request as the transfer of responsibility; the receiving worklist can assign the next review.",
+                "appropriate": false,
+                "feedback": "A sent request is not evidence that another person accepted the concern or the next review.",
+                "requires": []
+              }
+            ]
+          }
+        },
+        "readback": {
+          "prompt": "Verify the receiver’s reply against the sent handoff.",
+          "choices": []
+        },
+        "sources": [
+          {
+            "title": "WHO Emergency Care Toolkit: Interagency Integrated Triage Tool",
+            "url": "https://www.who.int/teams/integrated-health-services/clinical-services-and-systems/emergency-and-critical-care/emergency-care-toolkit",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Prioritizing clinical concern separately from establishing a diagnosis. These role-specific exercises do not implement or validate a triage scale."
+          },
+          {
+            "title": "NICE CG50: recognising and responding to deterioration",
+            "url": "https://www.nice.org.uk/guidance/CG50/chapter/recommendations",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Clinical concern, response ownership and reassessment. No physiological thresholds, observation intervals or treatment instructions are introduced."
+          },
+          {
+            "title": "AHRQ TeamSTEPPS: Handoff",
+            "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/handoff.html",
+            "checkedDate": "2026-10-17",
+            "scope": "Communicate uncertainty, recent changes, named responsibility and receiver acceptance. The educational exercise does not transfer real clinical authority."
+          },
+          {
+            "title": "AHRQ TeamSTEPPS: Check-Back (or Repeat-Back)",
+            "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/checkback.html",
+            "checkedDate": "2026-10-17",
+            "scope": "The receiver repeats the message and the sender verifies or corrects understanding. These scripted exchanges are newly authored fiction, without treatment instructions."
+          }
+        ],
+        "reviewProvenance": {
+          "status": "unreviewed",
+          "ownerReportedPriorClinicianReview": true,
+          "priorReviewScope": "unverified",
+          "priorReviewVersion": "unverified",
+          "text": "The owner reports clinician review of earlier material; the reviewed scope and version are unverified. These version 5 receiver exchanges, contextual questions and Arrival C contrasts are newly authored fiction and have not received separate clinician review."
+        },
+        "workboardPrompt": "Choose work to follow up; reports may arrive together.",
+        "patientUpdates": [
+          {
+            "id": "speech-arm-change",
+            "afterRound": 1,
+            "requiresReviewed": [],
+            "text": "Authored fictional change after arrival: a family member reports speech sounds clearer, while difficulty using the right arm continues. This is a witness update, not a new clinician examination.",
+            "prompt": "How should you pass on this mixed change?",
+            "choices": [
+              {
+                "id": "communicate-change",
+                "label": "Tell the receiving ED team that speech seems clearer but the arm difficulty continues, and ask who accepts the update.",
+                "appropriate": true,
+                "feedback": "Communicate the actual reported change and confirm a clinical owner. It neither establishes the cause nor predicts the outcome.",
+                "requires": []
+              },
+              {
+                "id": "defer-change-to-summary",
+                "label": "Pass on the clearer speech as the main update and leave the continuing arm difficulty in the earlier written account.",
+                "appropriate": false,
+                "feedback": "The new concern needs to reach the responsible clinician with its full detail. A pending report or one improved feature does not replace that communication.",
+                "requires": []
+              }
+            ]
+          }
+        ]
+      },
+      "familyId": "pub-003-missed-turn-investigation",
+      "familyTitle": "The Missed Turn",
+      "recordLabel": "Arrival C",
+      "workboardPrompt": "Choose work to follow up; reports may arrive together.",
+      "authoredFiction": true,
+      "reviewProvenance": {
+        "status": "unreviewed",
+        "ownerReportedPriorClinicianReview": true,
+        "priorReviewScope": "unverified",
+        "priorReviewVersion": "unverified",
+        "text": "The owner reports clinician review of earlier material; the reviewed scope and version are unverified. These version 5 receiver exchanges, contextual questions and Arrival C contrasts are newly authored fiction and have not received separate clinician review."
+      },
+      "transferQuestion": {
+        "version": 1,
+        "synthetic": true,
+        "reviewStatus": "pending_human_review",
+        "sourceCheckedDate": "2026-10-16",
+        "delivery": "after-another-arrival",
+        "id": "stroke-unavailable-versus-negative-contrast-v5",
+        "prompt": "A different fictional record has continuing one-sided arm difficulty, a first CT without hemorrhage or definite early infarct, and a notice that no later imaging report is supplied. What does the notice add?",
+        "choices": [
+          {
+            "id": "negative-later",
+            "label": "A second negative imaging result that reduces the remaining concern.",
+            "feedback": "An unavailable report supplies no second imaging result and does not exclude stroke."
+          },
+          {
+            "id": "nondiagnostic-later",
+            "label": "Proof that the later study was attempted but technically nondiagnostic.",
+            "feedback": "A status notice about an unavailable report does not establish whether a study was attempted or what it showed."
+          },
+          {
+            "id": "missing-information",
+            "label": "A documented information gap to carry with the ongoing focal concern to the ED team.",
+            "feedback": "The supplied record documents missing information. Clinical assessment remains with the team; this does not make MRI a universal prerequisite."
+          }
+        ],
+        "answerId": "missing-information",
+        "source": {
+          "title": "NINDS: Assess and Treat, diagnostic imaging",
+          "url": "https://www.ninds.nih.gov/health-information/stroke/assess-and-treat",
+          "scope": "Early ischemia may not be visible on noncontrast CT. An absent or nondiagnostic later study supplies no confirming finding; MRI is not presented as a universal prerequisite for urgent care.",
+          "checkedDate": "2026-10-16"
+        }
+      },
+      "coordination": {
+        "readbackScenarios": [
+          {
+            "id": "stroke-c-receiver-not-accepted",
+            "requiresSelections": {
+              "receiverId": "r-worklist"
+            },
+            "message": "“The worklist entry for speech and hand-use changes is visible. I have not accepted the next clinical review.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "stroke-c-receiver-not-accepted-verify",
+                "label": "Clarify who accepts the speech and hand-use changes concern and ask the named clinician to repeat their responsibility.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              },
+              {
+                "id": "stroke-c-receiver-not-accepted-alternative-1",
+                "label": "Verify that the entry is visible and record the next clinical review as accepted through the shared worklist.",
+                "appropriate": false,
+                "feedback": "Visibility does not establish that a person accepted responsibility.",
+                "requires": []
+              },
+              {
+                "id": "stroke-c-receiver-not-accepted-alternative-2",
+                "label": "Ask for a more complete diagnostic summary, then use its inclusion in the worklist as the review assignment.",
+                "appropriate": false,
+                "feedback": "More detail does not resolve the missing clinical receiver.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-c-next-owner-missing",
+            "requiresSelections": {
+              "nextOwnerId": "o-worklist"
+            },
+            "message": "“I received the summary. Whoever reads the last report will take responsibility for the next review.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "stroke-c-next-owner-missing-alternative-1",
+                "label": "Confirm that the final report reader will be recorded as the owner when the worklist becomes complete.",
+                "appropriate": false,
+                "feedback": "A future reader is not a named person accepting the concern now.",
+                "requires": []
+              },
+              {
+                "id": "stroke-c-next-owner-missing-verify",
+                "label": "Ask the receiving ED clinician to accept the next review and confirm the route for later reports or changes.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              },
+              {
+                "id": "stroke-c-next-owner-missing-alternative-2",
+                "label": "Verify the findings in the summary and leave ownership to the team handling the remaining requests.",
+                "appropriate": false,
+                "feedback": "Finding accuracy and ownership are separate parts of the exchange.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-c-opening-overclaim",
+            "requiresSelections": {
+              "situationId": "s-overclaim"
+            },
+            "message": "“I heard that the opening sudden speech and hand-use difficulty at dinner establishes a confirmed stroke.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "stroke-c-opening-overclaim-alternative-1",
+                "label": "Verify the diagnostic wording because it repeats the situation selected in the handoff accurately.",
+                "appropriate": false,
+                "feedback": "Repeating an inaccurate claim does not make it valid. The sender must also check its meaning against the known record.",
+                "requires": []
+              },
+              {
+                "id": "stroke-c-opening-overclaim-alternative-2",
+                "label": "Keep that diagnosis in the exchange and label the remaining reports as details about its extent.",
+                "appropriate": false,
+                "feedback": "The opening account does not establish the diagnosis or make other findings secondary.",
+                "requires": []
+              },
+              {
+                "id": "stroke-c-opening-overclaim-verify",
+                "label": "Correct the opening claim: it describes the presenting concern; stronger conclusions must use findings actually reviewed.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-c-uncertainty-withheld",
+            "requiresSelections": {
+              "uncertaintyId": "u-delay"
+            },
+            "message": "“I will accept the unresolved question after one cause has been confirmed.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "stroke-c-uncertainty-withheld-verify",
+                "label": "Clarify that the receiving ED clinician needs to accept the concern with its current uncertainty and outstanding work.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              },
+              {
+                "id": "stroke-c-uncertainty-withheld-alternative-1",
+                "label": "Verify the condition for acceptance and keep responsibility with the results worklist until the cause is confirmed.",
+                "appropriate": false,
+                "feedback": "Diagnostic uncertainty does not supply an accountable next reviewer.",
+                "requires": []
+              },
+              {
+                "id": "stroke-c-uncertainty-withheld-alternative-2",
+                "label": "Replace the unresolved question with the leading diagnosis so the receiver can accept a definite account.",
+                "appropriate": false,
+                "feedback": "A stronger label cannot substitute for communicating the actual evidence and uncertainty.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-c-imaging-and-change",
+            "requiresReviewed": [
+              "initial-ct",
+              "team-mri-summary"
+            ],
+            "requiresPatientUpdates": [
+              "speech-arm-change"
+            ],
+            "message": "“I heard clearer speech with continuing right-arm difficulty. the first CT reports no hemorrhage or definite early infarct, and the reviewed status notice supplies no later imaging report. I accept this update for the ED team’s review.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "stroke-c-imaging-and-change-alternative-1",
+                "label": "Correct the update to complete recovery because the speech improvement is the most recent observation.",
+                "appropriate": false,
+                "feedback": "Clearer speech does not mean the continuing right-arm difficulty has resolved.",
+                "requires": []
+              },
+              {
+                "id": "stroke-c-imaging-and-change-alternative-2",
+                "label": "Correct the imaging account to a negative stroke evaluation because no later positive image was supplied.",
+                "appropriate": false,
+                "feedback": "A missing or nondiagnostic later result does not exclude stroke or establish another cause.",
+                "requires": []
+              },
+              {
+                "id": "stroke-c-imaging-and-change-verify",
+                "label": "Verify the mixed witness update and the actual imaging account; keep clinical assessment with the ED team.",
+                "appropriate": true,
+                "feedback": "The repetition preserves both the continuing arm difficulty and the reviewed finding or report limit.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-c-first-ct-change-pending",
+            "requiresReviewed": [
+              "initial-ct"
+            ],
+            "requiresPatientUpdates": [
+              "speech-arm-change"
+            ],
+            "requiresPending": [
+              "team-mri-summary"
+            ],
+            "message": "“The first CT shows no definite infarct, so I heard a non-stroke problem. The speech seems clearer; the arm difficulty continues and later imaging is pending.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "stroke-c-first-ct-change-pending-alternative-1",
+                "label": "Verify the non-stroke wording because the improved speech agrees with the first CT’s lack of a visible infarct.",
+                "appropriate": false,
+                "feedback": "The improvement and this CT do not establish a non-stroke explanation.",
+                "requires": []
+              },
+              {
+                "id": "stroke-c-first-ct-change-pending-verify",
+                "label": "Correct the non-stroke claim: this CT does not exclude early ischemia; retain the mixed update and pending status.",
+                "appropriate": true,
+                "feedback": "The known CT, continuing focal concern and unreviewed later report have different roles in this exchange.",
+                "requires": []
+              },
+              {
+                "id": "stroke-c-first-ct-change-pending-alternative-2",
+                "label": "Replace the pending status with the later imaging finding so the team can receive a complete cause statement.",
+                "appropriate": false,
+                "feedback": "A pending later report cannot supply a finding in the current snapshot.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-c-mixed-change",
+            "requiresPatientUpdates": [
+              "speech-arm-change"
+            ],
+            "message": "“Speech seems clearer, but right-arm difficulty continues. I accept that as a family report, not a new clinical examination.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "stroke-c-mixed-change-alternative-1",
+                "label": "Correct the update to resolved focal symptoms because clearer speech is the newer reported feature.",
+                "appropriate": false,
+                "feedback": "The arm difficulty remains in the same update and must not disappear from the account.",
+                "requires": []
+              },
+              {
+                "id": "stroke-c-mixed-change-alternative-2",
+                "label": "Confirm the account as a new clinician examination because a receiving team member has repeated it.",
+                "appropriate": false,
+                "feedback": "Repeating a family report does not change its source into a clinical examination.",
+                "requires": []
+              },
+              {
+                "id": "stroke-c-mixed-change-verify",
+                "label": "Verify both parts of the witness update and its source; keep the ED team responsible for clinical reassessment.",
+                "appropriate": true,
+                "feedback": "The receiver has repeated the actual mixed observation without turning it into a diagnosis or an outcome.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-c-opening-only",
+            "message": "“I heard the presenting sudden speech and hand-use difficulty at dinner. The opening account alone does not establish its cause. I accept the next review; separately listed reports retain their recorded status.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "stroke-c-opening-only-alternative-1",
+                "label": "Correct the receiver to the final diagnosis expected for this arrival, even if its supporting report is not reviewed.",
+                "appropriate": false,
+                "feedback": "A future report or a remembered arrival cannot enter the current sent snapshot.",
+                "requires": []
+              },
+              {
+                "id": "stroke-c-opening-only-verify",
+                "label": "Verify the presenting concern, its limited certainty and accepted review; add no result that the sent snapshot does not contain.",
+                "appropriate": true,
+                "feedback": "This is a valid early exchange. A complete diagnostic worklist is not required to communicate the known concern and ownership.",
+                "requires": []
+              },
+              {
+                "id": "stroke-c-opening-only-alternative-2",
+                "label": "Withhold verification until all work is complete so the opening concern can be replaced by one definite explanation.",
+                "appropriate": false,
+                "feedback": "The known concern and next reviewer can be verified while the cause remains uncertain.",
+                "requires": []
+              }
+            ]
+          }
+        ],
+        "reassessmentScenarios": [
+          {
+            "id": "stroke-c-reassess-imaging-change",
+            "requiresReviewed": [
+              "initial-ct",
+              "team-mri-summary"
+            ],
+            "requiresPatientUpdates": [
+              "speech-arm-change"
+            ],
+            "message": "Reviewed: the first CT reports no hemorrhage or definite early infarct, and the reviewed status notice supplies no later imaging report. Family reports clearer speech with continuing right-arm difficulty.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "stroke-c-reassess-imaging-change-alternative-1",
+                "label": "Revise the account to resolved focal symptoms and use the imaging only as background for the earlier episode.",
+                "appropriate": false,
+                "feedback": "The family still reports right-arm difficulty. The exercise has not supplied resolution or a patient outcome.",
+                "requires": []
+              },
+              {
+                "id": "stroke-c-reassess-imaging-change-alternative-2",
+                "label": "Use the absent diagnostic later finding and clearer speech to establish a non-stroke cause.",
+                "appropriate": false,
+                "feedback": "Neither a limited supplied image record nor partial improvement establishes another cause.",
+                "requires": []
+              },
+              {
+                "id": "stroke-c-reassess-imaging-change-verify",
+                "label": "Give the ED team both the continuing arm difficulty and the reviewed imaging account. These supplied reports do not establish the cause or exclude stroke. This is not a rule that assessment waits for MRI.",
+                "appropriate": true,
+                "feedback": "A partial witness-reported improvement belongs alongside the actual reviewed record; it does not replace it.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-c-reassess-ct-change-pending",
+            "requiresReviewed": [
+              "initial-ct"
+            ],
+            "requiresPatientUpdates": [
+              "speech-arm-change"
+            ],
+            "requiresPending": [
+              "team-mri-summary"
+            ],
+            "message": "Reviewed: first CT without hemorrhage or definite early infarct. Speech seems clearer, arm difficulty continues, and later imaging remains pending.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "stroke-c-reassess-ct-change-pending-alternative-1",
+                "label": "Use the clearer speech and first CT together to describe a settled non-stroke explanation to the team.",
+                "appropriate": false,
+                "feedback": "Those observations do not establish that conclusion.",
+                "requires": []
+              },
+              {
+                "id": "stroke-c-reassess-ct-change-pending-verify",
+                "label": "Report the mixed change and first CT’s limit; leave the later report pending and the assessment with the ED team.",
+                "appropriate": true,
+                "feedback": "This uses what is known without treating the first CT as exclusion or forecasting the later report.",
+                "requires": []
+              },
+              {
+                "id": "stroke-c-reassess-ct-change-pending-alternative-2",
+                "label": "Hold the continuing arm concern until the later report is available to determine whether it belongs in the account.",
+                "appropriate": false,
+                "feedback": "The continuing reported difficulty belongs in the update before its explanation is settled.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-c-reassess-mixed-change",
+            "requiresPatientUpdates": [
+              "speech-arm-change"
+            ],
+            "message": "The family reports clearer speech with continuing right-arm difficulty. Other findings have only the status shown in this snapshot.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "stroke-c-reassess-mixed-change-verify",
+                "label": "Carry both observations and their witness source to the ED team, adding only findings already reviewed.",
+                "appropriate": true,
+                "feedback": "A clearer symptom and a continuing symptom must both remain visible; neither supplies an unreviewed test result.",
+                "requires": []
+              },
+              {
+                "id": "stroke-c-reassess-mixed-change-alternative-1",
+                "label": "Carry the improved speech as the current situation and leave the continuing arm difficulty in the earlier account.",
+                "appropriate": false,
+                "feedback": "That separates two parts of the same update and creates a misleading recovery account.",
+                "requires": []
+              },
+              {
+                "id": "stroke-c-reassess-mixed-change-alternative-2",
+                "label": "Use the continuing arm difficulty to label the cause as confirmed without relying on the reviewed record.",
+                "appropriate": false,
+                "feedback": "Continuing concern belongs in the handoff without converting it into an unsupported diagnostic label.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "stroke-c-reassess-current-record",
+            "message": "Use the reviewed findings and task statuses in the current snapshot. This checkpoint supplies no additional patient finding.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "stroke-c-reassess-current-record-verify",
+                "label": "Separate what you reviewed from what is pending or available to read, and confirm the receiving ED clinician owns the next review.",
+                "appropriate": true,
+                "feedback": "Reading, availability and pending work are different statuses. Use only the current snapshot; no later fact is supplied by this question.",
+                "requires": []
+              },
+              {
+                "id": "stroke-c-reassess-current-record-alternative-1",
+                "label": "Build the explanation from the expected final reports and revise it only if one later result disagrees.",
+                "appropriate": false,
+                "feedback": "A requested or expected finding is not reviewed evidence.",
+                "requires": []
+              },
+              {
+                "id": "stroke-c-reassess-current-record-alternative-2",
+                "label": "Carry the opening account alone until every requested report is ready, then assign the next clinical reviewer.",
+                "appropriate": false,
+                "feedback": "Reviewed findings can update the account before the worklist is complete, and the concern already needs an owner.",
+                "requires": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "transfer": {
+      "version": 1,
+      "synthetic": true,
+      "reviewStatus": "pending_human_review",
+      "sourceCheckedDate": "2026-10-16",
+      "delivery": "after-another-arrival",
+      "id": "stroke-unavailable-versus-negative-contrast-v5",
+      "prompt": "A different fictional record has continuing one-sided arm difficulty, a first CT without hemorrhage or definite early infarct, and a notice that no later imaging report is supplied. What does the notice add?",
+      "choices": [
+        {
+          "id": "negative-later",
+          "label": "A second negative imaging result that reduces the remaining concern.",
+          "feedback": "An unavailable report supplies no second imaging result and does not exclude stroke."
+        },
+        {
+          "id": "nondiagnostic-later",
+          "label": "Proof that the later study was attempted but technically nondiagnostic.",
+          "feedback": "A status notice about an unavailable report does not establish whether a study was attempted or what it showed."
+        },
+        {
+          "id": "missing-information",
+          "label": "A documented information gap to carry with the ongoing focal concern to the ED team.",
+          "feedback": "The supplied record documents missing information. Clinical assessment remains with the team; this does not make MRI a universal prerequisite."
+        }
+      ],
+      "answerId": "missing-information",
+      "source": {
+        "title": "NINDS: Assess and Treat, diagnostic imaging",
+        "url": "https://www.ninds.nih.gov/health-information/stroke/assess-and-treat",
+        "scope": "Early ischemia may not be visible on noncontrast CT. An absent or nondiagnostic later study supplies no confirming finding; MRI is not presented as a universal prerequisite for urgent care.",
+        "checkedDate": "2026-10-16"
+      }
+    }
+  },
+  {
+    "episode": {
+      "id": "stu-003-after-weekend-investigation",
+      "version": 5,
+      "title": "After the Weekend",
+      "subtitle": "Follow the concern. Review the record. Hand it over.",
+      "opening": "A 26-year-old arrives after a weekend away with vomiting, fatigue and abdominal discomfort. The team is already assessing the patient. The first handoff suggests a stomach illness, but the record is incomplete.",
+      "disclaimer": "Educational fiction pending human review. Reports, changes and update rounds are authored; they are not clinical advice or patient outcomes.",
+      "reviewStatus": "pending_human_review",
+      "presentation": {
+        "audience": "student",
+        "playMinutes": "5-8",
+        "image": "./assets/episodes/stu-001-dka-escalation-720.webp",
+        "imageAlt": "Generated illustration of a young adult under observation with a hospital team. Not diagnostic evidence."
+      },
+      "sources": [
+        {
+          "title": "ADA/EASD and partner societies: Hyperglycemic Crises in Adults With Diabetes, 2024 consensus report",
+          "url": "https://doi.org/10.2337/dci24-0032",
+          "checkedUtc": "2026-10-16T04:29:45Z",
+          "scope": "Diagnosis requires the combined glucose/diabetes, ketone and metabolic-acidosis criteria. HHS involves hyperosmolality without significant ketosis or acidosis; no treatment recommendations are used. Fictional values are not source patient data."
+        },
+        {
+          "title": "2024 consensus report: open full text, diagnostic criteria section",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11272983/",
+          "checkedUtc": "2026-10-16T04:29:45Z",
+          "scope": "Primary consensus text for the three-part DKA argument and the competing HHS pattern. Used only to check authored evidence relations, not care decisions."
+        },
+        {
+          "title": "ADA/EASD and partner societies: Hyperglycemic Crises in Adults With Diabetes, 2024 consensus",
+          "url": "https://doi.org/10.2337/dci24-0032",
+          "scope": "Compare the combined DKA criteria with severe hyperglycemia, hyperosmolality and absence of significant ketosis/acidosis in HHS. The fictional alternatives are simplified; real presentations can overlap. No treatment content is used.",
+          "checkedDate": "2026-10-16"
+        },
+        {
+          "title": "AHRQ TeamSTEPPS: Check-Back (or Repeat-Back)",
+          "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/checkback.html",
+          "checkedDate": "2026-10-17",
+          "scope": "The receiver repeats the message and the sender verifies or corrects understanding. These scripted exchanges are newly authored fiction, without treatment instructions."
+        },
+        {
+          "title": "AHRQ TeamSTEPPS: Handoff",
+          "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/handoff.html",
+          "checkedDate": "2026-10-17",
+          "scope": "Communicate uncertainty, recent changes, named responsibility and receiver acceptance. The educational exercise does not transfer real clinical authority."
+        }
+      ],
+      "hypotheses": [
+        {
+          "id": "diabetic-ketoacidosis",
+          "label": "Diabetic ketoacidosis"
+        },
+        {
+          "id": "hyperosmolar-state",
+          "label": "Hyperglycemic hyperosmolar state (HHS) alone"
+        },
+        {
+          "id": "gastroenteritis",
+          "label": "Gastroenteritis with dehydration"
+        },
+        {
+          "id": "cause-unresolved",
+          "label": "Cause not established by this record"
+        }
+      ],
+      "actions": [
+        {
+          "id": "recent-history",
+          "label": "Recent history",
+          "category": "history",
+          "minutes": 3,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional history: thirst and frequent urination started before the vomiting. There is no established diabetes diagnosis in the record.",
+          "interpretation": "The chronology weakens a stomach-only explanation but cannot settle the metabolic diagnosis."
+        },
+        {
+          "id": "bedside-observations",
+          "label": "Bedside observations",
+          "category": "examination",
+          "minutes": 3,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional observations: the patient is tired but conversant, with deep breathing, dry mouth and diffuse abdominal discomfort.",
+          "interpretation": "These observations require explanation; they are not specific enough to label the illness."
+        },
+        {
+          "id": "plasma-glucose",
+          "label": "Plasma glucose",
+          "category": "laboratory",
+          "minutes": 2,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional laboratory result: plasma glucose is 286 mg/dL.",
+          "interpretation": "Elevated glucose alone is not sufficient to establish ketoacidosis."
+        },
+        {
+          "id": "blood-ketones",
+          "label": "Blood ketones",
+          "category": "laboratory",
+          "minutes": 3,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional laboratory result: beta-hydroxybutyrate is 4.8 mmol/L.",
+          "interpretation": "The ketone result adds a second piece. Acid-base evidence is still distinct."
+        },
+        {
+          "id": "acid-base",
+          "label": "Acid-base report",
+          "category": "laboratory",
+          "minutes": 4,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional laboratory results: venous pH is 7.22 and bicarbonate is 13 mmol/L.",
+          "interpretation": "Acidosis together with elevated glucose and ketones supports the ketoacidosis explanation in this case."
+        },
+        {
+          "id": "serum-osmolality",
+          "label": "Serum osmolality",
+          "category": "laboratory",
+          "minutes": 4,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional laboratory result: measured total serum osmolality is 297 mOsm/kg.",
+          "interpretation": "This fictional result does not support a markedly hyperosmolar explanation. It does not replace the three-part ketoacidosis assessment."
+        }
+      ],
+      "reasoning": {
+        "supportLabel": "Evidence for your explanation",
+        "limitationLabel": "A comparison or limit",
+        "prompt": "Connect your explanation to reviewed evidence, then state a limit.",
+        "caseLearningText": "Keep glucose, ketones and acid-base evidence distinct until you can connect them. Compare the metabolic explanation with its rivals; one abnormal result is not the whole argument. These alternatives are simplified; real presentations can overlap.",
+        "insufficientCitationFeedback": "The three-part argument needs the glucose, ketone and acid-base findings together. Select their combined argument to justify this conclusion; citing one component does not demonstrate that connection.",
+        "openingFacts": [
+          {
+            "id": "opening:vomiting-fatigue-discomfort",
+            "label": "Vomiting, fatigue and abdominal discomfort in the opening handoff",
+            "strength": "concern",
+            "supports": [
+              "diabetic-ketoacidosis",
+              "hyperosmolar-state",
+              "gastroenteritis",
+              "cause-unresolved"
+            ]
+          }
+        ],
+        "supportRules": {
+          "recent-history": {
+            "strength": "suggestive",
+            "supports": [
+              "diabetic-ketoacidosis",
+              "hyperosmolar-state"
+            ]
+          },
+          "bedside-observations": {
+            "strength": "concern",
+            "supports": [
+              "diabetic-ketoacidosis",
+              "hyperosmolar-state",
+              "gastroenteritis"
+            ]
+          },
+          "plasma-glucose": {
+            "strength": "component",
+            "supports": [
+              "diabetic-ketoacidosis"
+            ],
+            "conflictsWith": [
+              "hyperosmolar-state"
+            ],
+            "conflictFeedback": "The glucose value you read does not fit HHS alone in this fictional case. It does not establish DKA without the remaining findings; real presentations can overlap."
+          },
+          "blood-ketones": {
+            "strength": "component",
+            "supports": [
+              "diabetic-ketoacidosis"
+            ],
+            "conflictsWith": [
+              "hyperosmolar-state"
+            ],
+            "conflictFeedback": "The ketone elevation you read does not fit HHS alone in this fictional case. It does not establish DKA without the remaining findings; real presentations can overlap."
+          },
+          "acid-base": {
+            "strength": "component",
+            "supports": [
+              "diabetic-ketoacidosis"
+            ],
+            "conflictsWith": [
+              "hyperosmolar-state"
+            ],
+            "conflictFeedback": "The acidosis you read does not fit HHS alone in this fictional case. It does not establish DKA without the remaining findings; real presentations can overlap."
+          },
+          "serum-osmolality": {
+            "strength": "limited",
+            "supports": [],
+            "conflictsWith": [
+              "hyperosmolar-state"
+            ],
+            "conflictFeedback": "The osmolality result you read does not support HHS alone in this fictional case. It does not establish DKA without the remaining findings; real presentations can overlap."
+          }
+        },
+        "supportGroups": [
+          {
+            "id": "pattern:metabolic-triad",
+            "label": "Glucose, blood ketones and acid-base results together",
+            "requires": [
+              "plasma-glucose",
+              "blood-ketones",
+              "acid-base"
+            ],
+            "strength": "decisive",
+            "supports": [
+              "diabetic-ketoacidosis"
+            ]
+          }
+        ],
+        "uncertaintyOptions": [
+          {
+            "id": "symptoms-not-confirmation",
+            "label": "Vomiting and discomfort alone do not establish a metabolic diagnosis.",
+            "requires": [],
+            "scope": "provisional"
+          },
+          {
+            "id": "history-limits",
+            "label": "Thirst and frequent urination before vomiting weaken a stomach-only explanation; the metabolic cause is still unresolved.",
+            "requires": [
+              "recent-history"
+            ],
+            "missingAny": [
+              "plasma-glucose",
+              "blood-ketones",
+              "acid-base"
+            ],
+            "scope": "provisional"
+          },
+          {
+            "id": "glucose-with-missing-components",
+            "label": "Glucose is raised, but a ketone or acid-base report is still missing from my route.",
+            "requires": [
+              "plasma-glucose"
+            ],
+            "missingAny": [
+              "blood-ketones",
+              "acid-base"
+            ],
+            "forHypotheses": [
+              "diabetic-ketoacidosis"
+            ],
+            "scope": "provisional"
+          },
+          {
+            "id": "ketones-with-missing-components",
+            "label": "Ketones are raised, but a glucose or acid-base report is still missing from my route.",
+            "requires": [
+              "blood-ketones"
+            ],
+            "missingAny": [
+              "plasma-glucose",
+              "acid-base"
+            ],
+            "forHypotheses": [
+              "diabetic-ketoacidosis"
+            ],
+            "scope": "provisional"
+          },
+          {
+            "id": "acidosis-with-missing-components",
+            "label": "A glucose or ketone report is still missing, so this acidosis has not been linked to the full pattern.",
+            "requires": [
+              "acid-base"
+            ],
+            "missingAny": [
+              "plasma-glucose",
+              "blood-ketones"
+            ],
+            "forHypotheses": [
+              "diabetic-ketoacidosis"
+            ],
+            "scope": "provisional"
+          },
+          {
+            "id": "triad-scope",
+            "label": "The laboratory pattern supports ketoacidosis here; it does not determine why it developed or settle every care decision.",
+            "requires": [
+              "plasma-glucose",
+              "blood-ketones",
+              "acid-base"
+            ],
+            "forHypotheses": [
+              "diabetic-ketoacidosis"
+            ],
+            "scope": "supported"
+          },
+          {
+            "id": "osmolality-discriminator",
+            "label": "This osmolality result weakens a markedly hyperosmolar explanation; it cannot establish ketoacidosis on its own.",
+            "requires": [
+              "serum-osmolality"
+            ],
+            "forHypotheses": [
+              "diabetic-ketoacidosis",
+              "gastroenteritis"
+            ],
+            "scope": "any"
+          },
+          {
+            "id": "all-excluded",
+            "label": "Every other cause of vomiting has now been ruled out.",
+            "requires": [],
+            "scope": "unsupported"
+          }
+        ]
+      },
+      "resolution": {
+        "hypothesisId": "diabetic-ketoacidosis",
+        "evidenceActionIds": [
+          "plasma-glucose",
+          "blood-ketones",
+          "acid-base"
+        ],
+        "supportedSummary": "The collected three-part pattern supports ketoacidosis in this fictional case: elevated glucose, ketones and acidosis. The opening complaint alone was not enough.",
+        "mismatchSummary": "The collected glucose, ketone and acid-base findings fit ketoacidosis more closely than the selected explanation in this fictional case.",
+        "provisionalSummary": "Your conclusion remains provisional because the glucose, ketone and acid-base results were not all collected. A partial pattern is not the complete evidence set.",
+        "decisiveClue": "The fictional combination is glucose 286 mg/dL, beta-hydroxybutyrate 4.8 mmol/L, pH 7.22 and bicarbonate 13 mmol/L.",
+        "missingClue": "At least one component of the three-part laboratory pattern is missing from your route.",
+        "nextLearning": "Ask whether the required pieces fit together, rather than letting one abnormal number carry the whole conclusion.",
+        "limitations": [
+          "Authored fictional records pending human medical review; source references support educational framing, not these patient measurements or events.",
+          "Update rounds are narrative release events, not clinical minutes, recommended waits or an investigation sequence. Emergency assessment continues independently.",
+          "No treatment, dose, eligibility, prognosis or patient outcome is modeled. A recorded explanation does not establish clinical competence.",
+          "Earlier owner-reported clinician review has unverified scope and version; it does not cover these version 5 questions, exchanges or Arrival C records."
+        ],
+        "conclusionKind": "diagnostic"
+      },
+      "careWorkflow": {
+        "episodeId": "stu-003-after-weekend-investigation",
+        "version": 1,
+        "role": {
+          "label": "Student reporting to a supervising clinician",
+          "boundary": "Offer a synthesis and questions to the supervisor. Independent test orders, treatment and care decisions are outside the student role."
+        },
+        "timingNote": "Fictional update rounds release reports and narrative events. They are not minutes, recommended waits or a prescribed clinical sequence.",
+        "priority": {
+          "prompt": "Who needs the opening concern before its cause is settled?",
+          "choices": [
+            {
+              "id": "share-opening-concern",
+              "label": "Share vomiting, fatigue and abdominal discomfort with the supervising clinician and confirm who accepts review.",
+              "appropriate": true,
+              "feedback": "Communicate the concern and uncertainty early; a diagnostic label is not required to name a review owner.",
+              "requires": []
+            },
+            {
+              "id": "finish-record-before-contact",
+              "label": "Collect the remaining reports first, then ask the supervising clinician to accept the complete explanation.",
+              "appropriate": false,
+              "feedback": "A fuller record may refine the explanation. It does not replace early shared awareness and responsibility for the presenting concern.",
+              "requires": []
+            }
+          ]
+        },
+        "tasks": {
+          "recent-history": {
+            "owner": "Supervising clinician",
+            "label": "Follow up: recent history",
+            "rounds": 1
+          },
+          "bedside-observations": {
+            "owner": "Supervising clinician",
+            "label": "Follow up: bedside observations",
+            "rounds": 1
+          },
+          "plasma-glucose": {
+            "owner": "Supervising clinician",
+            "label": "Follow up: plasma glucose",
+            "rounds": 1
+          },
+          "blood-ketones": {
+            "owner": "Supervising clinician",
+            "label": "Follow up: blood ketones",
+            "rounds": 2
+          },
+          "acid-base": {
+            "owner": "Supervising clinician",
+            "label": "Follow up: acid-base report",
+            "rounds": 2
+          },
+          "serum-osmolality": {
+            "owner": "Supervising clinician",
+            "label": "Follow up: serum osmolality",
+            "rounds": 2
+          }
+        },
+        "reassessment": {
+          "minimumReviewed": 1,
+          "update": "Fictional team checkpoint: identify what you reviewed, what remains pending and who accepts the next review. This checkpoint supplies no additional examination or laboratory finding."
+        },
+        "handoff": {
+          "receiver": {
+            "prompt": "Who accepts this concern?",
+            "choices": [
+              {
+                "id": "r-worklist",
+                "label": "The shared results worklist, with the next reader deciding who receives the concern.",
+                "appropriate": false,
+                "feedback": "A worklist records tasks; it does not show who accepted responsibility.",
+                "requires": []
+              },
+              {
+                "id": "r-clinical",
+                "label": "The supervising clinician responsible for this assessment.",
+                "appropriate": true,
+                "feedback": "Name the clinical receiver and verify acceptance of the concern.",
+                "requires": []
+              }
+            ]
+          },
+          "situation": {
+            "prompt": "Which known fact will you carry forward?",
+            "choices": [
+              {
+                "id": "s-opening",
+                "label": "A 26-year-old arrived with vomiting, fatigue and abdominal discomfort; the stomach-illness account was incomplete.",
+                "appropriate": true,
+                "feedback": "This is an opening fact, available for an early handoff. Add the actual reviewed and pending information to the shared record.",
+                "requires": []
+              },
+              {
+                "id": "s-glucose",
+                "label": "The reviewed plasma glucose is 286 mg/dL; this number alone is not the full pattern.",
+                "appropriate": true,
+                "feedback": "Include the value without inventing the unreviewed components.",
+                "requires": [
+                  "plasma-glucose"
+                ]
+              },
+              {
+                "id": "s-pattern",
+                "label": "The reviewed reports show glucose 286 mg/dL, ketones 4.8 mmol/L, pH 7.22 and bicarbonate 13 mmol/L.",
+                "appropriate": true,
+                "feedback": "A report-specific combined statement is available only after all its components were reviewed.",
+                "requires": [
+                  "plasma-glucose",
+                  "blood-ketones",
+                  "acid-base"
+                ]
+              },
+              {
+                "id": "s-overclaim",
+                "label": "The initial vomiting establishes a stomach illness; hand over the glucose report as a separate issue.",
+                "appropriate": false,
+                "feedback": "The opening observation does not establish that cause. Keep what happened separate from the explanation.",
+                "requires": []
+              }
+            ]
+          },
+          "uncertainty": {
+            "prompt": "Which limit belongs with that statement?",
+            "choices": [
+              {
+                "id": "u-delay",
+                "label": "Hold the handoff until a single cause is confirmed, so the receiver gets no unresolved question.",
+                "appropriate": false,
+                "feedback": "An unresolved question belongs in an early handoff. It should have a named clinical receiver, not be silently withheld.",
+                "requires": []
+              },
+              {
+                "id": "u-pattern",
+                "label": "The combined reports fit ketoacidosis here; the precipitant and care decisions remain for the supervisor.",
+                "appropriate": true,
+                "feedback": "A supported synthesis does not transfer clinical responsibility to the student. Real metabolic presentations can overlap.",
+                "requires": [
+                  "plasma-glucose",
+                  "blood-ketones",
+                  "acid-base"
+                ]
+              },
+              {
+                "id": "u-opening",
+                "label": "The opening symptoms alone do not establish a cause; stronger claims must cite reviewed findings.",
+                "appropriate": true,
+                "feedback": "This limits the opening account without pretending later reports are still unknown.",
+                "requires": []
+              }
+            ]
+          },
+          "nextOwner": {
+            "prompt": "Who follows up the remaining concern?",
+            "choices": [
+              {
+                "id": "o-clinical",
+                "label": "Confirm the supervising clinician owns the next review and how new reports or symptom changes reach them.",
+                "appropriate": true,
+                "feedback": "Identify an accountable receiver and an update route. This assigns communication responsibility, not treatment.",
+                "requires": []
+              },
+              {
+                "id": "o-worklist",
+                "label": "Use the completed request as the transfer of responsibility; the receiving worklist can assign the next review.",
+                "appropriate": false,
+                "feedback": "A sent request is not evidence that another person accepted the concern or the next review.",
+                "requires": []
+              }
+            ]
+          }
+        },
+        "readback": {
+          "prompt": "Verify the receiver’s reply against the sent handoff.",
+          "choices": []
+        },
+        "sources": [
+          {
+            "title": "WHO Emergency Care Toolkit: Interagency Integrated Triage Tool",
+            "url": "https://www.who.int/teams/integrated-health-services/clinical-services-and-systems/emergency-and-critical-care/emergency-care-toolkit",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Prioritizing clinical concern separately from establishing a diagnosis. These role-specific exercises do not implement or validate a triage scale."
+          },
+          {
+            "title": "NICE CG50: recognising and responding to deterioration",
+            "url": "https://www.nice.org.uk/guidance/CG50/chapter/recommendations",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Clinical concern, response ownership and reassessment. No physiological thresholds, observation intervals or treatment instructions are introduced."
+          },
+          {
+            "title": "AHRQ TeamSTEPPS: Handoff",
+            "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/handoff.html",
+            "checkedDate": "2026-10-17",
+            "scope": "Communicate uncertainty, recent changes, named responsibility and receiver acceptance. The educational exercise does not transfer real clinical authority."
+          },
+          {
+            "title": "AHRQ TeamSTEPPS: Check-Back (or Repeat-Back)",
+            "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/checkback.html",
+            "checkedDate": "2026-10-17",
+            "scope": "The receiver repeats the message and the sender verifies or corrects understanding. These scripted exchanges are newly authored fiction, without treatment instructions."
+          }
+        ],
+        "reviewProvenance": {
+          "status": "unreviewed",
+          "ownerReportedPriorClinicianReview": true,
+          "priorReviewScope": "unverified",
+          "priorReviewVersion": "unverified",
+          "text": "The owner reports clinician review of earlier material; the reviewed scope and version are unverified. These version 5 receiver exchanges, contextual questions and Arrival C contrasts are newly authored fiction and have not received separate clinician review."
+        },
+        "workboardPrompt": "Choose work to follow up; reports may arrive together.",
+        "patientUpdates": [
+          {
+            "id": "thirst-tiredness-change",
+            "afterRound": 1,
+            "requiresReviewed": [],
+            "text": "Authored fictional change after arrival: the patient tells the student that thirst persists and tiredness has increased; the patient is still conversant. No new laboratory or examination result is supplied.",
+            "prompt": "What should you bring to the supervisor?",
+            "choices": [
+              {
+                "id": "communicate-change",
+                "label": "Report persistent thirst and increased tiredness, state that the patient is conversant, and confirm the supervisor accepts review.",
+                "appropriate": true,
+                "feedback": "Communicate the actual reported change and confirm a clinical owner. It neither establishes the cause nor predicts the outcome.",
+                "requires": []
+              },
+              {
+                "id": "defer-change-to-summary",
+                "label": "Keep the symptom update for the completed laboratory synthesis, using conversation as reassurance while the reports are pending.",
+                "appropriate": false,
+                "feedback": "The new concern needs to reach the responsible clinician with its full detail. A pending report or one improved feature does not replace that communication.",
+                "requires": []
+              }
+            ]
+          }
+        ]
+      },
+      "familyId": "stu-003-after-weekend-investigation",
+      "familyTitle": "After the Weekend",
+      "recordLabel": "Arrival A",
+      "workboardPrompt": "Choose work to follow up; reports may arrive together.",
+      "authoredFiction": true,
+      "reviewProvenance": {
+        "status": "unreviewed",
+        "ownerReportedPriorClinicianReview": true,
+        "priorReviewScope": "unverified",
+        "priorReviewVersion": "unverified",
+        "text": "The owner reports clinician review of earlier material; the reviewed scope and version are unverified. These version 5 receiver exchanges, contextual questions and Arrival C contrasts are newly authored fiction and have not received separate clinician review."
+      },
+      "transferQuestion": {
+        "version": 1,
+        "synthetic": true,
+        "reviewStatus": "pending_human_review",
+        "sourceCheckedDate": "2026-10-16",
+        "delivery": "after-another-arrival",
+        "id": "hyperosmolar-pattern-contrast-v4",
+        "prompt": "A different fictional record has glucose 720 mg/dL, total osmolality 334 mOsm/kg, ketones 0.8 mmol/L, pH 7.36 and bicarbonate 23 mmol/L. Which explanation fits the combination?",
+        "choices": [
+          {
+            "id": "dka",
+            "label": "The high glucose establishes ketoacidosis; the other components describe its severity.",
+            "feedback": "Glucose alone does not establish ketoacidosis. These supplied ketone and acid-base results do not show that pattern."
+          },
+          {
+            "id": "hhs",
+            "label": "Severe hyperglycemia and hyperosmolality without significant ketosis or acidosis fit the HHS pattern.",
+            "feedback": "The combined components distinguish this authored pattern. They do not settle the precipitant or care decisions, and real presentations can overlap."
+          },
+          {
+            "id": "reassured",
+            "label": "The non-acidotic pH makes the glucose and osmolality findings a secondary concern.",
+            "feedback": "A non-acidotic pH is not reassurance about the full metabolic picture. The glucose and osmolality remain material findings."
+          }
+        ],
+        "answerId": "hhs",
+        "source": {
+          "title": "ADA/EASD and partner societies: Hyperglycemic Crises in Adults With Diabetes, 2024 consensus",
+          "url": "https://doi.org/10.2337/dci24-0032",
+          "scope": "Compare the combined DKA criteria with severe hyperglycemia, hyperosmolality and absence of significant ketosis/acidosis in HHS. The fictional alternatives are simplified; real presentations can overlap. No treatment content is used.",
+          "checkedDate": "2026-10-16"
+        }
+      },
+      "coordination": {
+        "readbackScenarios": [
+          {
+            "id": "metabolic-a-receiver-not-accepted",
+            "requiresSelections": {
+              "receiverId": "r-worklist"
+            },
+            "message": "“The worklist entry for vomiting, fatigue and abdominal discomfort is visible. I have not accepted the next clinical review.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "metabolic-a-receiver-not-accepted-alternative-1",
+                "label": "Verify that the entry is visible and record the next clinical review as accepted through the shared worklist.",
+                "appropriate": false,
+                "feedback": "Visibility does not establish that a person accepted responsibility.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-a-receiver-not-accepted-alternative-2",
+                "label": "Ask for a more complete diagnostic summary, then use its inclusion in the worklist as the review assignment.",
+                "appropriate": false,
+                "feedback": "More detail does not resolve the missing clinical receiver.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-a-receiver-not-accepted-verify",
+                "label": "Clarify who accepts the vomiting, fatigue and abdominal discomfort concern and ask the named clinician to repeat their responsibility.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-a-next-owner-missing",
+            "requiresSelections": {
+              "nextOwnerId": "o-worklist"
+            },
+            "message": "“I received the summary. Whoever reads the last report will take responsibility for the next review.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "metabolic-a-next-owner-missing-verify",
+                "label": "Ask the supervising clinician to accept the next review and confirm the route for later reports or changes.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-a-next-owner-missing-alternative-1",
+                "label": "Confirm that the final report reader will be recorded as the owner when the worklist becomes complete.",
+                "appropriate": false,
+                "feedback": "A future reader is not a named person accepting the concern now.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-a-next-owner-missing-alternative-2",
+                "label": "Verify the findings in the summary and leave ownership to the team handling the remaining requests.",
+                "appropriate": false,
+                "feedback": "Finding accuracy and ownership are separate parts of the exchange.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-a-opening-overclaim",
+            "requiresSelections": {
+              "situationId": "s-overclaim"
+            },
+            "message": "“I heard that the opening vomiting, fatigue and abdominal discomfort establishes a stomach illness.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "metabolic-a-opening-overclaim-alternative-1",
+                "label": "Verify the diagnostic wording because it repeats the situation selected in the handoff accurately.",
+                "appropriate": false,
+                "feedback": "Repeating an inaccurate claim does not make it valid. The sender must also check its meaning against the known record.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-a-opening-overclaim-verify",
+                "label": "Correct the opening claim: it describes the presenting concern; stronger conclusions must use findings actually reviewed.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-a-opening-overclaim-alternative-2",
+                "label": "Keep that diagnosis in the exchange and label the remaining reports as details about its extent.",
+                "appropriate": false,
+                "feedback": "The opening account does not establish the diagnosis or make other findings secondary.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-a-uncertainty-withheld",
+            "requiresSelections": {
+              "uncertaintyId": "u-delay"
+            },
+            "message": "“I will accept the unresolved question after one cause has been confirmed.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "metabolic-a-uncertainty-withheld-alternative-1",
+                "label": "Verify the condition for acceptance and keep responsibility with the results worklist until the cause is confirmed.",
+                "appropriate": false,
+                "feedback": "Diagnostic uncertainty does not supply an accountable next reviewer.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-a-uncertainty-withheld-alternative-2",
+                "label": "Replace the unresolved question with the leading diagnosis so the receiver can accept a definite account.",
+                "appropriate": false,
+                "feedback": "A stronger label cannot substitute for communicating the actual evidence and uncertainty.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-a-uncertainty-withheld-verify",
+                "label": "Clarify that the supervising clinician needs to accept the concern with its current uncertainty and outstanding work.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-a-pattern-and-change",
+            "requiresReviewed": [
+              "plasma-glucose",
+              "blood-ketones",
+              "acid-base"
+            ],
+            "requiresPatientUpdates": [
+              "thirst-tiredness-change"
+            ],
+            "message": "“The combined reports support the ketoacidotic pattern. Thirst persists and tiredness increased; the patient is conversant. I accept the next review.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "metabolic-a-pattern-and-change-alternative-1",
+                "label": "Use continued conversation to omit the tiredness change and verify the laboratory summary alone.",
+                "appropriate": false,
+                "feedback": "The update explicitly contains increased tiredness. Conversation does not remove it from the handoff.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-a-pattern-and-change-alternative-2",
+                "label": "Replace the combined pattern with a glucose-only diagnosis to keep the receiver’s account concise.",
+                "appropriate": false,
+                "feedback": "The relevant combined components cannot be reduced to a glucose-only argument.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-a-pattern-and-change-verify",
+                "label": "Verify the combined pattern, complete symptom report and accepted review; keep the precipitant question open.",
+                "appropriate": true,
+                "feedback": "The receiver has accurately repeated the pattern and change without turning conversation into reassurance.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-a-glucose-change-acid-pending",
+            "requiresReviewed": [
+              "plasma-glucose"
+            ],
+            "requiresPatientUpdates": [
+              "thirst-tiredness-change"
+            ],
+            "requiresPending": [
+              "acid-base"
+            ],
+            "message": "“Raised glucose is reviewed and acid-base is pending. I heard thirst continues and tiredness increased while the patient remains conversant.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "metabolic-a-glucose-change-acid-pending-alternative-1",
+                "label": "Correct the pending acid-base report to the value expected from the glucose and symptom account.",
+                "appropriate": false,
+                "feedback": "No value or full pattern can be inferred from a pending acid-base report.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-a-glucose-change-acid-pending-verify",
+                "label": "Verify the actual glucose report, pending acid-base status and symptom account; do not add an acid-base finding.",
+                "appropriate": true,
+                "feedback": "The repetition keeps a reviewed component, an outstanding report and a patient-reported change distinct.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-a-glucose-change-acid-pending-alternative-2",
+                "label": "Confirm the exchange as evidence that a full ketoacidotic pattern is already established.",
+                "appropriate": false,
+                "feedback": "Glucose and symptoms alone do not supply every required component.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-a-symptom-change",
+            "requiresPatientUpdates": [
+              "thirst-tiredness-change"
+            ],
+            "message": "“I heard persistent thirst and increased tiredness. The patient is still conversant; I accept that update for supervisor review.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "metabolic-a-symptom-change-verify",
+                "label": "Verify all three observations and the accepted review; avoid turning conversation into a laboratory conclusion.",
+                "appropriate": true,
+                "feedback": "The receiver has repeated the complete symptom account while leaving its explanation to the reviewed evidence and supervisor.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-a-symptom-change-alternative-1",
+                "label": "Correct increased tiredness to improvement because the patient can still hold a conversation.",
+                "appropriate": false,
+                "feedback": "The source account explicitly says tiredness increased.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-a-symptom-change-alternative-2",
+                "label": "Add a confirmed metabolic diagnosis to the repeated symptom account before accepting this exchange.",
+                "appropriate": false,
+                "feedback": "The reported change does not itself supply the missing laboratory pattern.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-a-opening-only",
+            "message": "“I heard the presenting vomiting, fatigue and abdominal discomfort. The opening account alone does not establish its cause. I accept the next review; separately listed reports retain their recorded status.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "metabolic-a-opening-only-alternative-1",
+                "label": "Correct the receiver to the final diagnosis expected for this arrival, even if its supporting report is not reviewed.",
+                "appropriate": false,
+                "feedback": "A future report or a remembered arrival cannot enter the current sent snapshot.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-a-opening-only-alternative-2",
+                "label": "Withhold verification until all work is complete so the opening concern can be replaced by one definite explanation.",
+                "appropriate": false,
+                "feedback": "The known concern and next reviewer can be verified while the cause remains uncertain.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-a-opening-only-verify",
+                "label": "Verify the presenting concern, its limited certainty and accepted review; add no result that the sent snapshot does not contain.",
+                "appropriate": true,
+                "feedback": "This is a valid early exchange. A complete diagnostic worklist is not required to communicate the known concern and ownership.",
+                "requires": []
+              }
+            ]
+          }
+        ],
+        "reassessmentScenarios": [
+          {
+            "id": "metabolic-a-reassess-pattern-change",
+            "requiresReviewed": [
+              "plasma-glucose",
+              "blood-ketones",
+              "acid-base"
+            ],
+            "requiresPatientUpdates": [
+              "thirst-tiredness-change"
+            ],
+            "message": "Reviewed: the combined reviewed glucose, ketone and acid-base reports support the ketoacidotic pattern. Reported change: thirst persists and tiredness has increased while the patient remains conversant.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "metabolic-a-reassess-pattern-change-alternative-1",
+                "label": "Keep the laboratory account and omit the tiredness change because the patient is still conversant.",
+                "appropriate": false,
+                "feedback": "A continuing ability to converse does not erase the patient’s reported change.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-a-reassess-pattern-change-alternative-2",
+                "label": "Use the symptom change to replace the combined pattern with a glucose-only conclusion.",
+                "appropriate": false,
+                "feedback": "A symptom report does not replace the components supporting the recorded pattern.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-a-reassess-pattern-change-verify",
+                "label": "Give the supervisor the component account and increased tiredness together. The combined pattern does not establish its precipitant or transfer care decisions from the supervisor.",
+                "appropriate": true,
+                "feedback": "This joins the current symptom report to the actual reviewed pattern or missing component without inventing values.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-a-reassess-glucose-change-pending",
+            "requiresReviewed": [
+              "plasma-glucose"
+            ],
+            "requiresPatientUpdates": [
+              "thirst-tiredness-change"
+            ],
+            "requiresPending": [
+              "acid-base"
+            ],
+            "message": "Glucose is reviewed; acid-base remains pending. Thirst persists and tiredness increased, while the patient remains conversant.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "metabolic-a-reassess-glucose-change-pending-verify",
+                "label": "Bring the glucose component and symptom change to the supervisor; keep acid-base pending without a value or full-pattern claim.",
+                "appropriate": true,
+                "feedback": "The next review can use a partial record while preserving the component that is still outstanding.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-a-reassess-glucose-change-pending-alternative-1",
+                "label": "Infer the acid-base component from the glucose and increased tiredness, then hand over a complete metabolic pattern.",
+                "appropriate": false,
+                "feedback": "The supplied observations do not create an unreviewed laboratory result.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-a-reassess-glucose-change-pending-alternative-2",
+                "label": "Defer the symptom change until the pending acid-base report shows whether the conversation is reassuring.",
+                "appropriate": false,
+                "feedback": "The change should be communicated as reported. An outstanding component does not replace review ownership.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-a-reassess-symptom-change",
+            "requiresPatientUpdates": [
+              "thirst-tiredness-change"
+            ],
+            "message": "Reported change: thirst persists and tiredness has increased while the patient remains conversant. Other results have the statuses shown in the current snapshot.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "metabolic-a-reassess-symptom-change-alternative-1",
+                "label": "Use continued conversation to keep the earlier symptom account until all reports can be synthesized together.",
+                "appropriate": false,
+                "feedback": "Continued conversation does not remove the reported increase in tiredness.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-a-reassess-symptom-change-verify",
+                "label": "Describe the full symptom change to the supervisor, adding reviewed components and identifying work still outstanding.",
+                "appropriate": true,
+                "feedback": "The update is neither a new laboratory result nor evidence of a patient outcome.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-a-reassess-symptom-change-alternative-2",
+                "label": "Let increased tiredness establish the metabolic diagnosis and treat unreviewed components as supporting detail.",
+                "appropriate": false,
+                "feedback": "The symptom change does not establish the required laboratory pattern.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-a-reassess-current-record",
+            "message": "Use the reviewed findings and task statuses in the current snapshot. This checkpoint supplies no additional patient finding.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "metabolic-a-reassess-current-record-alternative-1",
+                "label": "Build the explanation from the expected final reports and revise it only if one later result disagrees.",
+                "appropriate": false,
+                "feedback": "A requested or expected finding is not reviewed evidence.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-a-reassess-current-record-alternative-2",
+                "label": "Carry the opening account alone until every requested report is ready, then assign the next clinical reviewer.",
+                "appropriate": false,
+                "feedback": "Reviewed findings can update the account before the worklist is complete, and the concern already needs an owner.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-a-reassess-current-record-verify",
+                "label": "Separate what you reviewed from what is pending or available to read, and confirm the supervising clinician owns the next review.",
+                "appropriate": true,
+                "feedback": "Reading, availability and pending work are different statuses. Use only the current snapshot; no later fact is supplied by this question.",
+                "requires": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "transfer": {
+      "version": 1,
+      "synthetic": true,
+      "reviewStatus": "pending_human_review",
+      "sourceCheckedDate": "2026-10-16",
+      "delivery": "after-another-arrival",
+      "id": "hyperosmolar-pattern-contrast-v4",
+      "prompt": "A different fictional record has glucose 720 mg/dL, total osmolality 334 mOsm/kg, ketones 0.8 mmol/L, pH 7.36 and bicarbonate 23 mmol/L. Which explanation fits the combination?",
+      "choices": [
+        {
+          "id": "dka",
+          "label": "The high glucose establishes ketoacidosis; the other components describe its severity.",
+          "feedback": "Glucose alone does not establish ketoacidosis. These supplied ketone and acid-base results do not show that pattern."
+        },
+        {
+          "id": "hhs",
+          "label": "Severe hyperglycemia and hyperosmolality without significant ketosis or acidosis fit the HHS pattern.",
+          "feedback": "The combined components distinguish this authored pattern. They do not settle the precipitant or care decisions, and real presentations can overlap."
+        },
+        {
+          "id": "reassured",
+          "label": "The non-acidotic pH makes the glucose and osmolality findings a secondary concern.",
+          "feedback": "A non-acidotic pH is not reassurance about the full metabolic picture. The glucose and osmolality remain material findings."
+        }
+      ],
+      "answerId": "hhs",
+      "source": {
+        "title": "ADA/EASD and partner societies: Hyperglycemic Crises in Adults With Diabetes, 2024 consensus",
+        "url": "https://doi.org/10.2337/dci24-0032",
+        "scope": "Compare the combined DKA criteria with severe hyperglycemia, hyperosmolality and absence of significant ketosis/acidosis in HHS. The fictional alternatives are simplified; real presentations can overlap. No treatment content is used.",
+        "checkedDate": "2026-10-16"
+      }
+    }
+  },
+  {
+    "episode": {
+      "id": "stu-003-after-weekend-investigation-record-b",
+      "version": 5,
+      "title": "After the Weekend",
+      "subtitle": "Follow the concern. Review the record. Hand it over.",
+      "opening": "A 26-year-old arrives after a weekend away with vomiting, fatigue and abdominal discomfort. The team is already assessing the patient. The first handoff suggests a stomach illness, but the record is incomplete.",
+      "disclaimer": "Educational fiction pending human review. Reports, changes and update rounds are authored; they are not clinical advice or patient outcomes.",
+      "reviewStatus": "pending_human_review",
+      "presentation": {
+        "audience": "student",
+        "playMinutes": "5-8",
+        "image": "./assets/episodes/stu-001-dka-escalation-720.webp",
+        "imageAlt": "Generated illustration of a young adult under observation with a hospital team. Not diagnostic evidence."
+      },
+      "sources": [
+        {
+          "title": "ADA/EASD and partner societies: Hyperglycemic Crises in Adults With Diabetes, 2024 consensus report",
+          "url": "https://doi.org/10.2337/dci24-0032",
+          "checkedUtc": "2026-10-16T04:29:45Z",
+          "scope": "Diagnosis requires the combined glucose/diabetes, ketone and metabolic-acidosis criteria. HHS involves hyperosmolality without significant ketosis or acidosis; no treatment recommendations are used. Fictional values are not source patient data."
+        },
+        {
+          "title": "2024 consensus report: open full text, diagnostic criteria section",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11272983/",
+          "checkedUtc": "2026-10-16T04:29:45Z",
+          "scope": "Primary consensus text for the three-part DKA argument and the competing HHS pattern. Used only to check authored evidence relations, not care decisions."
+        },
+        {
+          "title": "ADA/EASD and partner societies: Hyperglycemic Crises in Adults With Diabetes, 2024 consensus",
+          "url": "https://doi.org/10.2337/dci24-0032",
+          "scope": "Compare the combined DKA criteria with severe hyperglycemia, hyperosmolality and absence of significant ketosis/acidosis in HHS. The fictional alternatives are simplified; real presentations can overlap. No treatment content is used.",
+          "checkedDate": "2026-10-16"
+        },
+        {
+          "title": "AHRQ TeamSTEPPS: Check-Back (or Repeat-Back)",
+          "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/checkback.html",
+          "checkedDate": "2026-10-17",
+          "scope": "The receiver repeats the message and the sender verifies or corrects understanding. These scripted exchanges are newly authored fiction, without treatment instructions."
+        },
+        {
+          "title": "AHRQ TeamSTEPPS: Handoff",
+          "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/handoff.html",
+          "checkedDate": "2026-10-17",
+          "scope": "Communicate uncertainty, recent changes, named responsibility and receiver acceptance. The educational exercise does not transfer real clinical authority."
+        }
+      ],
+      "hypotheses": [
+        {
+          "id": "diabetic-ketoacidosis",
+          "label": "Diabetic ketoacidosis"
+        },
+        {
+          "id": "hyperosmolar-state",
+          "label": "Hyperglycemic hyperosmolar state (HHS) alone"
+        },
+        {
+          "id": "gastroenteritis",
+          "label": "Gastroenteritis with dehydration"
+        },
+        {
+          "id": "cause-unresolved",
+          "label": "Cause not established by this record"
+        }
+      ],
+      "actions": [
+        {
+          "id": "recent-history",
+          "label": "Recent history",
+          "category": "history",
+          "minutes": 3,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional history: thirst and frequent urination started before the vomiting. There is no established diabetes diagnosis in the record.",
+          "interpretation": "The chronology weakens a stomach-only explanation but cannot settle the metabolic diagnosis."
+        },
+        {
+          "id": "bedside-observations",
+          "label": "Bedside observations",
+          "category": "examination",
+          "minutes": 3,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional observations: the patient is tired but conversant, with dry mouth and abdominal discomfort.",
+          "interpretation": "These observations need explanation. Conversing does not settle the metabolic pattern or its importance."
+        },
+        {
+          "id": "plasma-glucose",
+          "label": "Plasma glucose",
+          "category": "laboratory",
+          "minutes": 2,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional laboratory result: plasma glucose is 720 mg/dL.",
+          "interpretation": "Markedly raised glucose is one component; it does not establish ketoacidosis or HHS by itself."
+        },
+        {
+          "id": "blood-ketones",
+          "label": "Blood ketones",
+          "category": "laboratory",
+          "minutes": 3,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional laboratory result: beta-hydroxybutyrate is 0.8 mmol/L.",
+          "interpretation": "This report does not show significant ketonemia. Compare it with glucose, osmolality and acid-base findings."
+        },
+        {
+          "id": "acid-base",
+          "label": "Acid-base report",
+          "category": "laboratory",
+          "minutes": 4,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional laboratory results: venous pH is 7.36 and bicarbonate is 23 mmol/L.",
+          "interpretation": "This report does not show the metabolic acidosis required for the authored DKA pattern. It does not make the other abnormalities unimportant."
+        },
+        {
+          "id": "serum-osmolality",
+          "label": "Serum osmolality",
+          "category": "laboratory",
+          "minutes": 4,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional laboratory result: measured total serum osmolality is 334 mOsm/kg.",
+          "interpretation": "Hyperosmolality joins the other report components; this value alone does not establish the entire explanation."
+        }
+      ],
+      "reasoning": {
+        "supportLabel": "Evidence for your explanation",
+        "limitationLabel": "A comparison or limit",
+        "prompt": "Connect your explanation to reviewed evidence, then state a limit.",
+        "caseLearningText": "Compare all four reports: severe hyperglycemia and hyperosmolality without significant ketosis or acidosis support the HHS pattern here. One value cannot carry the conclusion. These alternatives are simplified; real presentations can overlap.",
+        "insufficientCitationFeedback": "Select the combined glucose, osmolality, ketone and acid-base argument. Reading all four but citing a single component does not explain how this pattern differs from ketoacidosis.",
+        "openingFacts": [
+          {
+            "id": "opening:vomiting-fatigue-discomfort",
+            "label": "Vomiting, fatigue and abdominal discomfort in the opening handoff",
+            "strength": "concern",
+            "supports": [
+              "diabetic-ketoacidosis",
+              "hyperosmolar-state",
+              "gastroenteritis",
+              "cause-unresolved"
+            ]
+          }
+        ],
+        "supportRules": {
+          "recent-history": {
+            "strength": "suggestive",
+            "supports": [
+              "diabetic-ketoacidosis",
+              "hyperosmolar-state"
+            ]
+          },
+          "bedside-observations": {
+            "strength": "concern",
+            "supports": [
+              "diabetic-ketoacidosis",
+              "hyperosmolar-state",
+              "gastroenteritis",
+              "cause-unresolved"
+            ]
+          },
+          "plasma-glucose": {
+            "strength": "component",
+            "supports": [
+              "diabetic-ketoacidosis",
+              "hyperosmolar-state"
+            ]
+          },
+          "blood-ketones": {
+            "strength": "component",
+            "supports": [
+              "hyperosmolar-state"
+            ],
+            "conflictsWith": [
+              "diabetic-ketoacidosis"
+            ],
+            "conflictFeedback": "The reviewed ketone value does not show the significant ketosis required for DKA in this authored record. It does not establish HHS without the other report components; real presentations can overlap."
+          },
+          "acid-base": {
+            "strength": "component",
+            "supports": [
+              "hyperosmolar-state"
+            ],
+            "conflictsWith": [
+              "diabetic-ketoacidosis"
+            ],
+            "conflictFeedback": "The reviewed pH and bicarbonate do not show the acidosis required for this authored DKA pattern. They do not establish HHS or make the other abnormalities safe."
+          },
+          "serum-osmolality": {
+            "strength": "component",
+            "supports": [
+              "hyperosmolar-state"
+            ]
+          }
+        },
+        "supportGroups": [
+          {
+            "id": "pattern:hyperosmolar-components",
+            "label": "Glucose, osmolality, ketones and acid-base together",
+            "requires": [
+              "plasma-glucose",
+              "blood-ketones",
+              "acid-base",
+              "serum-osmolality"
+            ],
+            "strength": "decisive",
+            "supports": [
+              "hyperosmolar-state"
+            ]
+          }
+        ],
+        "uncertaintyOptions": [
+          {
+            "id": "symptoms-not-confirmation",
+            "label": "Vomiting and discomfort alone do not establish a metabolic cause.",
+            "requires": [],
+            "scope": "provisional"
+          },
+          {
+            "id": "history-limits",
+            "label": "The symptom chronology suggests a metabolic concern but does not distinguish its laboratory pattern.",
+            "requires": [
+              "recent-history"
+            ],
+            "scope": "provisional",
+            "missingAny": [
+              "plasma-glucose",
+              "blood-ketones",
+              "acid-base",
+              "serum-osmolality"
+            ]
+          },
+          {
+            "id": "partial-pattern",
+            "label": "Glucose alone does not distinguish HHS from DKA; another component is still missing from my route.",
+            "requires": [
+              "plasma-glucose"
+            ],
+            "scope": "provisional",
+            "missingAny": [
+              "blood-ketones",
+              "acid-base",
+              "serum-osmolality"
+            ]
+          },
+          {
+            "id": "hyperosmolar-scope",
+            "label": "The combined reports support HHS here, but do not establish its precipitant or every care decision.",
+            "requires": [
+              "plasma-glucose",
+              "blood-ketones",
+              "acid-base",
+              "serum-osmolality"
+            ],
+            "scope": "supported",
+            "forHypotheses": [
+              "hyperosmolar-state"
+            ]
+          },
+          {
+            "id": "acid-base-limit",
+            "label": "A non-acidotic pH alone cannot make the glucose and osmolality findings unimportant.",
+            "requires": [
+              "acid-base"
+            ],
+            "scope": "any"
+          },
+          {
+            "id": "all-excluded",
+            "label": "The non-acidotic pH excludes an important metabolic problem.",
+            "requires": [],
+            "scope": "unsupported"
+          }
+        ]
+      },
+      "resolution": {
+        "hypothesisId": "hyperosmolar-state",
+        "conclusionKind": "diagnostic",
+        "evidenceActionIds": [
+          "plasma-glucose",
+          "blood-ketones",
+          "acid-base",
+          "serum-osmolality"
+        ],
+        "supportedSummary": "The combined fictional reports fit the HHS pattern: severe hyperglycemia and hyperosmolality without significant ketosis or acidosis.",
+        "mismatchSummary": "The combined reports favor the hyperosmolar pattern over the selected explanation in this fictional record. Raised glucose alone was not enough to choose.",
+        "provisionalSummary": "At least one of glucose, osmolality, ketones or acid-base was not reviewed. This remains a partial metabolic argument.",
+        "decisiveClue": "Glucose 720 mg/dL, total osmolality 334 mOsm/kg, beta-hydroxybutyrate 0.8 mmol/L, pH 7.36 and bicarbonate 23 mmol/L form the authored pattern.",
+        "missingClue": "At least one of the four required report components is missing from this route.",
+        "nextLearning": "Compare the full pattern. Very high glucose does not by itself mean ketoacidosis, and a non-acidotic pH does not mean no major metabolic concern.",
+        "limitations": [
+          "Authored fictional records pending human medical review; source references support educational framing, not these patient measurements or events.",
+          "Update rounds are narrative release events, not clinical minutes, recommended waits or an investigation sequence. Emergency assessment continues independently.",
+          "No treatment, dose, eligibility, prognosis or patient outcome is modeled. A recorded explanation does not establish clinical competence.",
+          "Earlier owner-reported clinician review has unverified scope and version; it does not cover these version 5 questions, exchanges or Arrival C records."
+        ]
+      },
+      "careWorkflow": {
+        "episodeId": "stu-003-after-weekend-investigation-record-b",
+        "version": 1,
+        "role": {
+          "label": "Student reporting to a supervising clinician",
+          "boundary": "Offer a synthesis and questions to the supervisor. Independent test orders, treatment and care decisions are outside the student role."
+        },
+        "timingNote": "Fictional update rounds release reports and narrative events. They are not minutes, recommended waits or a prescribed clinical sequence.",
+        "priority": {
+          "prompt": "Who needs the opening concern before its cause is settled?",
+          "choices": [
+            {
+              "id": "finish-record-before-contact",
+              "label": "Collect the remaining reports first, then ask the supervising clinician to accept the complete explanation.",
+              "appropriate": false,
+              "feedback": "A fuller record may refine the explanation. It does not replace early shared awareness and responsibility for the presenting concern.",
+              "requires": []
+            },
+            {
+              "id": "share-opening-concern",
+              "label": "Share vomiting, fatigue and abdominal discomfort with the supervising clinician and confirm who accepts review.",
+              "appropriate": true,
+              "feedback": "Communicate the concern and uncertainty early; a diagnostic label is not required to name a review owner.",
+              "requires": []
+            }
+          ]
+        },
+        "tasks": {
+          "recent-history": {
+            "owner": "Supervising clinician",
+            "label": "Follow up: recent history",
+            "rounds": 1
+          },
+          "bedside-observations": {
+            "owner": "Supervising clinician",
+            "label": "Follow up: bedside observations",
+            "rounds": 1
+          },
+          "plasma-glucose": {
+            "owner": "Supervising clinician",
+            "label": "Follow up: plasma glucose",
+            "rounds": 1
+          },
+          "blood-ketones": {
+            "owner": "Supervising clinician",
+            "label": "Follow up: blood ketones",
+            "rounds": 2
+          },
+          "acid-base": {
+            "owner": "Supervising clinician",
+            "label": "Follow up: acid-base report",
+            "rounds": 2
+          },
+          "serum-osmolality": {
+            "owner": "Supervising clinician",
+            "label": "Follow up: serum osmolality",
+            "rounds": 2
+          }
+        },
+        "reassessment": {
+          "minimumReviewed": 1,
+          "update": "Fictional team checkpoint: identify what you reviewed, what remains pending and who accepts the next review. This checkpoint supplies no additional examination or laboratory finding."
+        },
+        "handoff": {
+          "receiver": {
+            "prompt": "Who accepts this concern?",
+            "choices": [
+              {
+                "id": "r-clinical",
+                "label": "The supervising clinician responsible for this assessment.",
+                "appropriate": true,
+                "feedback": "Name the clinical receiver and verify acceptance of the concern.",
+                "requires": []
+              },
+              {
+                "id": "r-worklist",
+                "label": "The shared results worklist, with the next reader deciding who receives the concern.",
+                "appropriate": false,
+                "feedback": "A worklist records tasks; it does not show who accepted responsibility.",
+                "requires": []
+              }
+            ]
+          },
+          "situation": {
+            "prompt": "Which known fact will you carry forward?",
+            "choices": [
+              {
+                "id": "s-overclaim",
+                "label": "The initial vomiting establishes a stomach illness; hand over the glucose report as a separate issue.",
+                "appropriate": false,
+                "feedback": "The opening observation does not establish that cause. Keep what happened separate from the explanation.",
+                "requires": []
+              },
+              {
+                "id": "s-pattern",
+                "label": "The reviewed reports show glucose 720 mg/dL, total osmolality 334 mOsm/kg, ketones 0.8 mmol/L, pH 7.36 and bicarbonate 23 mmol/L.",
+                "appropriate": true,
+                "feedback": "A report-specific combined statement is available only after all its components were reviewed.",
+                "requires": [
+                  "plasma-glucose",
+                  "serum-osmolality",
+                  "blood-ketones",
+                  "acid-base"
+                ]
+              },
+              {
+                "id": "s-glucose",
+                "label": "The reviewed plasma glucose is 720 mg/dL; this number alone is not the full pattern.",
+                "appropriate": true,
+                "feedback": "Include the value without inventing the unreviewed components.",
+                "requires": [
+                  "plasma-glucose"
+                ]
+              },
+              {
+                "id": "s-opening",
+                "label": "A 26-year-old arrived with vomiting, fatigue and abdominal discomfort; the stomach-illness account was incomplete.",
+                "appropriate": true,
+                "feedback": "This is an opening fact, available for an early handoff. Add the actual reviewed and pending information to the shared record.",
+                "requires": []
+              }
+            ]
+          },
+          "uncertainty": {
+            "prompt": "Which limit belongs with that statement?",
+            "choices": [
+              {
+                "id": "u-opening",
+                "label": "The opening symptoms alone do not establish a cause; stronger claims must cite reviewed findings.",
+                "appropriate": true,
+                "feedback": "This limits the opening account without pretending later reports are still unknown.",
+                "requires": []
+              },
+              {
+                "id": "u-pattern",
+                "label": "The combined reports fit the HHS pattern here; the precipitant and care decisions remain for the supervisor.",
+                "appropriate": true,
+                "feedback": "A supported synthesis does not transfer clinical responsibility to the student. Real metabolic presentations can overlap.",
+                "requires": [
+                  "plasma-glucose",
+                  "serum-osmolality",
+                  "blood-ketones",
+                  "acid-base"
+                ]
+              },
+              {
+                "id": "u-delay",
+                "label": "Hold the handoff until a single cause is confirmed, so the receiver gets no unresolved question.",
+                "appropriate": false,
+                "feedback": "An unresolved question belongs in an early handoff. It should have a named clinical receiver, not be silently withheld.",
+                "requires": []
+              }
+            ]
+          },
+          "nextOwner": {
+            "prompt": "Who follows up the remaining concern?",
+            "choices": [
+              {
+                "id": "o-worklist",
+                "label": "Use the completed request as the transfer of responsibility; the receiving worklist can assign the next review.",
+                "appropriate": false,
+                "feedback": "A sent request is not evidence that another person accepted the concern or the next review.",
+                "requires": []
+              },
+              {
+                "id": "o-clinical",
+                "label": "Confirm the supervising clinician owns the next review and how new reports or symptom changes reach them.",
+                "appropriate": true,
+                "feedback": "Identify an accountable receiver and an update route. This assigns communication responsibility, not treatment.",
+                "requires": []
+              }
+            ]
+          }
+        },
+        "readback": {
+          "prompt": "Verify the receiver’s reply against the sent handoff.",
+          "choices": []
+        },
+        "sources": [
+          {
+            "title": "WHO Emergency Care Toolkit: Interagency Integrated Triage Tool",
+            "url": "https://www.who.int/teams/integrated-health-services/clinical-services-and-systems/emergency-and-critical-care/emergency-care-toolkit",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Prioritizing clinical concern separately from establishing a diagnosis. These role-specific exercises do not implement or validate a triage scale."
+          },
+          {
+            "title": "NICE CG50: recognising and responding to deterioration",
+            "url": "https://www.nice.org.uk/guidance/CG50/chapter/recommendations",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Clinical concern, response ownership and reassessment. No physiological thresholds, observation intervals or treatment instructions are introduced."
+          },
+          {
+            "title": "AHRQ TeamSTEPPS: Handoff",
+            "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/handoff.html",
+            "checkedDate": "2026-10-17",
+            "scope": "Communicate uncertainty, recent changes, named responsibility and receiver acceptance. The educational exercise does not transfer real clinical authority."
+          },
+          {
+            "title": "AHRQ TeamSTEPPS: Check-Back (or Repeat-Back)",
+            "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/checkback.html",
+            "checkedDate": "2026-10-17",
+            "scope": "The receiver repeats the message and the sender verifies or corrects understanding. These scripted exchanges are newly authored fiction, without treatment instructions."
+          }
+        ],
+        "reviewProvenance": {
+          "status": "unreviewed",
+          "ownerReportedPriorClinicianReview": true,
+          "priorReviewScope": "unverified",
+          "priorReviewVersion": "unverified",
+          "text": "The owner reports clinician review of earlier material; the reviewed scope and version are unverified. These version 5 receiver exchanges, contextual questions and Arrival C contrasts are newly authored fiction and have not received separate clinician review."
+        },
+        "workboardPrompt": "Choose work to follow up; reports may arrive together.",
+        "patientUpdates": [
+          {
+            "id": "thirst-tiredness-change",
+            "afterRound": 1,
+            "requiresReviewed": [],
+            "text": "Authored fictional change after arrival: the patient tells the student that thirst persists and tiredness has increased; the patient is still conversant. No new laboratory or examination result is supplied.",
+            "prompt": "What should you bring to the supervisor?",
+            "choices": [
+              {
+                "id": "defer-change-to-summary",
+                "label": "Keep the symptom update for the completed laboratory synthesis, using conversation as reassurance while the reports are pending.",
+                "appropriate": false,
+                "feedback": "The new concern needs to reach the responsible clinician with its full detail. A pending report or one improved feature does not replace that communication.",
+                "requires": []
+              },
+              {
+                "id": "communicate-change",
+                "label": "Report persistent thirst and increased tiredness, state that the patient is conversant, and confirm the supervisor accepts review.",
+                "appropriate": true,
+                "feedback": "Communicate the actual reported change and confirm a clinical owner. It neither establishes the cause nor predicts the outcome.",
+                "requires": []
+              }
+            ]
+          }
+        ]
+      },
+      "familyId": "stu-003-after-weekend-investigation",
+      "familyTitle": "After the Weekend",
+      "recordLabel": "Arrival B",
+      "workboardPrompt": "Choose work to follow up; reports may arrive together.",
+      "authoredFiction": true,
+      "reviewProvenance": {
+        "status": "unreviewed",
+        "ownerReportedPriorClinicianReview": true,
+        "priorReviewScope": "unverified",
+        "priorReviewVersion": "unverified",
+        "text": "The owner reports clinician review of earlier material; the reviewed scope and version are unverified. These version 5 receiver exchanges, contextual questions and Arrival C contrasts are newly authored fiction and have not received separate clinician review."
+      },
+      "transferQuestion": {
+        "version": 1,
+        "synthetic": true,
+        "reviewStatus": "pending_human_review",
+        "sourceCheckedDate": "2026-10-16",
+        "delivery": "after-another-arrival",
+        "id": "ketoacidotic-pattern-contrast-v4",
+        "prompt": "A different fictional arrival has glucose 410 mg/dL, beta-hydroxybutyrate 5.2 mmol/L, venous pH 7.25 and bicarbonate 16 mmol/L. Which explanation uses this different combination?",
+        "choices": [
+          {
+            "id": "hhs-by-memory",
+            "label": "HHS alone, treating the ketones and acidosis as nonspecific effects of dehydration.",
+            "feedback": "The significant ketones and acidosis are required parts of the ketoacidotic pattern, not findings to discard. Real presentations can overlap."
+          },
+          {
+            "id": "dka-pattern",
+            "label": "Ketoacidosis is supported by raised glucose, significant ketones and acidosis together.",
+            "feedback": "The three components form the authored ketoacidotic pattern. Do not reuse the earlier HHS conclusion just because both involve high glucose."
+          },
+          {
+            "id": "glucose-alone",
+            "label": "Keep ketoacidosis unsupported until an osmolality report completes its diagnostic pattern.",
+            "feedback": "Osmolality can help compare explanations, but it is not a substitute for or an additional requirement of the supplied three-part DKA argument."
+          }
+        ],
+        "answerId": "dka-pattern",
+        "source": {
+          "title": "ADA/EASD and partner societies: Hyperglycemic Crises in Adults With Diabetes, 2024 consensus",
+          "url": "https://doi.org/10.2337/dci24-0032",
+          "scope": "Compare the combined DKA criteria with severe hyperglycemia, hyperosmolality and absence of significant ketosis/acidosis in HHS. The fictional alternatives are simplified; real presentations can overlap. No treatment content is used.",
+          "checkedDate": "2026-10-16"
+        }
+      },
+      "coordination": {
+        "readbackScenarios": [
+          {
+            "id": "metabolic-b-receiver-not-accepted",
+            "requiresSelections": {
+              "receiverId": "r-worklist"
+            },
+            "message": "“The worklist entry for vomiting, fatigue and abdominal discomfort is visible. I have not accepted the next clinical review.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "metabolic-b-receiver-not-accepted-alternative-1",
+                "label": "Verify that the entry is visible and record the next clinical review as accepted through the shared worklist.",
+                "appropriate": false,
+                "feedback": "Visibility does not establish that a person accepted responsibility.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-b-receiver-not-accepted-verify",
+                "label": "Clarify who accepts the vomiting, fatigue and abdominal discomfort concern and ask the named clinician to repeat their responsibility.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-b-receiver-not-accepted-alternative-2",
+                "label": "Ask for a more complete diagnostic summary, then use its inclusion in the worklist as the review assignment.",
+                "appropriate": false,
+                "feedback": "More detail does not resolve the missing clinical receiver.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-b-next-owner-missing",
+            "requiresSelections": {
+              "nextOwnerId": "o-worklist"
+            },
+            "message": "“I received the summary. Whoever reads the last report will take responsibility for the next review.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "metabolic-b-next-owner-missing-alternative-1",
+                "label": "Confirm that the final report reader will be recorded as the owner when the worklist becomes complete.",
+                "appropriate": false,
+                "feedback": "A future reader is not a named person accepting the concern now.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-b-next-owner-missing-alternative-2",
+                "label": "Verify the findings in the summary and leave ownership to the team handling the remaining requests.",
+                "appropriate": false,
+                "feedback": "Finding accuracy and ownership are separate parts of the exchange.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-b-next-owner-missing-verify",
+                "label": "Ask the supervising clinician to accept the next review and confirm the route for later reports or changes.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-b-opening-overclaim",
+            "requiresSelections": {
+              "situationId": "s-overclaim"
+            },
+            "message": "“I heard that the opening vomiting, fatigue and abdominal discomfort establishes a stomach illness.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "metabolic-b-opening-overclaim-verify",
+                "label": "Correct the opening claim: it describes the presenting concern; stronger conclusions must use findings actually reviewed.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-b-opening-overclaim-alternative-1",
+                "label": "Verify the diagnostic wording because it repeats the situation selected in the handoff accurately.",
+                "appropriate": false,
+                "feedback": "Repeating an inaccurate claim does not make it valid. The sender must also check its meaning against the known record.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-b-opening-overclaim-alternative-2",
+                "label": "Keep that diagnosis in the exchange and label the remaining reports as details about its extent.",
+                "appropriate": false,
+                "feedback": "The opening account does not establish the diagnosis or make other findings secondary.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-b-uncertainty-withheld",
+            "requiresSelections": {
+              "uncertaintyId": "u-delay"
+            },
+            "message": "“I will accept the unresolved question after one cause has been confirmed.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "metabolic-b-uncertainty-withheld-alternative-1",
+                "label": "Verify the condition for acceptance and keep responsibility with the results worklist until the cause is confirmed.",
+                "appropriate": false,
+                "feedback": "Diagnostic uncertainty does not supply an accountable next reviewer.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-b-uncertainty-withheld-verify",
+                "label": "Clarify that the supervising clinician needs to accept the concern with its current uncertainty and outstanding work.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-b-uncertainty-withheld-alternative-2",
+                "label": "Replace the unresolved question with the leading diagnosis so the receiver can accept a definite account.",
+                "appropriate": false,
+                "feedback": "A stronger label cannot substitute for communicating the actual evidence and uncertainty.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-b-pattern-and-change",
+            "requiresReviewed": [
+              "plasma-glucose",
+              "blood-ketones",
+              "acid-base",
+              "serum-osmolality"
+            ],
+            "requiresPatientUpdates": [
+              "thirst-tiredness-change"
+            ],
+            "message": "“The combined reports fit HHS. The patient is conversant, so I heard that the reported tiredness has improved.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "metabolic-b-pattern-and-change-alternative-1",
+                "label": "Use continued conversation to omit the tiredness change and verify the laboratory summary alone.",
+                "appropriate": false,
+                "feedback": "The update explicitly contains increased tiredness. Conversation does not remove it from the handoff.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-b-pattern-and-change-verify",
+                "label": "Correct the symptom detail: tiredness increased despite conversation; retain the reviewed HHS pattern and review owner.",
+                "appropriate": true,
+                "feedback": "Being conversant does not reverse the reported increase in tiredness. Verify the source account as well as the pattern.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-b-pattern-and-change-alternative-2",
+                "label": "Replace the combined pattern with a glucose-only diagnosis to keep the receiver’s account concise.",
+                "appropriate": false,
+                "feedback": "The relevant combined components cannot be reduced to a glucose-only argument.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-b-glucose-change-acid-pending",
+            "requiresReviewed": [
+              "plasma-glucose"
+            ],
+            "requiresPatientUpdates": [
+              "thirst-tiredness-change"
+            ],
+            "requiresPending": [
+              "acid-base"
+            ],
+            "message": "“Raised glucose is reviewed and acid-base is pending. I heard thirst continues and tiredness increased while the patient remains conversant.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "metabolic-b-glucose-change-acid-pending-alternative-1",
+                "label": "Correct the pending acid-base report to the value expected from the glucose and symptom account.",
+                "appropriate": false,
+                "feedback": "No value or full pattern can be inferred from a pending acid-base report.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-b-glucose-change-acid-pending-verify",
+                "label": "Verify the actual glucose report, pending acid-base status and symptom account; do not add an acid-base finding.",
+                "appropriate": true,
+                "feedback": "The repetition keeps a reviewed component, an outstanding report and a patient-reported change distinct.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-b-glucose-change-acid-pending-alternative-2",
+                "label": "Confirm the exchange as evidence that a full ketoacidotic pattern is already established.",
+                "appropriate": false,
+                "feedback": "Glucose and symptoms alone do not supply every required component.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-b-symptom-change",
+            "requiresPatientUpdates": [
+              "thirst-tiredness-change"
+            ],
+            "message": "“I heard persistent thirst and increased tiredness. The patient is still conversant; I accept that update for supervisor review.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "metabolic-b-symptom-change-alternative-1",
+                "label": "Correct increased tiredness to improvement because the patient can still hold a conversation.",
+                "appropriate": false,
+                "feedback": "The source account explicitly says tiredness increased.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-b-symptom-change-alternative-2",
+                "label": "Add a confirmed metabolic diagnosis to the repeated symptom account before accepting this exchange.",
+                "appropriate": false,
+                "feedback": "The reported change does not itself supply the missing laboratory pattern.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-b-symptom-change-verify",
+                "label": "Verify all three observations and the accepted review; avoid turning conversation into a laboratory conclusion.",
+                "appropriate": true,
+                "feedback": "The receiver has repeated the complete symptom account while leaving its explanation to the reviewed evidence and supervisor.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-b-opening-only",
+            "message": "“I heard the presenting vomiting, fatigue and abdominal discomfort. The opening account alone does not establish its cause. I accept the next review; separately listed reports retain their recorded status.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "metabolic-b-opening-only-alternative-1",
+                "label": "Correct the receiver to the final diagnosis expected for this arrival, even if its supporting report is not reviewed.",
+                "appropriate": false,
+                "feedback": "A future report or a remembered arrival cannot enter the current sent snapshot.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-b-opening-only-alternative-2",
+                "label": "Withhold verification until all work is complete so the opening concern can be replaced by one definite explanation.",
+                "appropriate": false,
+                "feedback": "The known concern and next reviewer can be verified while the cause remains uncertain.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-b-opening-only-verify",
+                "label": "Verify the presenting concern, its limited certainty and accepted review; add no result that the sent snapshot does not contain.",
+                "appropriate": true,
+                "feedback": "This is a valid early exchange. A complete diagnostic worklist is not required to communicate the known concern and ownership.",
+                "requires": []
+              }
+            ]
+          }
+        ],
+        "reassessmentScenarios": [
+          {
+            "id": "metabolic-b-reassess-pattern-change",
+            "requiresReviewed": [
+              "plasma-glucose",
+              "blood-ketones",
+              "acid-base",
+              "serum-osmolality"
+            ],
+            "requiresPatientUpdates": [
+              "thirst-tiredness-change"
+            ],
+            "message": "Reviewed: the combined reviewed glucose, osmolality, ketone and acid-base reports fit the HHS pattern. Reported change: thirst persists and tiredness has increased while the patient remains conversant.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "metabolic-b-reassess-pattern-change-alternative-1",
+                "label": "Keep the laboratory account and omit the tiredness change because the patient is still conversant.",
+                "appropriate": false,
+                "feedback": "A continuing ability to converse does not erase the patient’s reported change.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-b-reassess-pattern-change-verify",
+                "label": "Give the supervisor the component account and increased tiredness together. The combined pattern does not establish its precipitant or transfer care decisions from the supervisor.",
+                "appropriate": true,
+                "feedback": "This joins the current symptom report to the actual reviewed pattern or missing component without inventing values.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-b-reassess-pattern-change-alternative-2",
+                "label": "Use the symptom change to replace the combined pattern with a glucose-only conclusion.",
+                "appropriate": false,
+                "feedback": "A symptom report does not replace the components supporting the recorded pattern.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-b-reassess-glucose-change-pending",
+            "requiresReviewed": [
+              "plasma-glucose"
+            ],
+            "requiresPatientUpdates": [
+              "thirst-tiredness-change"
+            ],
+            "requiresPending": [
+              "acid-base"
+            ],
+            "message": "Glucose is reviewed; acid-base remains pending. Thirst persists and tiredness increased, while the patient remains conversant.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "metabolic-b-reassess-glucose-change-pending-verify",
+                "label": "Bring the glucose component and symptom change to the supervisor; keep acid-base pending without a value or full-pattern claim.",
+                "appropriate": true,
+                "feedback": "The next review can use a partial record while preserving the component that is still outstanding.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-b-reassess-glucose-change-pending-alternative-1",
+                "label": "Infer the acid-base component from the glucose and increased tiredness, then hand over a complete metabolic pattern.",
+                "appropriate": false,
+                "feedback": "The supplied observations do not create an unreviewed laboratory result.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-b-reassess-glucose-change-pending-alternative-2",
+                "label": "Defer the symptom change until the pending acid-base report shows whether the conversation is reassuring.",
+                "appropriate": false,
+                "feedback": "The change should be communicated as reported. An outstanding component does not replace review ownership.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-b-reassess-symptom-change",
+            "requiresPatientUpdates": [
+              "thirst-tiredness-change"
+            ],
+            "message": "Reported change: thirst persists and tiredness has increased while the patient remains conversant. Other results have the statuses shown in the current snapshot.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "metabolic-b-reassess-symptom-change-alternative-1",
+                "label": "Use continued conversation to keep the earlier symptom account until all reports can be synthesized together.",
+                "appropriate": false,
+                "feedback": "Continued conversation does not remove the reported increase in tiredness.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-b-reassess-symptom-change-verify",
+                "label": "Describe the full symptom change to the supervisor, adding reviewed components and identifying work still outstanding.",
+                "appropriate": true,
+                "feedback": "The update is neither a new laboratory result nor evidence of a patient outcome.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-b-reassess-symptom-change-alternative-2",
+                "label": "Let increased tiredness establish the metabolic diagnosis and treat unreviewed components as supporting detail.",
+                "appropriate": false,
+                "feedback": "The symptom change does not establish the required laboratory pattern.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-b-reassess-current-record",
+            "message": "Use the reviewed findings and task statuses in the current snapshot. This checkpoint supplies no additional patient finding.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "metabolic-b-reassess-current-record-alternative-1",
+                "label": "Build the explanation from the expected final reports and revise it only if one later result disagrees.",
+                "appropriate": false,
+                "feedback": "A requested or expected finding is not reviewed evidence.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-b-reassess-current-record-alternative-2",
+                "label": "Carry the opening account alone until every requested report is ready, then assign the next clinical reviewer.",
+                "appropriate": false,
+                "feedback": "Reviewed findings can update the account before the worklist is complete, and the concern already needs an owner.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-b-reassess-current-record-verify",
+                "label": "Separate what you reviewed from what is pending or available to read, and confirm the supervising clinician owns the next review.",
+                "appropriate": true,
+                "feedback": "Reading, availability and pending work are different statuses. Use only the current snapshot; no later fact is supplied by this question.",
+                "requires": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "transfer": {
+      "version": 1,
+      "synthetic": true,
+      "reviewStatus": "pending_human_review",
+      "sourceCheckedDate": "2026-10-16",
+      "delivery": "after-another-arrival",
+      "id": "ketoacidotic-pattern-contrast-v4",
+      "prompt": "A different fictional arrival has glucose 410 mg/dL, beta-hydroxybutyrate 5.2 mmol/L, venous pH 7.25 and bicarbonate 16 mmol/L. Which explanation uses this different combination?",
+      "choices": [
+        {
+          "id": "hhs-by-memory",
+          "label": "HHS alone, treating the ketones and acidosis as nonspecific effects of dehydration.",
+          "feedback": "The significant ketones and acidosis are required parts of the ketoacidotic pattern, not findings to discard. Real presentations can overlap."
+        },
+        {
+          "id": "dka-pattern",
+          "label": "Ketoacidosis is supported by raised glucose, significant ketones and acidosis together.",
+          "feedback": "The three components form the authored ketoacidotic pattern. Do not reuse the earlier HHS conclusion just because both involve high glucose."
+        },
+        {
+          "id": "glucose-alone",
+          "label": "Keep ketoacidosis unsupported until an osmolality report completes its diagnostic pattern.",
+          "feedback": "Osmolality can help compare explanations, but it is not a substitute for or an additional requirement of the supplied three-part DKA argument."
+        }
+      ],
+      "answerId": "dka-pattern",
+      "source": {
+        "title": "ADA/EASD and partner societies: Hyperglycemic Crises in Adults With Diabetes, 2024 consensus",
+        "url": "https://doi.org/10.2337/dci24-0032",
+        "scope": "Compare the combined DKA criteria with severe hyperglycemia, hyperosmolality and absence of significant ketosis/acidosis in HHS. The fictional alternatives are simplified; real presentations can overlap. No treatment content is used.",
+        "checkedDate": "2026-10-16"
+      }
+    }
+  },
+  {
+    "episode": {
+      "id": "stu-003-after-weekend-investigation-record-c",
+      "version": 5,
+      "title": "After the Weekend",
+      "subtitle": "Follow the concern. Review the record. Hand it over.",
+      "opening": "A 26-year-old arrives after a weekend away with vomiting, fatigue and abdominal discomfort. The team is already assessing the patient. The first handoff suggests a stomach illness, but the record is incomplete.",
+      "disclaimer": "Educational fiction pending human review. Reports, changes and update rounds are authored; they are not clinical advice or patient outcomes.",
+      "reviewStatus": "pending_human_review",
+      "presentation": {
+        "audience": "student",
+        "playMinutes": "5-8",
+        "image": "./assets/episodes/stu-001-dka-escalation-720.webp",
+        "imageAlt": "Generated illustration of a young adult under observation with a hospital team. Not diagnostic evidence."
+      },
+      "sources": [
+        {
+          "title": "ADA/EASD and partner societies: Hyperglycemic Crises in Adults With Diabetes, 2024 consensus report",
+          "url": "https://doi.org/10.2337/dci24-0032",
+          "checkedUtc": "2026-10-16T04:29:45Z",
+          "scope": "Diagnosis requires the combined glucose/diabetes, ketone and metabolic-acidosis criteria. HHS involves hyperosmolality without significant ketosis or acidosis; no treatment recommendations are used. Fictional values are not source patient data."
+        },
+        {
+          "title": "2024 consensus report: open full text, diagnostic criteria section",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11272983/",
+          "checkedUtc": "2026-10-16T04:29:45Z",
+          "scope": "Primary consensus text for the three-part DKA argument and the competing HHS pattern. Used only to check authored evidence relations, not care decisions."
+        },
+        {
+          "title": "ADA/EASD and partner societies: Hyperglycemic Crises in Adults With Diabetes, 2024 consensus",
+          "url": "https://doi.org/10.2337/dci24-0032",
+          "scope": "Compare the combined DKA criteria with severe hyperglycemia, hyperosmolality and absence of significant ketosis/acidosis in HHS. The fictional alternatives are simplified; real presentations can overlap. No treatment content is used.",
+          "checkedDate": "2026-10-16"
+        },
+        {
+          "title": "AHRQ TeamSTEPPS: Check-Back (or Repeat-Back)",
+          "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/checkback.html",
+          "checkedDate": "2026-10-17",
+          "scope": "The receiver repeats the message and the sender verifies or corrects understanding. These scripted exchanges are newly authored fiction, without treatment instructions."
+        },
+        {
+          "title": "AHRQ TeamSTEPPS: Handoff",
+          "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/handoff.html",
+          "checkedDate": "2026-10-17",
+          "scope": "Communicate uncertainty, recent changes, named responsibility and receiver acceptance. The educational exercise does not transfer real clinical authority."
+        }
+      ],
+      "hypotheses": [
+        {
+          "id": "diabetic-ketoacidosis",
+          "label": "Diabetic ketoacidosis"
+        },
+        {
+          "id": "hyperosmolar-state",
+          "label": "Hyperglycemic hyperosmolar state (HHS) alone"
+        },
+        {
+          "id": "gastroenteritis",
+          "label": "Gastroenteritis with dehydration"
+        },
+        {
+          "id": "cause-unresolved",
+          "label": "Cause not established by this record"
+        }
+      ],
+      "actions": [
+        {
+          "id": "recent-history",
+          "label": "Recent history",
+          "category": "history",
+          "minutes": 3,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional history: thirst and frequent urination started before the vomiting. There is no established diabetes diagnosis in the record.",
+          "interpretation": "The chronology weakens a stomach-only explanation but cannot settle the metabolic diagnosis."
+        },
+        {
+          "id": "bedside-observations",
+          "label": "Bedside observations",
+          "category": "examination",
+          "minutes": 3,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional observations: the patient is tired but conversant, with deep breathing, dry mouth and diffuse abdominal discomfort.",
+          "interpretation": "These observations require explanation; they are not specific enough to label the illness."
+        },
+        {
+          "id": "plasma-glucose",
+          "label": "Plasma glucose",
+          "category": "laboratory",
+          "minutes": 2,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional laboratory result: plasma glucose is 286 mg/dL.",
+          "interpretation": "Elevated glucose alone is not sufficient to establish ketoacidosis."
+        },
+        {
+          "id": "blood-ketones",
+          "label": "Blood ketones",
+          "category": "laboratory",
+          "minutes": 3,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional laboratory result: beta-hydroxybutyrate is 4.8 mmol/L.",
+          "interpretation": "The ketone result adds a second piece. Acid-base evidence is still distinct."
+        },
+        {
+          "id": "acid-base",
+          "label": "Acid-base status notice",
+          "category": "laboratory",
+          "minutes": 4,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional status notice: no pH or bicarbonate result is available in this supplied record. Reading this notice supplies no acid-base measurement.",
+          "interpretation": "The acid-base component is unknown. Raised glucose and ketones do not supply the absent value; unavailable is not the same as normal or absent acidosis."
+        },
+        {
+          "id": "serum-osmolality",
+          "label": "Serum osmolality",
+          "category": "laboratory",
+          "minutes": 4,
+          "requires": [],
+          "sourceIds": [
+            0
+          ],
+          "finding": "Fictional laboratory result: measured total serum osmolality is 297 mOsm/kg.",
+          "interpretation": "This fictional result does not support a markedly hyperosmolar explanation. It does not replace the three-part ketoacidosis assessment."
+        }
+      ],
+      "reasoning": {
+        "supportLabel": "Evidence for your explanation",
+        "limitationLabel": "A comparison or limit",
+        "prompt": "Connect your explanation to reviewed evidence, then state a limit.",
+        "caseLearningText": "Raised glucose and significant ketones are reviewed, but no acid-base measurement is supplied. This record does not establish the complete ketoacidotic pattern. Unknown acid-base status cannot be called normal, and the concern still needs the supervisor’s assessment.",
+        "insufficientCitationFeedback": "Connect the reviewed glucose and ketones with the notice that acid-base values are unavailable. The unresolved conclusion needs the record-specific missing component, not the opening symptoms alone.",
+        "openingFacts": [
+          {
+            "id": "opening:vomiting-fatigue-discomfort",
+            "label": "Vomiting, fatigue and abdominal discomfort in the opening handoff",
+            "strength": "concern",
+            "supports": [
+              "diabetic-ketoacidosis",
+              "hyperosmolar-state",
+              "gastroenteritis",
+              "cause-unresolved"
+            ]
+          }
+        ],
+        "supportRules": {
+          "recent-history": {
+            "strength": "suggestive",
+            "supports": [
+              "diabetic-ketoacidosis",
+              "hyperosmolar-state"
+            ]
+          },
+          "bedside-observations": {
+            "strength": "concern",
+            "supports": [
+              "diabetic-ketoacidosis",
+              "hyperosmolar-state",
+              "gastroenteritis"
+            ]
+          },
+          "plasma-glucose": {
+            "strength": "component",
+            "supports": [
+              "diabetic-ketoacidosis",
+              "cause-unresolved"
+            ]
+          },
+          "blood-ketones": {
+            "strength": "component",
+            "supports": [
+              "diabetic-ketoacidosis",
+              "cause-unresolved"
+            ]
+          },
+          "acid-base": {
+            "strength": "component",
+            "supports": [
+              "cause-unresolved"
+            ]
+          },
+          "serum-osmolality": {
+            "strength": "limited",
+            "supports": [],
+            "conflictsWith": [
+              "hyperosmolar-state"
+            ],
+            "conflictFeedback": "The osmolality result you read does not support HHS alone in this fictional case. It does not establish DKA without the remaining findings; real presentations can overlap."
+          }
+        },
+        "supportGroups": [
+          {
+            "id": "pattern:missing-acid-base",
+            "label": "Reviewed glucose, ketones and unavailable acid-base notice together",
+            "requires": [
+              "plasma-glucose",
+              "blood-ketones",
+              "acid-base"
+            ],
+            "strength": "decisive",
+            "supports": [
+              "cause-unresolved"
+            ]
+          }
+        ],
+        "uncertaintyOptions": [
+          {
+            "id": "symptoms-not-confirmation",
+            "label": "Vomiting and discomfort alone do not establish a metabolic cause.",
+            "requires": [],
+            "scope": "provisional"
+          },
+          {
+            "id": "glucose-is-component",
+            "label": "Raised glucose alone does not establish the full metabolic pattern.",
+            "requires": [
+              "plasma-glucose"
+            ],
+            "scope": "any"
+          },
+          {
+            "id": "missing-acid-base-scope",
+            "label": "Reviewed glucose and ketones plus unavailable acid-base values leave this supplied cause unestablished.",
+            "requires": [
+              "plasma-glucose",
+              "blood-ketones",
+              "acid-base"
+            ],
+            "scope": "supported",
+            "forHypotheses": [
+              "cause-unresolved"
+            ]
+          },
+          {
+            "id": "unknown-is-normal",
+            "label": "No supplied acid-base value means acidosis is absent.",
+            "requires": [
+              "acid-base"
+            ],
+            "scope": "unsupported"
+          }
+        ]
+      },
+      "resolution": {
+        "hypothesisId": "cause-unresolved",
+        "evidenceActionIds": [
+          "plasma-glucose",
+          "blood-ketones",
+          "acid-base"
+        ],
+        "supportedSummary": "Glucose and ketones are reviewed, but the acid-base notice supplies no pH or bicarbonate. The supplied record does not establish the complete metabolic pattern or cause.",
+        "mismatchSummary": "The unavailable acid-base component does not establish the selected complete metabolic pattern. Unknown does not mean normal.",
+        "provisionalSummary": "The glucose, ketones and unavailable acid-base notice were not all reviewed. The record-specific missing component is not yet demonstrated on this route.",
+        "decisiveClue": "Raised glucose and ketones are supplied, but no acid-base measurement is available in this record.",
+        "missingClue": "At least one of glucose, ketones or the acid-base status notice was not reviewed.",
+        "nextLearning": "Distinguish a reviewed status notice from a measured result. Do not fill the missing acid-base component with an assumed value; the supervisor owns further assessment.",
+        "limitations": [
+          "Authored fictional records pending human medical review; source references support educational framing, not these patient measurements or events.",
+          "Update rounds are narrative release events, not clinical minutes, recommended waits or an investigation sequence. Emergency assessment continues independently.",
+          "No treatment, dose, eligibility, prognosis or patient outcome is modeled. A recorded explanation does not establish clinical competence.",
+          "Earlier owner-reported clinician review has unverified scope and version; it does not cover these version 5 questions, exchanges or Arrival C records."
+        ],
+        "conclusionKind": "unresolved"
+      },
+      "careWorkflow": {
+        "episodeId": "stu-003-after-weekend-investigation-record-c",
+        "version": 1,
+        "role": {
+          "label": "Student reporting to a supervising clinician",
+          "boundary": "Offer a synthesis and questions to the supervisor. Independent test orders, treatment and care decisions are outside the student role."
+        },
+        "timingNote": "Fictional update rounds release reports and narrative events. They are not minutes, recommended waits or a prescribed clinical sequence.",
+        "priority": {
+          "prompt": "Who needs the opening concern before its cause is settled?",
+          "choices": [
+            {
+              "id": "share-opening-concern",
+              "label": "Share vomiting, fatigue and abdominal discomfort with the supervising clinician and confirm who accepts review.",
+              "appropriate": true,
+              "feedback": "Communicate the concern and uncertainty early; a diagnostic label is not required to name a review owner.",
+              "requires": []
+            },
+            {
+              "id": "finish-record-before-contact",
+              "label": "Collect the remaining reports first, then ask the supervising clinician to accept the complete explanation.",
+              "appropriate": false,
+              "feedback": "A fuller record may refine the explanation. It does not replace early shared awareness and responsibility for the presenting concern.",
+              "requires": []
+            }
+          ]
+        },
+        "tasks": {
+          "recent-history": {
+            "owner": "Supervising clinician",
+            "label": "Follow up: recent history",
+            "rounds": 1
+          },
+          "bedside-observations": {
+            "owner": "Supervising clinician",
+            "label": "Follow up: bedside observations",
+            "rounds": 1
+          },
+          "plasma-glucose": {
+            "owner": "Supervising clinician",
+            "label": "Follow up: plasma glucose",
+            "rounds": 1
+          },
+          "blood-ketones": {
+            "owner": "Supervising clinician",
+            "label": "Follow up: blood ketones",
+            "rounds": 2
+          },
+          "acid-base": {
+            "owner": "Supervising clinician",
+            "label": "Follow up: acid-base status notice",
+            "rounds": 2
+          },
+          "serum-osmolality": {
+            "owner": "Supervising clinician",
+            "label": "Follow up: serum osmolality",
+            "rounds": 2
+          }
+        },
+        "reassessment": {
+          "minimumReviewed": 1,
+          "update": "Fictional team checkpoint: identify what you reviewed, what remains pending and who accepts the next review. This checkpoint supplies no additional examination or laboratory finding."
+        },
+        "handoff": {
+          "receiver": {
+            "prompt": "Who accepts this concern?",
+            "choices": [
+              {
+                "id": "r-worklist",
+                "label": "The shared results worklist, with the next reader deciding who receives the concern.",
+                "appropriate": false,
+                "feedback": "A worklist records tasks; it does not show who accepted responsibility.",
+                "requires": []
+              },
+              {
+                "id": "r-clinical",
+                "label": "The supervising clinician responsible for this assessment.",
+                "appropriate": true,
+                "feedback": "Name the clinical receiver and verify acceptance of the concern.",
+                "requires": []
+              }
+            ]
+          },
+          "situation": {
+            "prompt": "Which known fact will you carry forward?",
+            "choices": [
+              {
+                "id": "s-opening",
+                "label": "A 26-year-old arrived with vomiting, fatigue and abdominal discomfort; the stomach-illness account was incomplete.",
+                "appropriate": true,
+                "feedback": "This is an opening fact, available for an early handoff. Add the actual reviewed and pending information to the shared record.",
+                "requires": []
+              },
+              {
+                "id": "s-glucose",
+                "label": "The reviewed plasma glucose is 286 mg/dL; this number alone is not the full pattern.",
+                "appropriate": true,
+                "feedback": "Include the value without inventing the unreviewed components.",
+                "requires": [
+                  "plasma-glucose"
+                ]
+              },
+              {
+                "id": "s-pattern",
+                "label": "Glucose and ketones are reviewed; the acid-base status notice says no pH or bicarbonate result is supplied.",
+                "appropriate": true,
+                "feedback": "A report-specific combined statement is available only after all its components were reviewed.",
+                "requires": [
+                  "plasma-glucose",
+                  "blood-ketones",
+                  "acid-base"
+                ]
+              },
+              {
+                "id": "s-overclaim",
+                "label": "The initial vomiting establishes a stomach illness; hand over the glucose report as a separate issue.",
+                "appropriate": false,
+                "feedback": "The opening observation does not establish that cause. Keep what happened separate from the explanation.",
+                "requires": []
+              }
+            ]
+          },
+          "uncertainty": {
+            "prompt": "Which limit belongs with that statement?",
+            "choices": [
+              {
+                "id": "u-delay",
+                "label": "Hold the handoff until a single cause is confirmed, so the receiver gets no unresolved question.",
+                "appropriate": false,
+                "feedback": "An unresolved question belongs in an early handoff. It should have a named clinical receiver, not be silently withheld.",
+                "requires": []
+              },
+              {
+                "id": "u-pattern",
+                "label": "The supplied acid-base component is unknown, so this record does not establish the full metabolic pattern; the supervisor owns assessment.",
+                "appropriate": true,
+                "feedback": "A supported synthesis does not transfer clinical responsibility to the student. Real metabolic presentations can overlap.",
+                "requires": [
+                  "plasma-glucose",
+                  "blood-ketones",
+                  "acid-base"
+                ]
+              },
+              {
+                "id": "u-opening",
+                "label": "The opening symptoms alone do not establish a cause; stronger claims must cite reviewed findings.",
+                "appropriate": true,
+                "feedback": "This limits the opening account without pretending later reports are still unknown.",
+                "requires": []
+              }
+            ]
+          },
+          "nextOwner": {
+            "prompt": "Who follows up the remaining concern?",
+            "choices": [
+              {
+                "id": "o-clinical",
+                "label": "Confirm the supervising clinician owns the next review and how new reports or symptom changes reach them.",
+                "appropriate": true,
+                "feedback": "Identify an accountable receiver and an update route. This assigns communication responsibility, not treatment.",
+                "requires": []
+              },
+              {
+                "id": "o-worklist",
+                "label": "Use the completed request as the transfer of responsibility; the receiving worklist can assign the next review.",
+                "appropriate": false,
+                "feedback": "A sent request is not evidence that another person accepted the concern or the next review.",
+                "requires": []
+              }
+            ]
+          }
+        },
+        "readback": {
+          "prompt": "Verify the receiver’s reply against the sent handoff.",
+          "choices": []
+        },
+        "sources": [
+          {
+            "title": "WHO Emergency Care Toolkit: Interagency Integrated Triage Tool",
+            "url": "https://www.who.int/teams/integrated-health-services/clinical-services-and-systems/emergency-and-critical-care/emergency-care-toolkit",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Prioritizing clinical concern separately from establishing a diagnosis. These role-specific exercises do not implement or validate a triage scale."
+          },
+          {
+            "title": "NICE CG50: recognising and responding to deterioration",
+            "url": "https://www.nice.org.uk/guidance/CG50/chapter/recommendations",
+            "checkedUtc": "2026-10-16T06:06:44Z",
+            "scope": "Clinical concern, response ownership and reassessment. No physiological thresholds, observation intervals or treatment instructions are introduced."
+          },
+          {
+            "title": "AHRQ TeamSTEPPS: Handoff",
+            "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/handoff.html",
+            "checkedDate": "2026-10-17",
+            "scope": "Communicate uncertainty, recent changes, named responsibility and receiver acceptance. The educational exercise does not transfer real clinical authority."
+          },
+          {
+            "title": "AHRQ TeamSTEPPS: Check-Back (or Repeat-Back)",
+            "url": "https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/checkback.html",
+            "checkedDate": "2026-10-17",
+            "scope": "The receiver repeats the message and the sender verifies or corrects understanding. These scripted exchanges are newly authored fiction, without treatment instructions."
+          }
+        ],
+        "reviewProvenance": {
+          "status": "unreviewed",
+          "ownerReportedPriorClinicianReview": true,
+          "priorReviewScope": "unverified",
+          "priorReviewVersion": "unverified",
+          "text": "The owner reports clinician review of earlier material; the reviewed scope and version are unverified. These version 5 receiver exchanges, contextual questions and Arrival C contrasts are newly authored fiction and have not received separate clinician review."
+        },
+        "workboardPrompt": "Choose work to follow up; reports may arrive together.",
+        "patientUpdates": [
+          {
+            "id": "thirst-tiredness-change",
+            "afterRound": 1,
+            "requiresReviewed": [],
+            "text": "Authored fictional change after arrival: the patient tells the student that thirst persists and tiredness has increased; the patient is still conversant. No new laboratory or examination result is supplied.",
+            "prompt": "What should you bring to the supervisor?",
+            "choices": [
+              {
+                "id": "communicate-change",
+                "label": "Report persistent thirst and increased tiredness, state that the patient is conversant, and confirm the supervisor accepts review.",
+                "appropriate": true,
+                "feedback": "Communicate the actual reported change and confirm a clinical owner. It neither establishes the cause nor predicts the outcome.",
+                "requires": []
+              },
+              {
+                "id": "defer-change-to-summary",
+                "label": "Keep the symptom update for the completed laboratory synthesis, using conversation as reassurance while the reports are pending.",
+                "appropriate": false,
+                "feedback": "The new concern needs to reach the responsible clinician with its full detail. A pending report or one improved feature does not replace that communication.",
+                "requires": []
+              }
+            ]
+          }
+        ]
+      },
+      "familyId": "stu-003-after-weekend-investigation",
+      "familyTitle": "After the Weekend",
+      "recordLabel": "Arrival C",
+      "workboardPrompt": "Choose work to follow up; reports may arrive together.",
+      "authoredFiction": true,
+      "reviewProvenance": {
+        "status": "unreviewed",
+        "ownerReportedPriorClinicianReview": true,
+        "priorReviewScope": "unverified",
+        "priorReviewVersion": "unverified",
+        "text": "The owner reports clinician review of earlier material; the reviewed scope and version are unverified. These version 5 receiver exchanges, contextual questions and Arrival C contrasts are newly authored fiction and have not received separate clinician review."
+      },
+      "transferQuestion": {
+        "version": 1,
+        "synthetic": true,
+        "reviewStatus": "pending_human_review",
+        "sourceCheckedDate": "2026-10-16",
+        "delivery": "after-another-arrival",
+        "id": "metabolic-unavailable-component-contrast-v5",
+        "prompt": "A different fictional record supplies raised glucose and significant ketones, but its reviewed status notice says no pH or bicarbonate result is available. Which account preserves that distinction?",
+        "choices": [
+          {
+            "id": "full-pattern",
+            "label": "The glucose and ketones establish the entire ketoacidotic pattern without the absent component.",
+            "feedback": "The supplied record has not established its acid-base component. Do not infer a measurement from the other reports."
+          },
+          {
+            "id": "component-unknown",
+            "label": "The acid-base component remains unknown; the supplied record does not establish the full pattern.",
+            "feedback": "A reviewed status notice documents missing information, not measured normal values or absent acidosis."
+          },
+          {
+            "id": "normal-component",
+            "label": "The missing acid-base result supports a non-acidotic alternative because no acidosis is reported.",
+            "feedback": "Unavailable information is not evidence that acidosis is absent or that another pattern is established."
+          }
+        ],
+        "answerId": "component-unknown",
+        "source": {
+          "title": "ADA/EASD and partner societies: Hyperglycemic Crises in Adults With Diabetes, 2024 consensus",
+          "url": "https://doi.org/10.2337/dci24-0032",
+          "scope": "Compare the combined DKA criteria with severe hyperglycemia, hyperosmolality and absence of significant ketosis/acidosis in HHS. The fictional alternatives are simplified; real presentations can overlap. No treatment content is used.",
+          "checkedDate": "2026-10-16"
+        }
+      },
+      "coordination": {
+        "readbackScenarios": [
+          {
+            "id": "metabolic-c-receiver-not-accepted",
+            "requiresSelections": {
+              "receiverId": "r-worklist"
+            },
+            "message": "“The worklist entry for vomiting, fatigue and abdominal discomfort is visible. I have not accepted the next clinical review.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "metabolic-c-receiver-not-accepted-alternative-1",
+                "label": "Verify that the entry is visible and record the next clinical review as accepted through the shared worklist.",
+                "appropriate": false,
+                "feedback": "Visibility does not establish that a person accepted responsibility.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-c-receiver-not-accepted-alternative-2",
+                "label": "Ask for a more complete diagnostic summary, then use its inclusion in the worklist as the review assignment.",
+                "appropriate": false,
+                "feedback": "More detail does not resolve the missing clinical receiver.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-c-receiver-not-accepted-verify",
+                "label": "Clarify who accepts the vomiting, fatigue and abdominal discomfort concern and ask the named clinician to repeat their responsibility.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-c-next-owner-missing",
+            "requiresSelections": {
+              "nextOwnerId": "o-worklist"
+            },
+            "message": "“I received the summary. Whoever reads the last report will take responsibility for the next review.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "metabolic-c-next-owner-missing-verify",
+                "label": "Ask the supervising clinician to accept the next review and confirm the route for later reports or changes.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-c-next-owner-missing-alternative-1",
+                "label": "Confirm that the final report reader will be recorded as the owner when the worklist becomes complete.",
+                "appropriate": false,
+                "feedback": "A future reader is not a named person accepting the concern now.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-c-next-owner-missing-alternative-2",
+                "label": "Verify the findings in the summary and leave ownership to the team handling the remaining requests.",
+                "appropriate": false,
+                "feedback": "Finding accuracy and ownership are separate parts of the exchange.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-c-opening-overclaim",
+            "requiresSelections": {
+              "situationId": "s-overclaim"
+            },
+            "message": "“I heard that the opening vomiting, fatigue and abdominal discomfort establishes a stomach illness.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "metabolic-c-opening-overclaim-alternative-1",
+                "label": "Verify the diagnostic wording because it repeats the situation selected in the handoff accurately.",
+                "appropriate": false,
+                "feedback": "Repeating an inaccurate claim does not make it valid. The sender must also check its meaning against the known record.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-c-opening-overclaim-verify",
+                "label": "Correct the opening claim: it describes the presenting concern; stronger conclusions must use findings actually reviewed.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-c-opening-overclaim-alternative-2",
+                "label": "Keep that diagnosis in the exchange and label the remaining reports as details about its extent.",
+                "appropriate": false,
+                "feedback": "The opening account does not establish the diagnosis or make other findings secondary.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-c-uncertainty-withheld",
+            "requiresSelections": {
+              "uncertaintyId": "u-delay"
+            },
+            "message": "“I will accept the unresolved question after one cause has been confirmed.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "metabolic-c-uncertainty-withheld-alternative-1",
+                "label": "Verify the condition for acceptance and keep responsibility with the results worklist until the cause is confirmed.",
+                "appropriate": false,
+                "feedback": "Diagnostic uncertainty does not supply an accountable next reviewer.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-c-uncertainty-withheld-alternative-2",
+                "label": "Replace the unresolved question with the leading diagnosis so the receiver can accept a definite account.",
+                "appropriate": false,
+                "feedback": "A stronger label cannot substitute for communicating the actual evidence and uncertainty.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-c-uncertainty-withheld-verify",
+                "label": "Clarify that the supervising clinician needs to accept the concern with its current uncertainty and outstanding work.",
+                "appropriate": true,
+                "feedback": "Correct this part of the exchange, then review any other handoff issue. One correction does not repair a separate inaccurate selection.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-c-pattern-and-change",
+            "requiresReviewed": [
+              "plasma-glucose",
+              "blood-ketones",
+              "acid-base"
+            ],
+            "requiresPatientUpdates": [
+              "thirst-tiredness-change"
+            ],
+            "message": "“The acid-base values are unavailable, so I will record them as normal. Thirst persists and tiredness increased.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "metabolic-c-pattern-and-change-alternative-1",
+                "label": "Use continued conversation to omit the tiredness change and verify the laboratory summary alone.",
+                "appropriate": false,
+                "feedback": "The update explicitly contains increased tiredness. Conversation does not remove it from the handoff.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-c-pattern-and-change-verify",
+                "label": "Correct unavailable to unknown: there are no acid-base values to call normal; retain the reported symptom change.",
+                "appropriate": true,
+                "feedback": "Reading an unavailable-result notice does not supply a measurement or exclude acidosis.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-c-pattern-and-change-alternative-2",
+                "label": "Confirm the full ketoacidotic pattern from glucose and ketones, treating the absent acid-base result as a detail.",
+                "appropriate": false,
+                "feedback": "The acid-base component is missing from the supplied record. Do not infer it from the other two.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-c-glucose-change-acid-pending",
+            "requiresReviewed": [
+              "plasma-glucose"
+            ],
+            "requiresPatientUpdates": [
+              "thirst-tiredness-change"
+            ],
+            "requiresPending": [
+              "acid-base"
+            ],
+            "message": "“Raised glucose is reviewed and acid-base is pending. I heard thirst continues and tiredness increased while the patient remains conversant.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "metabolic-c-glucose-change-acid-pending-alternative-1",
+                "label": "Correct the pending acid-base report to the value expected from the glucose and symptom account.",
+                "appropriate": false,
+                "feedback": "No value or full pattern can be inferred from a pending acid-base report.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-c-glucose-change-acid-pending-verify",
+                "label": "Verify the actual glucose report, pending acid-base status and symptom account; do not add an acid-base finding.",
+                "appropriate": true,
+                "feedback": "The repetition keeps a reviewed component, an outstanding report and a patient-reported change distinct.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-c-glucose-change-acid-pending-alternative-2",
+                "label": "Confirm the exchange as evidence that a full ketoacidotic pattern is already established.",
+                "appropriate": false,
+                "feedback": "Glucose and symptoms alone do not supply every required component.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-c-symptom-change",
+            "requiresPatientUpdates": [
+              "thirst-tiredness-change"
+            ],
+            "message": "“I heard persistent thirst and increased tiredness. The patient is still conversant; I accept that update for supervisor review.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "metabolic-c-symptom-change-verify",
+                "label": "Verify all three observations and the accepted review; avoid turning conversation into a laboratory conclusion.",
+                "appropriate": true,
+                "feedback": "The receiver has repeated the complete symptom account while leaving its explanation to the reviewed evidence and supervisor.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-c-symptom-change-alternative-1",
+                "label": "Correct increased tiredness to improvement because the patient can still hold a conversation.",
+                "appropriate": false,
+                "feedback": "The source account explicitly says tiredness increased.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-c-symptom-change-alternative-2",
+                "label": "Add a confirmed metabolic diagnosis to the repeated symptom account before accepting this exchange.",
+                "appropriate": false,
+                "feedback": "The reported change does not itself supply the missing laboratory pattern.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-c-opening-only",
+            "message": "“I heard the presenting vomiting, fatigue and abdominal discomfort. The opening account alone does not establish its cause. I accept the next review; separately listed reports retain their recorded status.”",
+            "prompt": "Compare the receiver’s words with this sent handoff. What should you verify or correct?",
+            "choices": [
+              {
+                "id": "metabolic-c-opening-only-alternative-1",
+                "label": "Correct the receiver to the final diagnosis expected for this arrival, even if its supporting report is not reviewed.",
+                "appropriate": false,
+                "feedback": "A future report or a remembered arrival cannot enter the current sent snapshot.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-c-opening-only-alternative-2",
+                "label": "Withhold verification until all work is complete so the opening concern can be replaced by one definite explanation.",
+                "appropriate": false,
+                "feedback": "The known concern and next reviewer can be verified while the cause remains uncertain.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-c-opening-only-verify",
+                "label": "Verify the presenting concern, its limited certainty and accepted review; add no result that the sent snapshot does not contain.",
+                "appropriate": true,
+                "feedback": "This is a valid early exchange. A complete diagnostic worklist is not required to communicate the known concern and ownership.",
+                "requires": []
+              }
+            ]
+          }
+        ],
+        "reassessmentScenarios": [
+          {
+            "id": "metabolic-c-reassess-pattern-change",
+            "requiresReviewed": [
+              "plasma-glucose",
+              "blood-ketones",
+              "acid-base"
+            ],
+            "requiresPatientUpdates": [
+              "thirst-tiredness-change"
+            ],
+            "message": "Reviewed: raised glucose and ketones are reviewed, but the acid-base status notice supplies no pH or bicarbonate result. Reported change: thirst persists and tiredness has increased while the patient remains conversant.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "metabolic-c-reassess-pattern-change-alternative-1",
+                "label": "Keep the laboratory account and omit the tiredness change because the patient is still conversant.",
+                "appropriate": false,
+                "feedback": "A continuing ability to converse does not erase the patient’s reported change.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-c-reassess-pattern-change-alternative-2",
+                "label": "Treat the unavailable acid-base values as absent acidosis and favor a non-acidotic pattern.",
+                "appropriate": false,
+                "feedback": "Unavailable values supply no evidence that acidosis is absent.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-c-reassess-pattern-change-verify",
+                "label": "Give the supervisor the component account and increased tiredness together. The supplied record does not establish the complete metabolic pattern; unavailable acid-base values are not normal values.",
+                "appropriate": true,
+                "feedback": "This joins the current symptom report to the actual reviewed pattern or missing component without inventing values.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-c-reassess-glucose-change-pending",
+            "requiresReviewed": [
+              "plasma-glucose"
+            ],
+            "requiresPatientUpdates": [
+              "thirst-tiredness-change"
+            ],
+            "requiresPending": [
+              "acid-base"
+            ],
+            "message": "Glucose is reviewed; acid-base remains pending. Thirst persists and tiredness increased, while the patient remains conversant.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "metabolic-c-reassess-glucose-change-pending-verify",
+                "label": "Bring the glucose component and symptom change to the supervisor; keep acid-base pending without a value or full-pattern claim.",
+                "appropriate": true,
+                "feedback": "The next review can use a partial record while preserving the component that is still outstanding.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-c-reassess-glucose-change-pending-alternative-1",
+                "label": "Infer the acid-base component from the glucose and increased tiredness, then hand over a complete metabolic pattern.",
+                "appropriate": false,
+                "feedback": "The supplied observations do not create an unreviewed laboratory result.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-c-reassess-glucose-change-pending-alternative-2",
+                "label": "Defer the symptom change until the pending acid-base report shows whether the conversation is reassuring.",
+                "appropriate": false,
+                "feedback": "The change should be communicated as reported. An outstanding component does not replace review ownership.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-c-reassess-symptom-change",
+            "requiresPatientUpdates": [
+              "thirst-tiredness-change"
+            ],
+            "message": "Reported change: thirst persists and tiredness has increased while the patient remains conversant. Other results have the statuses shown in the current snapshot.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "metabolic-c-reassess-symptom-change-alternative-1",
+                "label": "Use continued conversation to keep the earlier symptom account until all reports can be synthesized together.",
+                "appropriate": false,
+                "feedback": "Continued conversation does not remove the reported increase in tiredness.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-c-reassess-symptom-change-verify",
+                "label": "Describe the full symptom change to the supervisor, adding reviewed components and identifying work still outstanding.",
+                "appropriate": true,
+                "feedback": "The update is neither a new laboratory result nor evidence of a patient outcome.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-c-reassess-symptom-change-alternative-2",
+                "label": "Let increased tiredness establish the metabolic diagnosis and treat unreviewed components as supporting detail.",
+                "appropriate": false,
+                "feedback": "The symptom change does not establish the required laboratory pattern.",
+                "requires": []
+              }
+            ]
+          },
+          {
+            "id": "metabolic-c-reassess-current-record",
+            "message": "Use the reviewed findings and task statuses in the current snapshot. This checkpoint supplies no additional patient finding.",
+            "prompt": "Which account fits the reviewed record, reported change and work still outstanding?",
+            "choices": [
+              {
+                "id": "metabolic-c-reassess-current-record-alternative-1",
+                "label": "Build the explanation from the expected final reports and revise it only if one later result disagrees.",
+                "appropriate": false,
+                "feedback": "A requested or expected finding is not reviewed evidence.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-c-reassess-current-record-alternative-2",
+                "label": "Carry the opening account alone until every requested report is ready, then assign the next clinical reviewer.",
+                "appropriate": false,
+                "feedback": "Reviewed findings can update the account before the worklist is complete, and the concern already needs an owner.",
+                "requires": []
+              },
+              {
+                "id": "metabolic-c-reassess-current-record-verify",
+                "label": "Separate what you reviewed from what is pending or available to read, and confirm the supervising clinician owns the next review.",
+                "appropriate": true,
+                "feedback": "Reading, availability and pending work are different statuses. Use only the current snapshot; no later fact is supplied by this question.",
+                "requires": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "transfer": {
+      "version": 1,
+      "synthetic": true,
+      "reviewStatus": "pending_human_review",
+      "sourceCheckedDate": "2026-10-16",
+      "delivery": "after-another-arrival",
+      "id": "metabolic-unavailable-component-contrast-v5",
+      "prompt": "A different fictional record supplies raised glucose and significant ketones, but its reviewed status notice says no pH or bicarbonate result is available. Which account preserves that distinction?",
+      "choices": [
+        {
+          "id": "full-pattern",
+          "label": "The glucose and ketones establish the entire ketoacidotic pattern without the absent component.",
+          "feedback": "The supplied record has not established its acid-base component. Do not infer a measurement from the other reports."
+        },
+        {
+          "id": "component-unknown",
+          "label": "The acid-base component remains unknown; the supplied record does not establish the full pattern.",
+          "feedback": "A reviewed status notice documents missing information, not measured normal values or absent acidosis."
+        },
+        {
+          "id": "normal-component",
+          "label": "The missing acid-base result supports a non-acidotic alternative because no acidosis is reported.",
+          "feedback": "Unavailable information is not evidence that acidosis is absent or that another pattern is established."
+        }
+      ],
+      "answerId": "component-unknown",
+      "source": {
+        "title": "ADA/EASD and partner societies: Hyperglycemic Crises in Adults With Diabetes, 2024 consensus",
+        "url": "https://doi.org/10.2337/dci24-0032",
+        "scope": "Compare the combined DKA criteria with severe hyperglycemia, hyperosmolality and absence of significant ketosis/acidosis in HHS. The fictional alternatives are simplified; real presentations can overlap. No treatment content is used.",
+        "checkedDate": "2026-10-16"
+      }
+    }
+  }
+]);
